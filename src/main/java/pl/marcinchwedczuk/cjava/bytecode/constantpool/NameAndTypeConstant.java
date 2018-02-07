@@ -1,21 +1,23 @@
 package pl.marcinchwedczuk.cjava.bytecode.constantpool;
 
-public class NameAndTypeConstant extends Constant {
-	private final short nameIndex;
-	private final short descriptorIndex;
+import java.util.Objects;
 
-	public NameAndTypeConstant(int nameIndex, int descriptorIndex) {
+public class NameAndTypeConstant extends Constant {
+	private final ConstantPoolIndex name;
+	private final ConstantPoolIndex descriptor;
+
+	public NameAndTypeConstant(ConstantPoolIndex name, ConstantPoolIndex descriptor) {
 		super(ConstantTag.NAME_AND_TYPE);
 
-		this.nameIndex = (short) nameIndex;
-		this.descriptorIndex = (short) descriptorIndex;
+		this.name = Objects.requireNonNull(name);
+		this.descriptor = Objects.requireNonNull(descriptor);
 	}
 
-	public short getNameIndex() {
-		return nameIndex;
+	public ConstantPoolIndex getName() {
+		return name;
 	}
-	public short getDescriptorIndex() {
-		return descriptorIndex;
+	public ConstantPoolIndex getDescriptor() {
+		return descriptor;
 	}
 
 	@Override
@@ -25,22 +27,22 @@ public class NameAndTypeConstant extends Constant {
 
 		NameAndTypeConstant that = (NameAndTypeConstant) o;
 
-		if (nameIndex != that.nameIndex) return false;
-		return descriptorIndex == that.descriptorIndex;
+		if (!name.equals(that.name)) return false;
+		return descriptor.equals(that.descriptor);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = (int) nameIndex;
-		result = 31 * result + (int) descriptorIndex;
+		int result = name.hashCode();
+		result = 31 * result + descriptor.hashCode();
 		return result;
 	}
 
 	@Override
 	public String toString() {
 		return "NameAndTypeConstant{" +
-				"nameIndex=" + nameIndex +
-				", descriptorIndex=" + descriptorIndex +
+				"name=" + name +
+				", descriptor=" + descriptor +
 				"} " + super.toString();
 	}
 }

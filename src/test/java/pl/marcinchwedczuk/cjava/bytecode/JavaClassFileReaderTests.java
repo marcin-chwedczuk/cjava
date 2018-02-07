@@ -8,6 +8,7 @@ import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_EmptyClass;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static pl.marcinchwedczuk.cjava.bytecode.TestUtils.idx;
 
 public class JavaClassFileReaderTests {
 	private JavaClassFileLoader loader;
@@ -30,7 +31,7 @@ public class JavaClassFileReaderTests {
 
 		assertThat(classFile.getMinorVersion())
 				.as("minor_version")
-				.isEqualTo((short)0);
+				.isEqualTo((short) 0);
 
 		assertThat(classFile.getMajorVersion())
 				.as("major_version")
@@ -39,7 +40,7 @@ public class JavaClassFileReaderTests {
 		assertThat(classFile.getConstantPool().getCount())
 				.as("constant_pool_count")
 				// 15 constants (from #1 to #15) and the reserved constant #0
-				.isEqualTo((short)(15 + 1));
+				.isEqualTo((short) (15 + 1));
 	}
 
 	@Test
@@ -48,13 +49,13 @@ public class JavaClassFileReaderTests {
 		ConstantPool constantPool = classFile.getConstantPool();
 
 		assertThat(constantPool.getMethodRef(1))
-				.isEqualTo(new MethodRefConstant(3, 13));
+				.isEqualTo(new MethodRefConstant(idx(3), idx(13)));
 
 		assertThat(constantPool.getClass(2))
-				.isEqualTo(new ClassConstant(14));
+				.isEqualTo(new ClassConstant(idx(14)));
 
 		assertThat(constantPool.getClass(3))
-				.isEqualTo(new ClassConstant(15));
+				.isEqualTo(new ClassConstant(idx(15)));
 
 		assertThat(constantPool.getUtf8(4).getString())
 				.isEqualTo("<init>");
@@ -66,9 +67,17 @@ public class JavaClassFileReaderTests {
 				.isEqualTo("Fixture_EmptyClass.java");
 
 		assertThat(constantPool.getNameAndType(13))
-				.isEqualTo(new NameAndTypeConstant(4,5));
+				.isEqualTo(new NameAndTypeConstant(idx(4), idx(5)));
 
 		assertThat(constantPool.getUtf8(15).getString())
 				.isEqualTo("java/lang/Object");
+	}
+
+	@Test
+	public void canReadAccessFlags() throws Exception {
+		JavaClassFile classFile = loader.load(Fixture_EmptyClass_Bytes);
+
+		assertThat(classFile.getAccessFlags())
+				.containsExactly(AccessFlag.ACC_PUBLIC, AccessFlag.ACC_SUPER);
 	}
 }

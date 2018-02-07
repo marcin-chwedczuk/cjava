@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex.fromUnsignedShort;
+
 public class ConstantPoolReader {
 
 	private final ConstantTagMapper constantTagMapper;
@@ -82,8 +84,8 @@ public class ConstantPoolReader {
 	}
 
 	private Constant readNameAndTypeConstant(DataInputStream bytes) throws IOException {
-		short nameIndex = bytes.readShort();
-		short descriptorIndex = bytes.readShort();
+		ConstantPoolIndex nameIndex = fromUnsignedShort(bytes.readShort());
+		ConstantPoolIndex descriptorIndex = fromUnsignedShort(bytes.readShort());
 
 		return new NameAndTypeConstant(nameIndex, descriptorIndex);
 	}
@@ -106,13 +108,13 @@ public class ConstantPoolReader {
 	}
 
 	private Constant readClassConstant(DataInputStream bytes) throws IOException {
-		short nameIndex = bytes.readShort();
+		ConstantPoolIndex nameIndex = fromUnsignedShort(bytes.readShort());
 		return new ClassConstant(nameIndex);
 	}
 
 	private Constant readMethodRefConstant(DataInputStream bytes) throws IOException {
-		short classIndex = bytes.readShort();
-		short nameAndTypeIndex = bytes.readShort();
+		ConstantPoolIndex classIndex = fromUnsignedShort(bytes.readShort());
+		ConstantPoolIndex nameAndTypeIndex = fromUnsignedShort(bytes.readShort());
 
 		return new MethodRefConstant(classIndex, nameAndTypeIndex);
 	}

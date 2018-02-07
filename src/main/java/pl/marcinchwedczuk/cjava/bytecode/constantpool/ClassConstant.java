@@ -1,15 +1,17 @@
 package pl.marcinchwedczuk.cjava.bytecode.constantpool;
 
-public class ClassConstant extends Constant {
-	private final short nameIndex;
+import java.util.Objects;
 
-	public ClassConstant(int nameIndex) {
+public class ClassConstant extends Constant {
+	private final ConstantPoolIndex name;
+
+	public ClassConstant(ConstantPoolIndex name) {
 		super(ConstantTag.CLASS);
-		this.nameIndex = (short) nameIndex;
+		this.name = Objects.requireNonNull(name);
 	}
 
-	public short getNameIndex() {
-		return nameIndex;
+	public ConstantPoolIndex getName() {
+		return name;
 	}
 
 	@Override
@@ -19,18 +21,18 @@ public class ClassConstant extends Constant {
 
 		ClassConstant that = (ClassConstant) o;
 
-		return nameIndex == that.nameIndex;
+		return name.equals(that.name);
 	}
 
 	@Override
 	public int hashCode() {
-		return (int) nameIndex;
+		return name.hashCode();
 	}
 
 	@Override
 	public String toString() {
 		return "ClassConstant{" +
-				"nameIndex=" + nameIndex +
+				"name=" + name +
 				"} " + super.toString();
 	}
 }

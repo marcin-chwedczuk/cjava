@@ -1,6 +1,9 @@
 package pl.marcinchwedczuk.cjava.bytecode;
 
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
+import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
+
+import java.util.EnumSet;
 
 public class JavaClassFile {
 	private int magicNumber;
@@ -8,8 +11,12 @@ public class JavaClassFile {
 	private short minorVersion;
 	private short majorVersion;
 
-	private short constantPoolCount;
 	private ConstantPool constantPool;
+
+	private EnumSet<AccessFlag> accessFlags;
+
+	private ConstantPoolIndex thisClass;
+	private ConstantPoolIndex superClass;
 
 	public int getMagicNumber() {
 		return magicNumber;
@@ -35,19 +42,19 @@ public class JavaClassFile {
 		this.majorVersion = majorVersion;
 	}
 
-	public short getConstantPoolCount() {
-		return constantPoolCount;
-	}
-
-	public void setConstantPoolCount(short constantPoolCount) {
-		this.constantPoolCount = constantPoolCount;
-	}
-
 	public ConstantPool getConstantPool() {
 		return constantPool;
 	}
 
 	public void setConstantPool(ConstantPool constantPool) {
 		this.constantPool = constantPool;
+	}
+
+	public EnumSet<AccessFlag> getAccessFlags() {
+		return accessFlags;
+	}
+
+	public void setAccessFlags(EnumSet<AccessFlag> accessFlags) {
+		this.accessFlags = accessFlags;
 	}
 }

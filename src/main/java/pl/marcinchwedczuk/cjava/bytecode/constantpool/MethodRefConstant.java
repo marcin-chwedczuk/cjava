@@ -1,22 +1,24 @@
 package pl.marcinchwedczuk.cjava.bytecode.constantpool;
 
-public class MethodRefConstant extends Constant {
-	private final short classIndex;
-	private final short nameAndTypeIndex;
+import java.util.Objects;
 
-	public MethodRefConstant(int classIndex, int nameAndTypeIndex) {
+public class MethodRefConstant extends Constant {
+	private final ConstantPoolIndex klass;
+	private final ConstantPoolIndex nameAndType;
+
+	public MethodRefConstant(ConstantPoolIndex klass, ConstantPoolIndex nameAndType) {
 		super(ConstantTag.METHOD_REF);
 
-		this.classIndex = (short) classIndex;
-		this.nameAndTypeIndex = (short) nameAndTypeIndex;
+		this.klass = Objects.requireNonNull(klass);
+		this.nameAndType = Objects.requireNonNull(nameAndType);
 	}
 
-	public short getClassIndex() {
-		return classIndex;
+	public ConstantPoolIndex getKlass() {
+		return klass;
 	}
 
-	public short getNameAndTypeIndex() {
-		return nameAndTypeIndex;
+	public ConstantPoolIndex getNameAndType() {
+		return nameAndType;
 	}
 
 	@Override
@@ -26,22 +28,22 @@ public class MethodRefConstant extends Constant {
 
 		MethodRefConstant that = (MethodRefConstant) o;
 
-		if (classIndex != that.classIndex) return false;
-		return nameAndTypeIndex == that.nameAndTypeIndex;
+		if (!klass.equals(that.klass)) return false;
+		return nameAndType.equals(that.nameAndType);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = (int) classIndex;
-		result = 31 * result + (int) nameAndTypeIndex;
+		int result = klass.hashCode();
+		result = 31 * result + nameAndType.hashCode();
 		return result;
 	}
 
 	@Override
 	public String toString() {
 		return "MethodRefConstant{" +
-				"classIndex=" + classIndex +
-				", nameAndTypeIndex=" + nameAndTypeIndex +
+				"klass=" + klass +
+				", nameAndType=" + nameAndType +
 				"} " + super.toString();
 	}
 }

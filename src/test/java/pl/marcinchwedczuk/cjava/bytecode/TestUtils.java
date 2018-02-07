@@ -2,6 +2,7 @@ package pl.marcinchwedczuk.cjava.bytecode;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
+import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,5 +27,9 @@ public class TestUtils {
 		catch (IOException e) {
 			throw new RuntimeException("Cannot load class: " + klass.getName() + ".", e);
 		}
+	}
+
+	public static ConstantPoolIndex idx(int index) {
+		return ConstantPoolIndex.fromInteger(index);
 	}
 }
