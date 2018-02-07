@@ -20,13 +20,13 @@ public class ConstantPoolReader {
 	}
 
 	public ConstantPool readConstantPool(DataInputStream classFileBytes) throws IOException {
-		short constantPoolCount = classFileBytes.readShort();
+		int constantPoolCount = Short.toUnsignedInt(classFileBytes.readShort());
 		List<Constant> constants = readConstants(classFileBytes, constantPoolCount);
 
 		return new ConstantPool(constantPoolCount, constants);
 	}
 
-	private List<Constant> readConstants(DataInputStream classFileBytes, short constantPoolCount) throws IOException {
+	private List<Constant> readConstants(DataInputStream classFileBytes, int constantPoolCount) throws IOException {
 		List<Constant> constants = new ArrayList<>();
 
 		// Constant #0 is reserved and is not present in class file

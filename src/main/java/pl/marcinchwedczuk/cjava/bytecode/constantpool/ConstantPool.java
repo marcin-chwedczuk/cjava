@@ -7,17 +7,17 @@ import java.util.Collections;
 import java.util.List;
 
 public class ConstantPool {
-	private final short constantPoolCount;
+	private final int constantPoolCount;
 	private final List<Constant> constants;
 
-	public ConstantPool(short constantPoolCount, List<Constant> constants) {
+	public ConstantPool(int constantPoolCount, List<Constant> constants) {
 		this.constantPoolCount = constantPoolCount;
 
 		this.constants =
 				Collections.unmodifiableList(Lists.newArrayList(constants));
 	}
 
-	public short getCount() {
+	public int getCount() {
 		return constantPoolCount;
 	}
 

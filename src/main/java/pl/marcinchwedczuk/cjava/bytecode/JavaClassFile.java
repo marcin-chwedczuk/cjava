@@ -2,6 +2,7 @@ package pl.marcinchwedczuk.cjava.bytecode;
 
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
+import pl.marcinchwedczuk.cjava.bytecode.interfaces.Interfaces;
 
 import java.util.EnumSet;
 
@@ -17,6 +18,8 @@ public class JavaClassFile {
 
 	private ConstantPoolIndex thisClass;
 	private ConstantPoolIndex superClass;
+
+	private Interfaces interfaces;
 
 	public int getMagicNumber() {
 		return magicNumber;
@@ -72,5 +75,13 @@ public class JavaClassFile {
 
 	public void setSuperClass(ConstantPoolIndex superClass) {
 		this.superClass = superClass;
+	}
+
+	public Interfaces getInterfaces() {
+		return interfaces;
+	}
+
+	public void setInterfaces(Interfaces interfaces) {
+		this.interfaces = interfaces;
 	}
 }

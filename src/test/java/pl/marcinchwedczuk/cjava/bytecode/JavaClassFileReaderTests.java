@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.*;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_EmptyClass;
+import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_EmptyClassImplementingTwoInterfaces;
 
 import java.io.IOException;
 
@@ -13,10 +14,15 @@ import static pl.marcinchwedczuk.cjava.bytecode.TestUtils.idx;
 public class JavaClassFileReaderTests {
 	private JavaClassFileLoader loader;
 	private byte[] Fixture_EmptyClass_Bytes;
+	private byte[] Fixture_EmptyClassImplementingTwoInterfaces;
 
 	@Before
 	public void before() {
-		Fixture_EmptyClass_Bytes = TestUtils.readClassBytes(Fixture_EmptyClass.class);
+		Fixture_EmptyClass_Bytes =
+				TestUtils.readClassBytes(Fixture_EmptyClass.class);
+
+		Fixture_EmptyClassImplementingTwoInterfaces =
+				TestUtils.readClassBytes(Fixture_EmptyClassImplementingTwoInterfaces.class);
 
 		loader = new JavaClassFileLoader();
 	}
@@ -92,5 +98,27 @@ public class JavaClassFileReaderTests {
 		assertThat(classFile.getSuperClass())
 				.as("super_class")
 				.isEqualTo(idx(3));
+	}
+
+	@Test
+	public void canReadEmptyInterfacesList() throws IOException {
+		JavaClassFile classFile = loader.load(Fixture_EmptyClass_Bytes);
+
+		assertThat(classFile.getInterfaces().getCount())
+				.isZero();
+
+		assertThat(classFile.getInterfaces().getList())
+				.isEmpty();
+	}
+
+	@Test
+	public void canReadInterfacesList() throws IOException {
+		JavaClassFile classFile = loader.load(Fixture_EmptyClassImplementingTwoInterfaces);
+
+		assertThat(classFile.getInterfaces().getCount())
+				.isEqualTo(2);
+
+		assertThat(classFile.getInterfaces().getList())
+				.containsExactly(idx(4), idx(5));
 	}
 }
