@@ -57,4 +57,20 @@ public class JavaClassFile {
 	public void setAccessFlags(EnumSet<AccessFlag> accessFlags) {
 		this.accessFlags = accessFlags;
 	}
+
+	public ConstantPoolIndex getThisClass() {
+		return thisClass;
+	}
+
+	public void setThisClass(ConstantPoolIndex thisClass) {
+		this.thisClass = thisClass;
+	}
+
+	public ConstantPoolIndex getSuperClass() {
+		return superClass;
+	}
+
+	public void setSuperClass(ConstantPoolIndex superClass) {
+		this.superClass = superClass;
+	}
 }

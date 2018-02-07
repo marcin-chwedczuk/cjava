@@ -80,4 +80,17 @@ public class JavaClassFileReaderTests {
 		assertThat(classFile.getAccessFlags())
 				.containsExactly(AccessFlag.ACC_PUBLIC, AccessFlag.ACC_SUPER);
 	}
+
+	@Test
+	public void canReadThisAndSuperClass() throws IOException {
+		JavaClassFile classFile = loader.load(Fixture_EmptyClass_Bytes);
+
+		assertThat(classFile.getThisClass())
+				.as("this_class")
+				.isEqualTo(idx(2));
+
+		assertThat(classFile.getSuperClass())
+				.as("super_class")
+				.isEqualTo(idx(3));
+	}
 }

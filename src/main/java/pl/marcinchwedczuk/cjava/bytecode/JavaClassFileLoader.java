@@ -1,12 +1,15 @@
 package pl.marcinchwedczuk.cjava.bytecode;
 
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
+import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolReader;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.EnumSet;
+
+import static pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex.fromUnsignedShort;
 
 public class JavaClassFileLoader {
 	private final ConstantPoolReader constantPoolReader;
@@ -30,8 +33,17 @@ public class JavaClassFileLoader {
 		classFile.setConstantPool(constantPool);
 
 		readAccessFlags(classFileBytesIS, classFile);
+		readThisAndSuperClass(classFileBytesIS, classFile);
 
 		return classFile;
+	}
+
+	private void readThisAndSuperClass(DataInputStream classFileBytesIS, JavaClassFile classFile) throws IOException {
+		ConstantPoolIndex thisClass = fromUnsignedShort(classFileBytesIS.readShort());
+		classFile.setThisClass(thisClass);
+
+		ConstantPoolIndex superClass = fromUnsignedShort(classFileBytesIS.readShort());
+		classFile.setSuperClass(superClass);
 	}
 
 	private void readAccessFlags(DataInputStream classFileBytesIS, JavaClassFile classFile) throws IOException {
