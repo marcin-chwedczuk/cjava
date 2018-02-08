@@ -8,19 +8,21 @@ import java.util.List;
 
 public class Interfaces {
 	private final int count;
-	private final List<ConstantPoolIndex> interfaces;
 
-	public Interfaces(int count, List<ConstantPoolIndex> interfaces) {
+	// Indexes should point to ClassConstants
+	private final List<ConstantPoolIndex> classes;
+
+	public Interfaces(int count, List<ConstantPoolIndex> classes) {
 		this.count = count;
-		this.interfaces =
-				Collections.unmodifiableList(Lists.newArrayList(interfaces));
+		this.classes =
+				Collections.unmodifiableList(Lists.newArrayList(classes));
 	}
 
 	public int getCount() {
 		return count;
 	}
 
-	public List<ConstantPoolIndex> getList() {
-		return interfaces;
+	public List<ConstantPoolIndex> getClasses() {
+		return classes;
 	}
 }

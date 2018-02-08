@@ -107,7 +107,7 @@ public class JavaClassFileReaderTests {
 		assertThat(classFile.getInterfaces().getCount())
 				.isZero();
 
-		assertThat(classFile.getInterfaces().getList())
+		assertThat(classFile.getInterfaces().getClasses())
 				.isEmpty();
 	}
 
@@ -118,7 +118,7 @@ public class JavaClassFileReaderTests {
 		assertThat(classFile.getInterfaces().getCount())
 				.isEqualTo(2);
 
-		assertThat(classFile.getInterfaces().getList())
+		assertThat(classFile.getInterfaces().getClasses())
 				.containsExactly(idx(4), idx(5));
 	}
 }
