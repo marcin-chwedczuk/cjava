@@ -3,8 +3,12 @@ package pl.marcinchwedczuk.cjava.bytecode;
 import org.junit.Before;
 import org.junit.Test;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.*;
+import pl.marcinchwedczuk.cjava.bytecode.fields.FieldAccessFlag;
+import pl.marcinchwedczuk.cjava.bytecode.fields.FieldInfo;
+import pl.marcinchwedczuk.cjava.bytecode.fields.Fields;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_EmptyClass;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_EmptyClassImplementingTwoInterfaces;
+import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithThreeFields;
 
 import java.io.IOException;
 
@@ -13,8 +17,10 @@ import static pl.marcinchwedczuk.cjava.bytecode.TestUtils.idx;
 
 public class JavaClassFileReaderTests {
 	private JavaClassFileLoader loader;
+
 	private byte[] Fixture_EmptyClass_Bytes;
 	private byte[] Fixture_EmptyClassImplementingTwoInterfaces;
+	private byte[] Fixture_ClassWithThreeFields;
 
 	@Before
 	public void before() {
@@ -23,6 +29,9 @@ public class JavaClassFileReaderTests {
 
 		Fixture_EmptyClassImplementingTwoInterfaces =
 				TestUtils.readClassBytes(Fixture_EmptyClassImplementingTwoInterfaces.class);
+
+		Fixture_ClassWithThreeFields =
+				TestUtils.readClassBytes(Fixture_ClassWithThreeFields.class);
 
 		loader = new JavaClassFileLoader();
 	}
@@ -120,5 +129,53 @@ public class JavaClassFileReaderTests {
 
 		assertThat(classFile.getInterfaces().getClasses())
 				.containsExactly(idx(4), idx(5));
+	}
+
+	@Test
+	public void canReadFieldList() throws Exception {
+		JavaClassFile classFile = loader.load(Fixture_ClassWithThreeFields);
+
+		Fields fields = classFile.getClassFields();
+
+		assertThat(fields.getCount())
+				.as("fields_count")
+				.isEqualTo(3);
+
+		// public static String field1;
+		FieldInfo field1 = fields.get(0);
+
+		assertThat(field1.getName())
+				.isEqualTo(idx(5));
+
+		assertThat(field1.getDescriptor())
+				.isEqualTo(idx(6));
+
+		assertThat(field1.getAccessFlags())
+				.containsExactly(FieldAccessFlag.ACC_PUBLIC, FieldAccessFlag.ACC_STATIC);
+
+		// private int field2;
+		FieldInfo field2 = fields.get(1);
+
+		assertThat(field2.getName())
+				.isEqualTo(idx(7));
+
+		assertThat(field2.getDescriptor())
+				.isEqualTo(idx(8));
+
+		assertThat(field2.getAccessFlags())
+				.containsExactly(FieldAccessFlag.ACC_PRIVATE);
+
+		// protected final Boolean field3;
+		FieldInfo field3 = fields.get(2);
+
+		assertThat(field3.getName())
+				.isEqualTo(idx(9));
+
+		assertThat(field3.getDescriptor())
+				.isEqualTo(idx(10));
+
+		assertThat(field3.getAccessFlags())
+				.containsExactly(FieldAccessFlag.ACC_PROTECTED, FieldAccessFlag.ACC_FINAL);
+
 	}
 }

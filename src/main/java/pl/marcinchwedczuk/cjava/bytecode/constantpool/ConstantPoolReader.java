@@ -48,7 +48,7 @@ public class ConstantPoolReader {
 				return readClassConstant(bytes);
 
 			case FIELD_REF:
-				break;
+				return readFieldRefConstant(bytes);
 
 			case METHOD_REF:
 				return readMethodRefConstant(bytes);
@@ -117,5 +117,12 @@ public class ConstantPoolReader {
 		ConstantPoolIndex nameAndTypeIndex = fromUnsignedShort(bytes.readShort());
 
 		return new MethodRefConstant(classIndex, nameAndTypeIndex);
+	}
+
+	private Constant readFieldRefConstant(DataInputStream bytes) throws IOException {
+		ConstantPoolIndex classIndex = fromUnsignedShort(bytes.readShort());
+		ConstantPoolIndex nameAndTypeIndex = fromUnsignedShort(bytes.readShort());
+
+		return new FieldRefConstant(classIndex, nameAndTypeIndex);
 	}
 }

@@ -3,6 +3,8 @@ package pl.marcinchwedczuk.cjava.bytecode;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolReader;
+import pl.marcinchwedczuk.cjava.bytecode.fields.Fields;
+import pl.marcinchwedczuk.cjava.bytecode.fields.FieldsReader;
 import pl.marcinchwedczuk.cjava.bytecode.interfaces.Interfaces;
 import pl.marcinchwedczuk.cjava.bytecode.interfaces.InterfacesReader;
 
@@ -15,13 +17,15 @@ import static pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex.f
 
 public class JavaClassFileLoader {
 	private final ConstantPoolReader constantPoolReader;
-	private final AccessFlagMapper accessFlagMapper;
+	private final FlagsEnumMapper accessFlagMapper;
 	private final InterfacesReader interfacesReader;
+	private final FieldsReader fieldsReader;
 
 	public JavaClassFileLoader() {
 		this.constantPoolReader = new ConstantPoolReader();
-		this.accessFlagMapper = new AccessFlagMapper();
+		this.accessFlagMapper = new FlagsEnumMapper();
 		this.interfacesReader = new InterfacesReader();
+		this.fieldsReader = new FieldsReader();
 	}
 
 	public JavaClassFile load(byte[] classFileBytes) throws IOException {
@@ -43,6 +47,9 @@ public class JavaClassFileLoader {
 			interfacesReader.readInterfaces(classFileBytesIS);
 		classFile.setInterfaces(interfaces);
 
+		Fields classFields = fieldsReader.readFields(classFileBytesIS);
+		classFile.setClassFields(classFields);
+
 		return classFile;
 	}
 
@@ -57,11 +64,10 @@ public class JavaClassFileLoader {
 		short bitFieldsAccessFlags = classFileBytesIS.readShort();
 
 		EnumSet<AccessFlag> accessFlags =
-				accessFlagMapper.mapBitFieldsAccessFlagsToAccessFlagEnumSet(bitFieldsAccessFlags);
+				accessFlagMapper.mapToFlags(bitFieldsAccessFlags, AccessFlag.class);
 
 		classFile.setAccessFlags(accessFlags);
 	}
-
 
 	private void readThisAndSuperClass(DataInputStream classFileBytesIS, JavaClassFile classFile) throws IOException {
 		ConstantPoolIndex thisClass = fromUnsignedShort(classFileBytesIS.readShort());

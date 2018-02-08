@@ -1,6 +1,7 @@
 package pl.marcinchwedczuk.cjava.bytecode.interfaces;
 
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
+import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndexes;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -12,19 +13,10 @@ import static pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex.f
 public class InterfacesReader {
 	public Interfaces readInterfaces(DataInputStream classFileBytes) throws IOException {
 		int count = Short.toUnsignedInt(classFileBytes.readShort());
-		List<ConstantPoolIndex> interfaces = readInterfaces(classFileBytes, count);
+
+		List<ConstantPoolIndex> interfaces =
+				ConstantPoolIndexes.read(classFileBytes, count);
 
 		return new Interfaces(count, interfaces);
-	}
-
-	private List<ConstantPoolIndex> readInterfaces(DataInputStream classFileBytes, int count) throws IOException {
-		List<ConstantPoolIndex> interfaces = new ArrayList<>();
-
-		for (int i = 0; i < count; i++) {
-			ConstantPoolIndex interfaceType = fromUnsignedShort(classFileBytes.readShort());
-			interfaces.add(interfaceType);
-		}
-
-		return interfaces;
 	}
 }

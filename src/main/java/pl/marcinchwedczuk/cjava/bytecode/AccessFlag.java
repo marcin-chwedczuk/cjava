@@ -1,6 +1,6 @@
 package pl.marcinchwedczuk.cjava.bytecode;
 
-public enum AccessFlag {
+public enum AccessFlag implements FlagsEnum<AccessFlag> {
 	// Declared public; may be accessed from outside its package.
 	ACC_PUBLIC(0x0001),
 
@@ -31,7 +31,8 @@ public enum AccessFlag {
 		this.byteCodeConstant = (short) byteCodeConstant;
 	}
 
-	public short asByteCodeConstant() {
+	@Override
+	public int getBitMask() {
 		return byteCodeConstant;
 	}
 }
