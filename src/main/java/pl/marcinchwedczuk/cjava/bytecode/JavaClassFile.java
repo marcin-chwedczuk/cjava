@@ -1,5 +1,7 @@
 package pl.marcinchwedczuk.cjava.bytecode;
 
+import pl.marcinchwedczuk.cjava.bytecode.attribute.Attribute;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.Attributes;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 import pl.marcinchwedczuk.cjava.bytecode.fields.Fields;
@@ -24,6 +26,7 @@ public class JavaClassFile {
 	private Interfaces interfaces;
 	private Fields classFields;
 	private Methods classMethods;
+	private Attributes attributes;
 
 	public int getMagicNumber() {
 		return magicNumber;
@@ -103,5 +106,13 @@ public class JavaClassFile {
 
 	public void setClassMethods(Methods classMethods) {
 		this.classMethods = classMethods;
+	}
+
+	public Attributes getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Attributes attributes) {
+		this.attributes = attributes;
 	}
 }

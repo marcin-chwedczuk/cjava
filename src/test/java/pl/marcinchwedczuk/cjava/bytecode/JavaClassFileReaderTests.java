@@ -2,6 +2,7 @@ package pl.marcinchwedczuk.cjava.bytecode;
 
 import org.junit.Before;
 import org.junit.Test;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.Attribute;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.*;
 import pl.marcinchwedczuk.cjava.bytecode.fields.FieldAccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.fields.FieldInfo;
@@ -222,5 +223,25 @@ public class JavaClassFileReaderTests {
 
 		assertThat(main.getDescriptor())
 				.isEqualTo(idx(12));
+	}
+
+	@Test
+	public void canReadAttributes() throws Exception {
+		JavaClassFile classFile = loader.load(Fixture_ClassWithTwoMethods);
+
+		assertThat(classFile.getAttributes())
+				.isNotNull();
+
+		// Class file contains source file attribute
+		assertThat(classFile.getAttributes().getCount())
+				.isEqualTo(1);
+
+		Attribute sourceFile = classFile.getAttributes().get(0);
+
+		assertThat(sourceFile.getAttributeName())
+				.isEqualTo(idx(17));
+
+		assertThat(sourceFile.getAttributeData())
+				.containsExactly(0, 18); // index to constant pool
 	}
 }

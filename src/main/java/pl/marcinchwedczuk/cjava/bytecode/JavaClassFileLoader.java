@@ -1,5 +1,7 @@
 package pl.marcinchwedczuk.cjava.bytecode;
 
+import pl.marcinchwedczuk.cjava.bytecode.attribute.Attributes;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.AttributesReader;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolReader;
@@ -22,6 +24,7 @@ public class JavaClassFileLoader {
 	private final InterfacesReader interfacesReader;
 	private final FieldsReader fieldsReader;
 	private final MethodReader methodReader;
+	private final AttributesReader attributesReader;
 
 	public JavaClassFileLoader() {
 		this.constantPoolReader = new ConstantPoolReader();
@@ -29,6 +32,7 @@ public class JavaClassFileLoader {
 		this.interfacesReader = new InterfacesReader();
 		this.fieldsReader = new FieldsReader();
 		this.methodReader = new MethodReader();
+		this.attributesReader = new AttributesReader();
 	}
 
 	public JavaClassFile load(byte[] classFileBytes) throws IOException {
@@ -54,6 +58,9 @@ public class JavaClassFileLoader {
 
 		Methods classMethods = methodReader.readMethods(classFileReader);
 		classFile.setClassMethods(classMethods);
+
+		Attributes attributes = attributesReader.readAttributes(classFileReader);
+		classFile.setAttributes(attributes);
 
 		return classFile;
 	}
