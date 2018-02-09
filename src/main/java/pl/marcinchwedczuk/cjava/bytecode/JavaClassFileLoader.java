@@ -7,6 +7,8 @@ import pl.marcinchwedczuk.cjava.bytecode.fields.Fields;
 import pl.marcinchwedczuk.cjava.bytecode.fields.FieldsReader;
 import pl.marcinchwedczuk.cjava.bytecode.interfaces.Interfaces;
 import pl.marcinchwedczuk.cjava.bytecode.interfaces.InterfacesReader;
+import pl.marcinchwedczuk.cjava.bytecode.method.MethodReader;
+import pl.marcinchwedczuk.cjava.bytecode.method.Methods;
 import pl.marcinchwedczuk.cjava.bytecode.utils.ClassFileReader;
 
 import java.io.IOException;
@@ -19,12 +21,14 @@ public class JavaClassFileLoader {
 	private final FlagsEnumMapper accessFlagMapper;
 	private final InterfacesReader interfacesReader;
 	private final FieldsReader fieldsReader;
+	private final MethodReader methodReader;
 
 	public JavaClassFileLoader() {
 		this.constantPoolReader = new ConstantPoolReader();
 		this.accessFlagMapper = new FlagsEnumMapper();
 		this.interfacesReader = new InterfacesReader();
 		this.fieldsReader = new FieldsReader();
+		this.methodReader = new MethodReader();
 	}
 
 	public JavaClassFile load(byte[] classFileBytes) throws IOException {
@@ -47,6 +51,9 @@ public class JavaClassFileLoader {
 
 		Fields classFields = fieldsReader.readFields(classFileReader);
 		classFile.setClassFields(classFields);
+
+		Methods classMethods = methodReader.readMethods(classFileReader);
+		classFile.setClassMethods(classMethods);
 
 		return classFile;
 	}

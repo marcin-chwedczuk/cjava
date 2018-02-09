@@ -4,6 +4,7 @@ import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 import pl.marcinchwedczuk.cjava.bytecode.fields.Fields;
 import pl.marcinchwedczuk.cjava.bytecode.interfaces.Interfaces;
+import pl.marcinchwedczuk.cjava.bytecode.method.Methods;
 
 import java.util.EnumSet;
 
@@ -22,6 +23,7 @@ public class JavaClassFile {
 
 	private Interfaces interfaces;
 	private Fields classFields;
+	private Methods classMethods;
 
 	public int getMagicNumber() {
 		return magicNumber;
@@ -93,5 +95,13 @@ public class JavaClassFile {
 
 	public void setClassFields(Fields classFields) {
 		this.classFields = classFields;
+	}
+
+	public Methods getClassMethods() {
+		return classMethods;
+	}
+
+	public void setClassMethods(Methods classMethods) {
+		this.classMethods = classMethods;
 	}
 }

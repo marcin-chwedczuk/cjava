@@ -6,6 +6,10 @@ import pl.marcinchwedczuk.cjava.bytecode.constantpool.*;
 import pl.marcinchwedczuk.cjava.bytecode.fields.FieldAccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.fields.FieldInfo;
 import pl.marcinchwedczuk.cjava.bytecode.fields.Fields;
+import pl.marcinchwedczuk.cjava.bytecode.method.MethodAccessFlag;
+import pl.marcinchwedczuk.cjava.bytecode.method.MethodInfo;
+import pl.marcinchwedczuk.cjava.bytecode.method.Methods;
+import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithTwoMethods;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_EmptyClass;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_EmptyClassImplementingTwoInterfaces;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithThreeFields;
@@ -21,6 +25,7 @@ public class JavaClassFileReaderTests {
 	private byte[] Fixture_EmptyClass_Bytes;
 	private byte[] Fixture_EmptyClassImplementingTwoInterfaces;
 	private byte[] Fixture_ClassWithThreeFields;
+	private byte[] Fixture_ClassWithTwoMethods;
 
 	@Before
 	public void before() {
@@ -32,6 +37,9 @@ public class JavaClassFileReaderTests {
 
 		Fixture_ClassWithThreeFields =
 				TestUtils.readClassBytes(Fixture_ClassWithThreeFields.class);
+
+		Fixture_ClassWithTwoMethods =
+				TestUtils.readClassBytes(Fixture_ClassWithTwoMethods.class);
 
 		loader = new JavaClassFileLoader();
 	}
@@ -132,7 +140,7 @@ public class JavaClassFileReaderTests {
 	}
 
 	@Test
-	public void canReadFieldList() throws Exception {
+	public void canReadFields() throws Exception {
 		JavaClassFile classFile = loader.load(Fixture_ClassWithThreeFields);
 
 		Fields fields = classFile.getClassFields();
@@ -176,6 +184,43 @@ public class JavaClassFileReaderTests {
 
 		assertThat(field3.getAccessFlags())
 				.containsExactly(FieldAccessFlag.ACC_PROTECTED, FieldAccessFlag.ACC_FINAL);
+	}
 
+	@Test
+	public void canReadMethods() throws IOException {
+		JavaClassFile classFile = loader.load(Fixture_ClassWithTwoMethods);
+
+		Methods methods = classFile.getClassMethods();
+
+		assertThat(methods.getCount())
+				// 2 methods + default constructor
+				.isEqualTo(2 + 1);
+
+		// default constructor
+		MethodInfo init = methods.get(0);
+
+		assertThat(init.getAccessFlags())
+				.containsExactly(MethodAccessFlag.ACC_PUBLIC);
+
+		assertThat(init.getName())
+				.isEqualTo(idx(4));
+
+		assertThat(init.getDescriptor())
+				.isEqualTo(idx(5));
+
+		assertThat(init.getAttributes().getCount())
+				.isEqualTo(1);
+
+		// main
+		MethodInfo main = methods.get(1);
+
+		assertThat(main.getAccessFlags())
+				.containsExactly(MethodAccessFlag.ACC_PUBLIC, MethodAccessFlag.ACC_STATIC);
+
+		assertThat(main.getName())
+				.isEqualTo(idx(11));
+
+		assertThat(main.getDescriptor())
+				.isEqualTo(idx(12));
 	}
 }

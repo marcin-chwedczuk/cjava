@@ -9,6 +9,8 @@ public class Attributes {
 		this.attributes = attributes;
 	}
 
+	public int getCount() { return attributes.size(); }
+
 	public List<Attribute> getAttributes() {
 		return attributes;
 	}

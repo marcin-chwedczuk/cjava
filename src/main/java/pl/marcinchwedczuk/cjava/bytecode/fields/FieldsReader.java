@@ -42,7 +42,7 @@ public class FieldsReader {
 
 	private FieldInfo readField(ClassFileReader classFileReader) throws IOException {
 		EnumSet<FieldAccessFlag> accessFlags =
-				flagsEnumMapper.mapToFlags(classFileReader.readShort(), FieldAccessFlag.class);
+				flagsEnumMapper.mapToFlags(classFileReader.readUnsignedShort(), FieldAccessFlag.class);
 
 		ConstantPoolIndex name = readFrom(classFileReader);
 		ConstantPoolIndex descriptor = readFrom(classFileReader);
