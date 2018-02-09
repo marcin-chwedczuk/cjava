@@ -7,9 +7,10 @@ import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 
 import java.util.EnumSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class FieldInfo {
-	private final ImmutableSet<FieldAccessFlag> accessFlags;
+	private final Set<FieldAccessFlag> accessFlags;
 	private final ConstantPoolIndex name;
 	private final ConstantPoolIndex descriptor;
 	private final Attributes attributes;
@@ -28,7 +29,7 @@ public class FieldInfo {
 		this.attributes = Objects.requireNonNull(attributes);
 	}
 
-	public ImmutableSet<FieldAccessFlag> getAccessFlags() {
+	public Set<FieldAccessFlag> getAccessFlags() {
 		return accessFlags;
 	}
 

@@ -13,8 +13,7 @@ public class Fields {
 
 	public Fields(int count, List<FieldInfo> fields) {
 		this.count = count;
-		this.fields =
-				Collections.unmodifiableList(Lists.newArrayList(fields));
+		this.fields = Collections.unmodifiableList(Lists.newArrayList(fields));
 	}
 
 	public int getCount() {
