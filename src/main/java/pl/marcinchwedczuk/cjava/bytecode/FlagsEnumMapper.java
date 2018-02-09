@@ -7,7 +7,7 @@ import static java.util.stream.Collectors.toMap;
 public class FlagsEnumMapper {
 
 	public <E extends Enum<E> & FlagsEnum<E>> EnumSet<E>
-		mapToFlags(short byteCodeConstant, Class<E> enumClass)
+		mapToFlags(int byteCodeConstant, Class<E> enumClass)
 	{
 		EnumSet<E> setFlags = EnumSet.noneOf(enumClass);
 

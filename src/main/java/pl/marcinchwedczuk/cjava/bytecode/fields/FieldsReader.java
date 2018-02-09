@@ -4,14 +4,14 @@ import pl.marcinchwedczuk.cjava.bytecode.FlagsEnumMapper;
 import pl.marcinchwedczuk.cjava.bytecode.annotation.Attributes;
 import pl.marcinchwedczuk.cjava.bytecode.annotation.AttributesReader;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
+import pl.marcinchwedczuk.cjava.bytecode.utils.ClassFileReader;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import static pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex.fromUnsignedShort;
+import static pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex.readFrom;
 
 public class FieldsReader {
 	private final AttributesReader attributeReader;
@@ -22,15 +22,15 @@ public class FieldsReader {
 		this.flagsEnumMapper = new FlagsEnumMapper();
 	}
 
-	public Fields readFields(DataInputStream classFileBytes) throws IOException {
-		int fieldsCount = Short.toUnsignedInt(classFileBytes.readShort());
+	public Fields readFields(ClassFileReader classFileReader) throws IOException {
+		int fieldsCount = classFileReader.readUnsignedShort();
 
-		List<FieldInfo> fields = readFields(classFileBytes, fieldsCount);
+		List<FieldInfo> fields = readFields(classFileReader, fieldsCount);
 
 		return new Fields(fieldsCount, fields);
 	}
 
-	private List<FieldInfo> readFields(DataInputStream classFileBytes, int count) throws IOException {
+	private List<FieldInfo> readFields(ClassFileReader classFileBytes, int count) throws IOException {
 		List<FieldInfo> fields = new ArrayList<>();
 
 		for (int i = 0; i < count; i++) {
@@ -40,14 +40,14 @@ public class FieldsReader {
 		return fields;
 	}
 
-	private FieldInfo readField(DataInputStream classFileBytes) throws IOException {
+	private FieldInfo readField(ClassFileReader classFileReader) throws IOException {
 		EnumSet<FieldAccessFlag> accessFlags =
-				flagsEnumMapper.mapToFlags(classFileBytes.readShort(), FieldAccessFlag.class);
+				flagsEnumMapper.mapToFlags(classFileReader.readShort(), FieldAccessFlag.class);
 
-		ConstantPoolIndex name = fromUnsignedShort(classFileBytes.readShort());
-		ConstantPoolIndex descriptor = fromUnsignedShort(classFileBytes.readShort());
+		ConstantPoolIndex name = readFrom(classFileReader);
+		ConstantPoolIndex descriptor = readFrom(classFileReader);
 
-		Attributes attributes = attributeReader.readAttributes(classFileBytes);
+		Attributes attributes = attributeReader.readAttributes(classFileReader);
 
 		return new FieldInfo(accessFlags, name, descriptor, attributes);
 	}

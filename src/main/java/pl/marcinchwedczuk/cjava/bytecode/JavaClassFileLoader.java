@@ -7,13 +7,12 @@ import pl.marcinchwedczuk.cjava.bytecode.fields.Fields;
 import pl.marcinchwedczuk.cjava.bytecode.fields.FieldsReader;
 import pl.marcinchwedczuk.cjava.bytecode.interfaces.Interfaces;
 import pl.marcinchwedczuk.cjava.bytecode.interfaces.InterfacesReader;
+import pl.marcinchwedczuk.cjava.bytecode.utils.ClassFileReader;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.EnumSet;
 
-import static pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex.fromUnsignedShort;
+import static pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex.readFrom;
 
 public class JavaClassFileLoader {
 	private final ConstantPoolReader constantPoolReader;
@@ -31,37 +30,36 @@ public class JavaClassFileLoader {
 	public JavaClassFile load(byte[] classFileBytes) throws IOException {
 		JavaClassFile classFile = new JavaClassFile();
 
-		DataInputStream classFileBytesIS = new DataInputStream(
-				new ByteArrayInputStream(classFileBytes));
+		ClassFileReader classFileReader = new ClassFileReader(classFileBytes);
 
-		readHeaders(classFileBytesIS, classFile);
+		readHeaders(classFileReader, classFile);
 
 		ConstantPool constantPool =
-				constantPoolReader.readConstantPool(classFileBytesIS);
+				constantPoolReader.readConstantPool(classFileReader);
 		classFile.setConstantPool(constantPool);
 
-		readAccessFlags(classFileBytesIS, classFile);
-		readThisAndSuperClass(classFileBytesIS, classFile);
+		readAccessFlags(classFileReader, classFile);
+		readThisAndSuperClass(classFileReader, classFile);
 
 		Interfaces interfaces =
-			interfacesReader.readInterfaces(classFileBytesIS);
+			interfacesReader.readInterfaces(classFileReader);
 		classFile.setInterfaces(interfaces);
 
-		Fields classFields = fieldsReader.readFields(classFileBytesIS);
+		Fields classFields = fieldsReader.readFields(classFileReader);
 		classFile.setClassFields(classFields);
 
 		return classFile;
 	}
 
-	private void readHeaders(DataInputStream bytes, JavaClassFile classFile) throws IOException {
-		classFile.setMagicNumber(bytes.readInt());
+	private void readHeaders(ClassFileReader classFileReader, JavaClassFile classFile) throws IOException {
+		classFile.setMagicNumber(classFileReader.readInt());
 
-		classFile.setMinorVersion(bytes.readShort());
-		classFile.setMajorVersion(bytes.readShort());
+		classFile.setMinorVersion(classFileReader.readShort());
+		classFile.setMajorVersion(classFileReader.readShort());
 	}
 
-	private void readAccessFlags(DataInputStream classFileBytesIS, JavaClassFile classFile) throws IOException {
-		short bitFieldsAccessFlags = classFileBytesIS.readShort();
+	private void readAccessFlags(ClassFileReader classFileReader, JavaClassFile classFile) throws IOException {
+		int bitFieldsAccessFlags = classFileReader.readUnsignedShort();
 
 		EnumSet<AccessFlag> accessFlags =
 				accessFlagMapper.mapToFlags(bitFieldsAccessFlags, AccessFlag.class);
@@ -69,11 +67,11 @@ public class JavaClassFileLoader {
 		classFile.setAccessFlags(accessFlags);
 	}
 
-	private void readThisAndSuperClass(DataInputStream classFileBytesIS, JavaClassFile classFile) throws IOException {
-		ConstantPoolIndex thisClass = fromUnsignedShort(classFileBytesIS.readShort());
+	private void readThisAndSuperClass(ClassFileReader classFileReader, JavaClassFile classFile) throws IOException {
+		ConstantPoolIndex thisClass = readFrom(classFileReader);
 		classFile.setThisClass(thisClass);
 
-		ConstantPoolIndex superClass = fromUnsignedShort(classFileBytesIS.readShort());
+		ConstantPoolIndex superClass = readFrom(classFileReader);
 		classFile.setSuperClass(superClass);
 	}
 }

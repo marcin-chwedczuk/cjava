@@ -1,13 +1,15 @@
 package pl.marcinchwedczuk.cjava.bytecode.constantpool;
 
 import com.google.common.base.Preconditions;
-import com.google.common.primitives.UnsignedInts;
+import pl.marcinchwedczuk.cjava.bytecode.utils.ClassFileReader;
+
+import java.io.IOException;
 
 public class ConstantPoolIndex {
 	private static final int MAX_USHORT_VALUE = 65_535;
 
-	public static ConstantPoolIndex fromUnsignedShort(short index) {
-		return new ConstantPoolIndex(Short.toUnsignedInt(index));
+	public static ConstantPoolIndex readFrom(ClassFileReader reader) throws IOException {
+		return new ConstantPoolIndex(reader.readUnsignedShort());
 	}
 
 	public static ConstantPoolIndex fromInteger(int index) {

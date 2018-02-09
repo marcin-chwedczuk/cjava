@@ -1,15 +1,13 @@
 package pl.marcinchwedczuk.cjava.bytecode.constantpool;
 
-import com.google.common.io.ByteStreams;
-import pl.marcinchwedczuk.cjava.bytecode.InvalidJavaClassFileException;
+import pl.marcinchwedczuk.cjava.bytecode.utils.ClassFileReader;
 import pl.marcinchwedczuk.cjava.bytecode.utils.JavaClassFileUtf8Decoder;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex.fromUnsignedShort;
+import static pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex.readFrom;
 
 public class ConstantPoolReader {
 
@@ -19,14 +17,14 @@ public class ConstantPoolReader {
 		this.constantTagMapper = new ConstantTagMapper();
 	}
 
-	public ConstantPool readConstantPool(DataInputStream classFileBytes) throws IOException {
+	public ConstantPool readConstantPool(ClassFileReader classFileBytes) throws IOException {
 		int constantPoolCount = Short.toUnsignedInt(classFileBytes.readShort());
 		List<Constant> constants = readConstants(classFileBytes, constantPoolCount);
 
 		return new ConstantPool(constantPoolCount, constants);
 	}
 
-	private List<Constant> readConstants(DataInputStream classFileBytes, int constantPoolCount) throws IOException {
+	private List<Constant> readConstants(ClassFileReader classFileBytes, int constantPoolCount) throws IOException {
 		List<Constant> constants = new ArrayList<>();
 
 		// Constant #0 is reserved and is not present in class file
@@ -37,7 +35,7 @@ public class ConstantPoolReader {
 		return constants;
 	}
 
-	public Constant readConstant(DataInputStream bytes) throws IOException {
+	public Constant readConstant(ClassFileReader bytes) throws IOException {
 		byte byteCodeTagConstant = bytes.readByte();
 
 		ConstantTag tag = constantTagMapper
@@ -83,45 +81,37 @@ public class ConstantPoolReader {
 		throw new AssertionError("Cannot happen.");
 	}
 
-	private Constant readNameAndTypeConstant(DataInputStream bytes) throws IOException {
-		ConstantPoolIndex nameIndex = fromUnsignedShort(bytes.readShort());
-		ConstantPoolIndex descriptorIndex = fromUnsignedShort(bytes.readShort());
+	private Constant readNameAndTypeConstant(ClassFileReader classFileReader) throws IOException {
+		ConstantPoolIndex nameIndex = readFrom(classFileReader);
+		ConstantPoolIndex descriptorIndex = readFrom(classFileReader);
 
 		return new NameAndTypeConstant(nameIndex, descriptorIndex);
 	}
 
-	private Constant readUtf8Constant(DataInputStream bytes) throws IOException {
-		short length = bytes.readShort();
+	private Constant readUtf8Constant(ClassFileReader classFileReader) throws IOException {
+		int length = classFileReader.readUnsignedShort();
 
-		byte[] buffer = new byte[length];
-		int bytesRead = ByteStreams.read(bytes, buffer, 0, buffer.length);
+		byte[] bytes = classFileReader.readBytes(length);
+		String decodedString = JavaClassFileUtf8Decoder.decode(bytes);
 
-		if (bytesRead != length) {
-			throw new InvalidJavaClassFileException(
-					"Unexpected end of class file while reading " +
-					"constant pool UTF8 constant.");
-		}
-
-		String decodedString = JavaClassFileUtf8Decoder.decode(buffer);
-
-		return new Utf8Constant(buffer, decodedString);
+		return new Utf8Constant(bytes, decodedString);
 	}
 
-	private Constant readClassConstant(DataInputStream bytes) throws IOException {
-		ConstantPoolIndex nameIndex = fromUnsignedShort(bytes.readShort());
+	private Constant readClassConstant(ClassFileReader classFileReader) throws IOException {
+		ConstantPoolIndex nameIndex = readFrom(classFileReader);
 		return new ClassConstant(nameIndex);
 	}
 
-	private Constant readMethodRefConstant(DataInputStream bytes) throws IOException {
-		ConstantPoolIndex classIndex = fromUnsignedShort(bytes.readShort());
-		ConstantPoolIndex nameAndTypeIndex = fromUnsignedShort(bytes.readShort());
+	private Constant readMethodRefConstant(ClassFileReader classFileReader) throws IOException {
+		ConstantPoolIndex classIndex = readFrom(classFileReader);
+		ConstantPoolIndex nameAndTypeIndex = readFrom(classFileReader);
 
 		return new MethodRefConstant(classIndex, nameAndTypeIndex);
 	}
 
-	private Constant readFieldRefConstant(DataInputStream bytes) throws IOException {
-		ConstantPoolIndex classIndex = fromUnsignedShort(bytes.readShort());
-		ConstantPoolIndex nameAndTypeIndex = fromUnsignedShort(bytes.readShort());
+	private Constant readFieldRefConstant(ClassFileReader classFileReader) throws IOException {
+		ConstantPoolIndex classIndex = readFrom(classFileReader);
+		ConstantPoolIndex nameAndTypeIndex = readFrom(classFileReader);
 
 		return new FieldRefConstant(classIndex, nameAndTypeIndex);
 	}
