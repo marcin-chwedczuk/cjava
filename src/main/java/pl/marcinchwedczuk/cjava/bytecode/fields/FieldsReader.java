@@ -1,8 +1,8 @@
 package pl.marcinchwedczuk.cjava.bytecode.fields;
 
 import pl.marcinchwedczuk.cjava.bytecode.FlagsEnumMapper;
-import pl.marcinchwedczuk.cjava.bytecode.annotation.Attributes;
-import pl.marcinchwedczuk.cjava.bytecode.annotation.AttributesReader;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.Attributes;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.AttributesReader;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 import pl.marcinchwedczuk.cjava.bytecode.utils.ClassFileReader;
 

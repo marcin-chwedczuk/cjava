@@ -19,7 +19,7 @@ public enum AccessFlag implements FlagsEnum<AccessFlag> {
 	// Declared synthetic; not present in the source code.
 	ACC_SYNTHETIC(0x1000),
 
-	// Declared as an annotation type.
+	// Declared as an attribute type.
 	ACC_ANNOTATION(0x2000),
 
 	// Declared as an enum type.

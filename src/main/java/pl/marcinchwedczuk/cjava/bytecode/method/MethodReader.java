@@ -1,11 +1,9 @@
 package pl.marcinchwedczuk.cjava.bytecode.method;
 
 import pl.marcinchwedczuk.cjava.bytecode.FlagsEnumMapper;
-import pl.marcinchwedczuk.cjava.bytecode.annotation.Attributes;
-import pl.marcinchwedczuk.cjava.bytecode.annotation.AttributesReader;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.Attributes;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.AttributesReader;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
-import pl.marcinchwedczuk.cjava.bytecode.fields.FieldAccessFlag;
-import pl.marcinchwedczuk.cjava.bytecode.fields.FieldInfo;
 import pl.marcinchwedczuk.cjava.bytecode.utils.ClassFileReader;
 
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package pl.marcinchwedczuk.cjava.bytecode.annotation;
+package pl.marcinchwedczuk.cjava.bytecode.attribute;
 
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 

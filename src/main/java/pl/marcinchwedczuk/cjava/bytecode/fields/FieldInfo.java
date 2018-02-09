@@ -1,8 +1,7 @@
 package pl.marcinchwedczuk.cjava.bytecode.fields;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import pl.marcinchwedczuk.cjava.bytecode.annotation.Attributes;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.Attributes;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 
 import java.util.EnumSet;

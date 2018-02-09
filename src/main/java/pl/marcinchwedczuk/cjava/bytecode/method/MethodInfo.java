@@ -1,9 +1,8 @@
 package pl.marcinchwedczuk.cjava.bytecode.method;
 
 import com.google.common.collect.Sets;
-import pl.marcinchwedczuk.cjava.bytecode.annotation.Attributes;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.Attributes;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
-import pl.marcinchwedczuk.cjava.bytecode.fields.FieldAccessFlag;
 
 import java.util.EnumSet;
 import java.util.Objects;
