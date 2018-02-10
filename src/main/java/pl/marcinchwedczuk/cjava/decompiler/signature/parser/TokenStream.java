@@ -91,4 +91,8 @@ public class TokenStream {
 	public void matchCurrent() {
 		match(current());
 	}
+
+	public boolean ended() {
+		return currentPosition >= input.length();
+	}
 }

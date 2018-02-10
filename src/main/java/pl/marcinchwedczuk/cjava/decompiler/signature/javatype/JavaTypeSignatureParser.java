@@ -35,7 +35,7 @@ public class JavaTypeSignatureParser {
 		}
 	}
 
-	private JavaTypeSignature parseReferenceTypeSignature() {
+	public JavaTypeSignature parseReferenceTypeSignature() {
 		if (tokenStream.currentIs(ARRAY_TYPE_MARKER)) {
 			return parseArrayTypeSignature();
 		}
@@ -47,7 +47,7 @@ public class JavaTypeSignatureParser {
 		return parseClassTypeSignature();
 	}
 
-	private JavaTypeSignature parseClassTypeSignature() {
+	public JavaTypeSignature parseClassTypeSignature() {
 		tokenStream.match(CLASS_TYPE_SIGNATURE_MARKER);
 
 		List<String> packageSpecifier = parsePackageSpecifier();
