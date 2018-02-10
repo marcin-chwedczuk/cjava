@@ -7,6 +7,7 @@ import pl.marcinchwedczuk.cjava.ast.CompilationUnitAst;
 import pl.marcinchwedczuk.cjava.ast.TypeName;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFile;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFileLoader;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.SignatureAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ComplexClassWithoutCode;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericClass;
 
@@ -94,5 +95,15 @@ public class BytecodeDecompilerTests {
 		ClassDeclarationAst classDeclaration =
 				(ClassDeclarationAst) compilationUnit.getDeclaredTypes().get(0);
 
+
+		SignatureAttribute signatureAttribute = genericClassWithoutCode
+				.getAttributes()
+				.findSignatureAttribute()
+				.get();
+
+		ConstantPoolHelper cp = new ConstantPoolHelper(genericClassWithoutCode.getConstantPool());
+		String signature = cp.getString(signatureAttribute.getUtf8SignatureString());
+
+		assertThat(signature).isEqualTo("foo");
 	}
 }
