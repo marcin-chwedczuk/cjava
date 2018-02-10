@@ -1,6 +1,4 @@
-package pl.marcinchwedczuk.cjava.decompiler.signature.reftype;
-
-import java.util.Optional;
+package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
 
 public enum BaseType implements JavaTypeSignature {
 	// signed byte

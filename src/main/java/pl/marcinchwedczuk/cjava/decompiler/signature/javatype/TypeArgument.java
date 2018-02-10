@@ -1,4 +1,4 @@
-package pl.marcinchwedczuk.cjava.decompiler.signature.reftype;
+package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
 
 public class TypeArgument {
 	private final TypeArgumentWildcardIndicator wildcardIndicator;

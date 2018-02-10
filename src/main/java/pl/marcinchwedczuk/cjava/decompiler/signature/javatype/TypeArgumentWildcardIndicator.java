@@ -1,4 +1,4 @@
-package pl.marcinchwedczuk.cjava.decompiler.signature.reftype;
+package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
 
 public enum TypeArgumentWildcardIndicator {
 	EXTENDS('+'),
