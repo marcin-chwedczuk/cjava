@@ -22,17 +22,11 @@ public class JavaClassFileLoader {
 	private final ConstantPoolReader constantPoolReader;
 	private final FlagsEnumMapper accessFlagMapper;
 	private final InterfacesReader interfacesReader;
-	private final FieldsReader fieldsReader;
-	private final MethodReader methodReader;
-	private final AttributesReader attributesReader;
 
 	public JavaClassFileLoader() {
 		this.constantPoolReader = new ConstantPoolReader();
 		this.accessFlagMapper = new FlagsEnumMapper();
 		this.interfacesReader = new InterfacesReader();
-		this.fieldsReader = new FieldsReader();
-		this.methodReader = new MethodReader();
-		this.attributesReader = new AttributesReader();
 	}
 
 	public JavaClassFile load(byte[] classFileBytes) throws IOException {
@@ -53,13 +47,16 @@ public class JavaClassFileLoader {
 			interfacesReader.readInterfaces(classFileReader);
 		classFile.setInterfaces(interfaces);
 
-		Fields classFields = fieldsReader.readFields(classFileReader);
+		FieldsReader fieldsReader = new FieldsReader(classFileReader, constantPool);
+		Fields classFields = fieldsReader.readFields();
 		classFile.setClassFields(classFields);
 
-		Methods classMethods = methodReader.readMethods(classFileReader);
+		MethodReader methodReader = new MethodReader(classFileReader, constantPool);
+		Methods classMethods = methodReader.readMethods();
 		classFile.setClassMethods(classMethods);
 
-		Attributes attributes = attributesReader.readAttributes(classFileReader);
+		AttributesReader attributesReader = new AttributesReader(classFileReader, constantPool);
+		Attributes attributes = attributesReader.readAttributes();
 		classFile.setAttributes(attributes);
 
 		return classFile;

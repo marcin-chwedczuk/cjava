@@ -18,7 +18,7 @@ public class Utf8Constant extends Constant {
 		return Arrays.copyOf(bytes, bytes.length);
 	}
 
-	public String getString() {
+	public String asString() {
 		return string;
 	}
 

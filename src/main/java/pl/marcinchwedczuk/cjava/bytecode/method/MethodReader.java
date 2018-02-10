@@ -1,8 +1,10 @@
 package pl.marcinchwedczuk.cjava.bytecode.method;
 
+import com.google.common.base.Preconditions;
 import pl.marcinchwedczuk.cjava.bytecode.FlagsEnumMapper;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.Attributes;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.AttributesReader;
+import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 import pl.marcinchwedczuk.cjava.bytecode.utils.ClassFileReader;
 
@@ -14,41 +16,49 @@ import java.util.List;
 import static pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex.readFrom;
 
 public class MethodReader {
-	private final AttributesReader attributeReader;
+	private final ClassFileReader classFileReader;
+	private final ConstantPool constantPool;
 	private final FlagsEnumMapper flagsEnumMapper;
 
-	public MethodReader() {
-		this.attributeReader = new AttributesReader();
+	public MethodReader(ClassFileReader classFileReader, ConstantPool constantPool) {
+		Preconditions.checkNotNull(classFileReader);
+		Preconditions.checkNotNull(constantPool);
+
+		this.classFileReader = classFileReader;
+		this.constantPool = constantPool;
+
 		this.flagsEnumMapper = new FlagsEnumMapper();
 	}
 
-	public Methods readMethods(ClassFileReader classFileReader) throws IOException {
+	public Methods readMethods() throws IOException {
 		int count = classFileReader.readUnsignedShort();
 
-		List<MethodInfo> methods = readMethods(classFileReader, count);
+		List<MethodInfo> methods = readMethods(count);
 
 		return new Methods(count, methods);
 	}
 
-	private List<MethodInfo> readMethods(ClassFileReader classFileReader, int count) throws IOException {
+	private List<MethodInfo> readMethods(int count) throws IOException {
 		List<MethodInfo> methods = new ArrayList<>();
 
 		for (int i = 0; i < count; i++) {
-			MethodInfo method = readMethod(classFileReader);
+			MethodInfo method = readMethod();
 			methods.add(method);
 		}
 
 		return methods;
 	}
 
-	private MethodInfo readMethod(ClassFileReader classFileReader) throws IOException {
+	private MethodInfo readMethod() throws IOException {
 		EnumSet<MethodAccessFlag> accessFlags =
 				flagsEnumMapper.mapToFlags(classFileReader.readUnsignedShort(), MethodAccessFlag.class);
 
 		ConstantPoolIndex name = readFrom(classFileReader);
 		ConstantPoolIndex descriptor = readFrom(classFileReader);
 
-		Attributes attributes = attributeReader.readAttributes(classFileReader);
+		AttributesReader attributesReader =
+				new AttributesReader(classFileReader, constantPool);
+		Attributes attributes = attributesReader.readAttributes();
 
 		return new MethodInfo(accessFlags, name, descriptor, attributes);
 	}

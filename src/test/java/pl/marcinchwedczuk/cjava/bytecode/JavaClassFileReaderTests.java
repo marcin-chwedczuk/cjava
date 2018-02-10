@@ -3,6 +3,7 @@ package pl.marcinchwedczuk.cjava.bytecode;
 import org.junit.Before;
 import org.junit.Test;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.Attribute;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.UnknownAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.*;
 import pl.marcinchwedczuk.cjava.bytecode.fields.FieldAccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.fields.FieldInfo;
@@ -81,19 +82,19 @@ public class JavaClassFileReaderTests {
 		assertThat(constantPool.getClass(3))
 				.isEqualTo(new ClassConstant(idx(15)));
 
-		assertThat(constantPool.getUtf8(4).getString())
+		assertThat(constantPool.getUtf8(4).asString())
 				.isEqualTo("<init>");
 
-		assertThat(constantPool.getUtf8(5).getString())
+		assertThat(constantPool.getUtf8(5).asString())
 				.isEqualTo("()V");
 
-		assertThat(constantPool.getUtf8(12).getString())
+		assertThat(constantPool.getUtf8(12).asString())
 				.isEqualTo("Fixture_EmptyClass.java");
 
 		assertThat(constantPool.getNameAndType(13))
 				.isEqualTo(new NameAndTypeConstant(idx(4), idx(5)));
 
-		assertThat(constantPool.getUtf8(15).getString())
+		assertThat(constantPool.getUtf8(15).asString())
 				.isEqualTo("java/lang/Object");
 	}
 
@@ -236,12 +237,12 @@ public class JavaClassFileReaderTests {
 		assertThat(classFile.getAttributes().getCount())
 				.isEqualTo(1);
 
-		Attribute sourceFile = classFile.getAttributes().get(0);
+		UnknownAttribute sourceFile = (UnknownAttribute) classFile.getAttributes().get(0);
 
-		assertThat(sourceFile.getAttributeName())
+		assertThat(sourceFile.getName())
 				.isEqualTo(idx(17));
 
-		assertThat(sourceFile.getAttributeData())
+		assertThat(sourceFile.getData())
 				.containsExactly(0, 18); // index to constant pool
 	}
 }

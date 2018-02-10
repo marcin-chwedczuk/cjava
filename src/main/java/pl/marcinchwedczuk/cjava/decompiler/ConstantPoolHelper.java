@@ -18,6 +18,6 @@ public class ConstantPoolHelper {
 	public TypeName getClassName(ConstantPoolIndex indexToClassConstant) {
 		ClassConstant classConstant = constantPool.getClass(indexToClassConstant);
 		Utf8Constant utf8Constant = constantPool.getUtf8(classConstant.getName());
-		return TypeName.fromBytecodeClassName(utf8Constant.getString());
+		return TypeName.fromBytecodeClassName(utf8Constant.asString());
 	}
 }

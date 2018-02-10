@@ -8,6 +8,7 @@ import pl.marcinchwedczuk.cjava.ast.TypeName;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFile;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFileLoader;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ComplexClassWithoutCode;
+import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericClass;
 
 import java.util.List;
 
@@ -17,15 +18,22 @@ import static pl.marcinchwedczuk.cjava.bytecode.TestUtils.readClassBytes;
 public class BytecodeDecompilerTests {
 
 	private BytecodeDecompiler decompiler;
+
 	private JavaClassFile complexClassWithoutCode;
+	private JavaClassFile genericClassWithoutCode;
 
 	@Before
 	public void setUp() throws Exception {
 		decompiler = new BytecodeDecompiler();
 
 		JavaClassFileLoader loader = new JavaClassFileLoader();
+
 		complexClassWithoutCode =
 				loader.load(readClassBytes(Fixture_ComplexClassWithoutCode.class));
+
+		genericClassWithoutCode =
+				loader.load(readClassBytes(Fixture_GenericClass.class));
+
 	}
 
 	@Test
@@ -77,6 +85,14 @@ public class BytecodeDecompilerTests {
 
 		assertThat(implementedIntefaces.get(1).getTypeName())
 				.isEqualTo("Fixture_EmptyInterface2");
+	}
+
+	@Test
+	public void canDecompileGenericClassTypeParameters() {
+		CompilationUnitAst compilationUnit = decompiler.decompile(genericClassWithoutCode);
+
+		ClassDeclarationAst classDeclaration =
+				(ClassDeclarationAst) compilationUnit.getDeclaredTypes().get(0);
 
 	}
 }

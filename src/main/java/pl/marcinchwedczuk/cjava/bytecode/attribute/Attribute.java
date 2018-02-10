@@ -1,21 +1,13 @@
 package pl.marcinchwedczuk.cjava.bytecode.attribute;
 
-import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
+public abstract class Attribute {
+	private final AttributeType type;
 
-public class Attribute {
-	private final ConstantPoolIndex attributeName;
-	private final byte[] attributeData;
-
-	public Attribute(ConstantPoolIndex attributeName, byte[] attributeData) {
-		this.attributeName = attributeName;
-		this.attributeData = attributeData;
+	public Attribute(AttributeType type) {
+		this.type = type;
 	}
 
-	public ConstantPoolIndex getAttributeName() {
-		return attributeName;
-	}
-
-	public byte[] getAttributeData() {
-		return attributeData;
+	public AttributeType getType() {
+		return type;
 	}
 }
