@@ -54,7 +54,7 @@ public class ConstantPoolReader {
 			case INTERFACE_METHOD_REF:
 				break;
 			case STRING:
-				break;
+				return readStringConstant(bytes);
 			case INTEGER:
 				break;
 			case FLOAT:
@@ -78,7 +78,32 @@ public class ConstantPoolReader {
 				break;
 		}
 
-		throw new AssertionError("Cannot happen.");
+		throw new AssertionError("Unsupported tag value: " + tag + ".");
+	}
+
+	private Constant readClassConstant(ClassFileReader classFileReader) throws IOException {
+		ConstantPoolIndex nameIndex = readFrom(classFileReader);
+		return new ClassConstant(nameIndex);
+	}
+
+	private Constant readFieldRefConstant(ClassFileReader classFileReader) throws IOException {
+		ConstantPoolIndex classIndex = readFrom(classFileReader);
+		ConstantPoolIndex nameAndTypeIndex = readFrom(classFileReader);
+
+		return new FieldRefConstant(classIndex, nameAndTypeIndex);
+	}
+
+	private Constant readMethodRefConstant(ClassFileReader classFileReader) throws IOException {
+		ConstantPoolIndex classIndex = readFrom(classFileReader);
+		ConstantPoolIndex nameAndTypeIndex = readFrom(classFileReader);
+
+		return new MethodRefConstant(classIndex, nameAndTypeIndex);
+	}
+
+	private Constant readStringConstant(ClassFileReader bytes) throws IOException {
+		ConstantPoolIndex utf8Index = readFrom(bytes);
+
+		return new StringConstant(utf8Index);
 	}
 
 	private Constant readNameAndTypeConstant(ClassFileReader classFileReader) throws IOException {
@@ -95,24 +120,5 @@ public class ConstantPoolReader {
 		String decodedString = JavaClassFileUtf8Decoder.decode(bytes);
 
 		return new Utf8Constant(bytes, decodedString);
-	}
-
-	private Constant readClassConstant(ClassFileReader classFileReader) throws IOException {
-		ConstantPoolIndex nameIndex = readFrom(classFileReader);
-		return new ClassConstant(nameIndex);
-	}
-
-	private Constant readMethodRefConstant(ClassFileReader classFileReader) throws IOException {
-		ConstantPoolIndex classIndex = readFrom(classFileReader);
-		ConstantPoolIndex nameAndTypeIndex = readFrom(classFileReader);
-
-		return new MethodRefConstant(classIndex, nameAndTypeIndex);
-	}
-
-	private Constant readFieldRefConstant(ClassFileReader classFileReader) throws IOException {
-		ConstantPoolIndex classIndex = readFrom(classFileReader);
-		ConstantPoolIndex nameAndTypeIndex = readFrom(classFileReader);
-
-		return new FieldRefConstant(classIndex, nameAndTypeIndex);
 	}
 }

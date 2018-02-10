@@ -36,8 +36,16 @@ public class ConstantPool {
 		return get(index, MethodRefConstant.class);
 	}
 
+	public ClassConstant getClass(ConstantPoolIndex index) {
+		return get(index.asInteger(), ClassConstant.class);
+	}
+
 	public ClassConstant getClass(int index) {
 		return get(index, ClassConstant.class);
+	}
+
+	public Utf8Constant getUtf8(ConstantPoolIndex index) {
+		return get(index.asInteger(), Utf8Constant.class);
 	}
 
 	public Utf8Constant getUtf8(int index) {
