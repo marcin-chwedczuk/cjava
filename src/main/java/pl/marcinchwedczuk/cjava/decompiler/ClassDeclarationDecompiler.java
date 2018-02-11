@@ -1,6 +1,8 @@
 package pl.marcinchwedczuk.cjava.decompiler;
 
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
+import pl.marcinchwedczuk.cjava.ast.Visibility;
+import pl.marcinchwedczuk.cjava.bytecode.AccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFile;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.SignatureAttribute;
 import pl.marcinchwedczuk.cjava.decompiler.signature.ClassSignature;
@@ -10,10 +12,7 @@ import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ClassType;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -36,9 +35,25 @@ public class ClassDeclarationDecompiler {
 				.getAttributes()
 				.findSignatureAttribute();
 
-		return signatureAttribute
+		ClassDeclarationAst declaration = signatureAttribute
 				.map(this::createDeclarationFromSignatureAttribute)
 				.orElseGet(this::createDeclarationFromRawTypes);
+
+		addClassModifiers(declaration, classFile.getAccessFlags());
+
+		return declaration;
+	}
+
+	private void addClassModifiers(ClassDeclarationAst declaration, EnumSet<AccessFlag> accessFlags) {
+		if (accessFlags.contains(AccessFlag.ACC_PUBLIC)) {
+			declaration.setVisibility(Visibility.PUBLIC);
+		}
+		else {
+			declaration.setVisibility(Visibility.PACKAGE);
+		}
+
+		declaration.setAbstract(accessFlags.contains(AccessFlag.ACC_ABSTRACT));
+		declaration.setFinal(accessFlags.contains(AccessFlag.ACC_FINAL));
 	}
 
 	private ClassDeclarationAst createDeclarationFromSignatureAttribute(SignatureAttribute signatureAttribute) {

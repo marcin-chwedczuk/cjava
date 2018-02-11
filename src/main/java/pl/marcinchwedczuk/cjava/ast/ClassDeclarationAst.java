@@ -21,6 +21,10 @@ public class ClassDeclarationAst extends TypeDeclarationAst {
 	private final JavaType superClassName;
 	private final List<JavaType> implementedInterfaces;
 
+	private boolean isAbstract;
+	private boolean isFinal;
+	private Visibility visibility;
+
 	public ClassDeclarationAst(ClassType className,
 							   List<TypeParameter> typeParameters,
 							   JavaType superClassName,
@@ -46,5 +50,37 @@ public class ClassDeclarationAst extends TypeDeclarationAst {
 
 	public List<JavaType> getImplementedInterfaces() {
 		return implementedInterfaces;
+	}
+
+	public boolean isAbstract() {
+		return isAbstract;
+	}
+
+	public void setAbstract(boolean anAbstract) {
+		isAbstract = anAbstract;
+	}
+
+	public boolean isFinal() {
+		return isFinal;
+	}
+
+	public void setFinal(boolean aFinal) {
+		isFinal = aFinal;
+	}
+
+	public Visibility getVisibility() {
+		return visibility;
+	}
+
+	public void setVisibility(Visibility visibility) {
+		this.visibility = visibility;
+	}
+
+	public boolean isGenericClassDeclaration() {
+		return !getTypeParameters().isEmpty();
+	}
+
+	public boolean isImplementingInterfaces() {
+		return !getImplementedInterfaces().isEmpty();
 	}
 }

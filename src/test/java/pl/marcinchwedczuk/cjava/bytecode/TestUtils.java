@@ -1,14 +1,23 @@
 package pl.marcinchwedczuk.cjava.bytecode;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Resources;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 public class TestUtils {
 	private TestUtils() { }
+
+	public static String readExpectedDecompiledSourceCode(Class<?> klass) throws IOException {
+		String className = klass.getSimpleName();
+		URL resourceUrl = Resources.getResource(className + ".decompiled");
+		return Resources.toString(resourceUrl, Charsets.UTF_8);
+	}
 
 	public static byte[] readClassBytes(Class<?> klass) {
 		Preconditions.checkNotNull(klass);
