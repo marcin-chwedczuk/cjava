@@ -1,39 +1,19 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
 
-public class TypeArgument {
-	private final TypeArgumentWildcardIndicator wildcardIndicator;
-	private final JavaTypeSignature type;
-	private boolean wildcard;
+import static pl.marcinchwedczuk.cjava.decompiler.signature.javatype.BoundType.EXTENDS;
 
-	public TypeArgument(
-			TypeArgumentWildcardIndicator wildcardIndicator,
-			JavaTypeSignature type,
-			boolean wildcard) {
-		this.wildcardIndicator = wildcardIndicator;
-		this.type = type;
-		this.wildcard = wildcard;
+public abstract class TypeArgument {
+	public static TypeArgument forWildcard() {
+		return new WildcardTypeArgument();
 	}
 
-	public String toJavaString() {
-		StringBuilder javaString = new StringBuilder();
-
-		if (wildcard) {
-			javaString.append("?");
-		}
-
-		if (wildcardIndicator != null) {
-			javaString.append("? ");
-			if (wildcardIndicator == TypeArgumentWildcardIndicator.EXTENDS) {
-				javaString.append("extends ");
-			} else {
-				javaString.append("super ");
-			}
-		}
-
-		if (type != null) {
-			javaString.append(type.toJavaType());
-		}
-
-		return javaString.toString();
+	public static TypeArgument forConcreateType(JavaTypeSignature type) {
+		return new ConcreateTypeTypeArgument(type);
 	}
+
+	public static TypeArgument forBoundedWildcard(BoundType boundType, JavaTypeSignature bound) {
+		return new BoundedWildcardTypeArgument(boundType, bound);
+	}
+
+	public abstract String toJavaString();
 }

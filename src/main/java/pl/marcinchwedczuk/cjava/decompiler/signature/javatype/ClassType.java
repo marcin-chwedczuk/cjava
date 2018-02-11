@@ -9,7 +9,6 @@ public class ClassType implements JavaTypeSignature {
 	private final List<SimpleClassType> classes;
 
 	public ClassType(List<String> packageSpecifier, List<SimpleClassType> classes) {
-
 		this.packageSpecifier = packageSpecifier;
 		this.classes = classes;
 	}

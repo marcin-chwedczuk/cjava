@@ -1,12 +1,12 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
 
-public enum TypeArgumentWildcardIndicator {
+public enum BoundType {
 	EXTENDS('+'),
 	SUPER('-');
 
 	private final char signatureConstant;
 
-	TypeArgumentWildcardIndicator(char signatureConstant) {
+	BoundType(char signatureConstant) {
 		this.signatureConstant = signatureConstant;
 	}
 
@@ -14,8 +14,8 @@ public enum TypeArgumentWildcardIndicator {
 		return this.signatureConstant == signatureConstant;
 	}
 
-	public static TypeArgumentWildcardIndicator parse(char signatureConstant) {
-		for (TypeArgumentWildcardIndicator wildcardIndicator : values()) {
+	public static BoundType parse(char signatureConstant) {
+		for (BoundType wildcardIndicator : values()) {
 			if (wildcardIndicator.representsConstant(signatureConstant)) {
 				return wildcardIndicator;
 			}

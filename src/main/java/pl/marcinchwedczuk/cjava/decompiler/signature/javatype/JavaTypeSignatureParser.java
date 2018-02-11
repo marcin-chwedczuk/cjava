@@ -92,19 +92,20 @@ public class JavaTypeSignatureParser {
 		if (tokenStream.currentIs('*')) {
 			tokenStream.matchCurrent();
 
-			return new TypeArgument(null, null, true);
+			return TypeArgument.forWildcard();
 		}
 
-		TypeArgumentWildcardIndicator wildcardIndicator = null;
 		if (tokenStream.currentIsAnyOf("+-")) {
-			wildcardIndicator =
-					TypeArgumentWildcardIndicator.parse(tokenStream.current());
+			BoundType boundType = BoundType.parse(tokenStream.current());
 			tokenStream.matchCurrent();
+
+			JavaTypeSignature type = parseReferenceTypeSignature();
+
+			return TypeArgument.forBoundedWildcard(boundType, type);
 		}
 
 		JavaTypeSignature type = parseReferenceTypeSignature();
-
-		return new TypeArgument(wildcardIndicator, type, false);
+		return TypeArgument.forConcreateType(type);
 	}
 
 	private List<String> parsePackageSpecifier() {
