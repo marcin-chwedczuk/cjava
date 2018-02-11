@@ -1,26 +1,45 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature;
 
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaTypeSignature;
+import com.google.common.collect.Lists;
+import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Objects;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
+import static pl.marcinchwedczuk.cjava.util.ListUtils.readOnlyCopy;
 
 public class ClassSignature {
 	private final List<TypeParameter> typeParameters;
-	private final JavaTypeSignature superclass;
-	private final List<JavaTypeSignature> interaces;
+	private final JavaType superclass;
+	private final List<JavaType> implementedInterfaces;
 
 	public ClassSignature(List<TypeParameter> typeParameters,
-						  JavaTypeSignature superclass,
-						  List<JavaTypeSignature> interaces) {
-		this.typeParameters = typeParameters;
-		this.superclass = superclass;
-		this.interaces = interaces;
+						  JavaType superclass,
+						  List<JavaType> implementedInterfaces) {
+
+		this.typeParameters = readOnlyCopy(typeParameters);
+		this.superclass = requireNonNull(superclass);
+		this.implementedInterfaces = readOnlyCopy(implementedInterfaces);
 	}
 
-	public String toJavaString() {
+	public List<TypeParameter> getTypeParameters() {
+		return typeParameters;
+	}
+
+	public JavaType getSuperclass() {
+		return superclass;
+	}
+
+	public List<JavaType> getImplementedInterfaces() {
+		return implementedInterfaces;
+	}
+
+	public String asJavaSourceCode() {
 		StringBuilder signature = new StringBuilder();
 
 		if (!typeParameters.isEmpty()) {
@@ -37,16 +56,16 @@ public class ClassSignature {
 		if (superclass != null) {
 			signature
 					.append(" extends ")
-					.append(superclass.toJavaType());
+					.append(superclass.asSourceCodeString());
 
 		}
 
-		if (!interaces.isEmpty()) {
+		if (!implementedInterfaces.isEmpty()) {
 			signature.append(" implements ");
 
 			signature.append(
-					interaces.stream()
-						.map(JavaTypeSignature::toJavaType)
+					implementedInterfaces.stream()
+						.map(JavaType::asSourceCodeString)
 						.collect(joining(", ")));
 		}
 

@@ -2,13 +2,11 @@ package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
 
 import java.util.Objects;
 
-import static pl.marcinchwedczuk.cjava.decompiler.signature.javatype.BoundType.EXTENDS;
-
 public class BoundedWildcardTypeArgument extends TypeArgument {
 	private final BoundType boundType;
-	private final JavaTypeSignature type;
+	private final JavaType type;
 
-	public BoundedWildcardTypeArgument(BoundType boundType, JavaTypeSignature type) {
+	public BoundedWildcardTypeArgument(BoundType boundType, JavaType type) {
 		this.boundType = Objects.requireNonNull(boundType);
 		this.type = Objects.requireNonNull(type);
 	}
@@ -27,7 +25,7 @@ public class BoundedWildcardTypeArgument extends TypeArgument {
 				break;
 		}
 
-		javaString.append(type.toJavaType());
+		javaString.append(type.asSourceCodeString());
 
 		return javaString.toString();
 	}

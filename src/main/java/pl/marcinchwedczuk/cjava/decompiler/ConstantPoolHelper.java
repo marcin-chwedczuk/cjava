@@ -1,10 +1,12 @@
 package pl.marcinchwedczuk.cjava.decompiler;
 
-import pl.marcinchwedczuk.cjava.ast.TypeName;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ClassConstant;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.Utf8Constant;
+import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.BinaryNameParser;
+import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ClassType;
+import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
 
 import java.util.Objects;
 
@@ -15,10 +17,10 @@ public class ConstantPoolHelper {
 		this.constantPool = Objects.requireNonNull(constantPool);
 	}
 
-	public TypeName getClassName(ConstantPoolIndex indexToClassConstant) {
+	public ClassType getClassName(ConstantPoolIndex indexToClassConstant) {
 		ClassConstant classConstant = constantPool.getClass(indexToClassConstant);
-		String byteCodeClassName = getString(classConstant.getName());
-		return TypeName.fromBytecodeClassName(byteCodeClassName);
+		String classBinaryName = getString(classConstant.getName());
+		return new BinaryNameParser(classBinaryName).parse();
 	}
 
 	public String getString(ConstantPoolIndex utf8Constant) {

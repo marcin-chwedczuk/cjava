@@ -1,30 +1,76 @@
 package pl.marcinchwedczuk.cjava.decompiler;
 
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
-import pl.marcinchwedczuk.cjava.ast.TypeName;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFile;
-import pl.marcinchwedczuk.cjava.bytecode.constantpool.ClassConstant;
-import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
-import pl.marcinchwedczuk.cjava.bytecode.constantpool.Utf8Constant;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.SignatureAttribute;
+import pl.marcinchwedczuk.cjava.decompiler.signature.ClassSignature;
+import pl.marcinchwedczuk.cjava.decompiler.signature.ClassSignatureParser;
+import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
+import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ClassType;
+import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 public class ClassDeclarationDecompiler {
-	public ClassDeclarationAst decompile(JavaClassFile classFile) {
+	private static final List<TypeParameter> EMPTY_GENERIC_PARAMETERS = emptyList();
 
-		ConstantPoolHelper cp = new ConstantPoolHelper(classFile.getConstantPool());
+	private final JavaClassFile classFile;
+	private final ConstantPoolHelper cp;
 
-		TypeName className = cp.getClassName(classFile.getThisClass());
-		TypeName superClassName = cp.getClassName(classFile.getSuperClass());
+	public ClassDeclarationDecompiler(JavaClassFile classFile) {
+		this.classFile = Objects.requireNonNull(classFile);
+		this.cp = new ConstantPoolHelper(classFile.getConstantPool());
+	}
 
-		List<TypeName> implementedInterfaces = classFile.getInterfaces()
+	public ClassDeclarationAst decompile() {
+		// If class has Signature attribute attached use that
+		// to obtain exact class declaration
+		Optional<SignatureAttribute> signatureAttribute = classFile
+				.getAttributes()
+				.findSignatureAttribute();
+
+		return signatureAttribute
+				.map(this::createDeclarationFromSignatureAttribute)
+				.orElseGet(this::createDeclarationFromRawTypes);
+	}
+
+	private ClassDeclarationAst createDeclarationFromSignatureAttribute(SignatureAttribute signatureAttribute) {
+		ClassType className = cp.getClassName(classFile.getThisClass());
+
+		String signatureText = cp.getString(signatureAttribute.getSignatureText());
+		ClassSignature classSignature =
+				new ClassSignatureParser(new TokenStream(signatureText)).parse();
+
+		return new ClassDeclarationAst(
+				className,
+				classSignature.getTypeParameters(),
+				classSignature.getSuperclass(),
+				classSignature.getImplementedInterfaces());
+	}
+
+	private ClassDeclarationAst createDeclarationFromRawTypes() {
+		// Use bytecode raw class names to construct class declaration.
+		ClassType className = cp.getClassName(classFile.getThisClass());
+
+		JavaType superClassName = cp.getClassName(classFile.getSuperClass());
+
+		List<JavaType> implementedInterfaces = classFile.getInterfaces()
 				.getClasses()
 				.stream()
 				.map(cp::getClassName)
 				.collect(toList());
 
-		return new ClassDeclarationAst(className, superClassName, implementedInterfaces);
+		return new ClassDeclarationAst(
+				className,
+				EMPTY_GENERIC_PARAMETERS,
+				superClassName,
+				implementedInterfaces);
 	}
 }

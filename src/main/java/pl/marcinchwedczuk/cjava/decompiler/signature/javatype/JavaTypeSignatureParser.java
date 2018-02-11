@@ -22,11 +22,11 @@ public class JavaTypeSignatureParser {
 		this.tokenStream = Objects.requireNonNull(tokenStream);
 	}
 
-	public JavaTypeSignature parse() {
+	public JavaType parse() {
 		return parseJavaTypeSignature();
 	}
 
-	private JavaTypeSignature parseJavaTypeSignature() {
+	private JavaType parseJavaTypeSignature() {
 		if (tokenStream.currentIsAnyOf("BCDFIJSZ")) {
 			return parseBaseType();
 		}
@@ -35,7 +35,7 @@ public class JavaTypeSignatureParser {
 		}
 	}
 
-	public JavaTypeSignature parseReferenceTypeSignature() {
+	public JavaType parseReferenceTypeSignature() {
 		if (tokenStream.currentIs(ARRAY_TYPE_MARKER)) {
 			return parseArrayTypeSignature();
 		}
@@ -47,7 +47,7 @@ public class JavaTypeSignatureParser {
 		return parseClassTypeSignature();
 	}
 
-	public JavaTypeSignature parseClassTypeSignature() {
+	public JavaType parseClassTypeSignature() {
 		tokenStream.match(CLASS_TYPE_SIGNATURE_MARKER);
 
 		List<String> packageSpecifier = parsePackageSpecifier();
@@ -99,12 +99,12 @@ public class JavaTypeSignatureParser {
 			BoundType boundType = BoundType.parse(tokenStream.current());
 			tokenStream.matchCurrent();
 
-			JavaTypeSignature type = parseReferenceTypeSignature();
+			JavaType type = parseReferenceTypeSignature();
 
 			return TypeArgument.forBoundedWildcard(boundType, type);
 		}
 
-		JavaTypeSignature type = parseReferenceTypeSignature();
+		JavaType type = parseReferenceTypeSignature();
 		return TypeArgument.forConcreateType(type);
 	}
 
@@ -132,16 +132,16 @@ public class JavaTypeSignatureParser {
 		return packageSpecifier;
 	}
 
-	private JavaTypeSignature parseTypeVariableSignature() {
+	private JavaType parseTypeVariableSignature() {
 		tokenStream.match(TYPE_VARIABLE_MARKER);
-		JavaTypeSignature typeVariable =
+		JavaType typeVariable =
 				new TypeVariable(tokenStream.matchIdentifier());
 		tokenStream.match(TYPE_VARIABLE_END_MARKER);
 
 		return typeVariable;
 	}
 
-	private JavaTypeSignature parseArrayTypeSignature() {
+	private JavaType parseArrayTypeSignature() {
 		int arrayDimension = 0;
 
 		while (tokenStream.currentIs(ARRAY_TYPE_MARKER)) {
@@ -149,13 +149,13 @@ public class JavaTypeSignatureParser {
 			arrayDimension++;
 		}
 
-		JavaTypeSignature arrayType = parseJavaTypeSignature();
+		JavaType arrayType = parseJavaTypeSignature();
 
 		return new ArrayType(arrayDimension, arrayType);
 	}
 
-	private JavaTypeSignature parseBaseType() {
-		JavaTypeSignature baseType = BaseType.parse(tokenStream.current());
+	private JavaType parseBaseType() {
+		JavaType baseType = BaseType.parse(tokenStream.current());
 		tokenStream.matchCurrent();
 		return baseType;
 	}

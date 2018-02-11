@@ -1,6 +1,6 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
 
-public enum BaseType implements JavaTypeSignature {
+public enum BaseType implements JavaType {
 	// signed byte
 	BYTE('B'),
 
@@ -32,7 +32,7 @@ public enum BaseType implements JavaTypeSignature {
 	}
 
 	@Override
-	public String toJavaType() {
+	public String asSourceCodeString() {
 		return name().toLowerCase();
 	}
 

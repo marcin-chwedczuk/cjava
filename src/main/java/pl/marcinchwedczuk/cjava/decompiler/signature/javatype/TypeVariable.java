@@ -1,6 +1,6 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
 
-public class TypeVariable implements JavaTypeSignature {
+public class TypeVariable implements JavaType {
 	private final String identifier;
 
 	public TypeVariable(String identifier) {
@@ -13,7 +13,7 @@ public class TypeVariable implements JavaTypeSignature {
 	}
 
 	@Override
-	public String toJavaType() {
+	public String asSourceCodeString() {
 		return identifier;
 	}
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.joining;
 
-public class ClassType implements JavaTypeSignature {
+public class ClassType implements JavaType {
 	private final List<String> packageSpecifier;
 	private final List<SimpleClassType> classes;
 
@@ -14,7 +14,7 @@ public class ClassType implements JavaTypeSignature {
 	}
 
 	@Override
-	public String toJavaType() {
+	public String asSourceCodeString() {
 		String javaPackage = packageSpecifier.stream()
 			.collect(joining("."));
 
@@ -23,7 +23,7 @@ public class ClassType implements JavaTypeSignature {
 		}
 
 		String javaClasses = classes.stream()
-				.map(SimpleClassType::toJavaType)
+				.map(SimpleClassType::asSourceCodeString)
 				.collect(joining("."));
 
 		return javaPackage.concat(javaClasses);

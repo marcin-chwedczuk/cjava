@@ -1,6 +1,6 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature;
 
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaTypeSignature;
+import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaTypeSignatureParser;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
@@ -17,14 +17,14 @@ public class ClassSignatureParser {
 
 	public ClassSignature parse() {
 		List<TypeParameter> typeParameters = parseTypeParameters();
-		JavaTypeSignature superclass = parseClassTypeSignature();
-		List<JavaTypeSignature> interaces = parseSuperInterfaces();
+		JavaType superclass = parseClassTypeSignature();
+		List<JavaType> interaces = parseSuperInterfaces();
 
 		return new ClassSignature(typeParameters, superclass, interaces);
 	}
 
-	private List<JavaTypeSignature> parseSuperInterfaces() {
-		List<JavaTypeSignature> interfaces = new ArrayList<>();
+	private List<JavaType> parseSuperInterfaces() {
+		List<JavaType> interfaces = new ArrayList<>();
 
 		while(!tokenStream.ended()) {
 			interfaces.add(parseClassTypeSignature());
@@ -52,8 +52,8 @@ public class ClassSignatureParser {
 	private TypeParameter parseTypeParameter() {
 		String identifier = tokenStream.matchIdentifier();
 
-		JavaTypeSignature classBound = null;
-		List<JavaTypeSignature> interfaceBounds = new ArrayList<>();
+		JavaType classBound = null;
+		List<JavaType> interfaceBounds = new ArrayList<>();
 
 		// class bound - can be empty
 		tokenStream.match(':');
@@ -63,19 +63,21 @@ public class ClassSignatureParser {
 
 		// interface bounds
 		while (tokenStream.currentIs(':')) {
-			JavaTypeSignature interfaceBound = parseReferenceTypeSignature();
+			tokenStream.match(':');
+
+			JavaType interfaceBound = parseReferenceTypeSignature();
 			interfaceBounds.add(interfaceBound);
 		}
 
 		return new TypeParameter(identifier, classBound, interfaceBounds);
 	}
 
-	private JavaTypeSignature parseReferenceTypeSignature() {
+	private JavaType parseReferenceTypeSignature() {
 		return new JavaTypeSignatureParser(tokenStream)
 				.parseReferenceTypeSignature();
 	}
 
-	private JavaTypeSignature parseClassTypeSignature() {
+	private JavaType parseClassTypeSignature() {
 		return new JavaTypeSignatureParser(tokenStream)
 				.parseClassTypeSignature();
 	}

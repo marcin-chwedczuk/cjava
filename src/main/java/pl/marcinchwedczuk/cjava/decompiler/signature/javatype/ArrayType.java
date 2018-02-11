@@ -4,27 +4,27 @@ import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.joining;
 
-public class ArrayType implements JavaTypeSignature {
+public class ArrayType implements JavaType {
 	private final int dimensions;
-	private final JavaTypeSignature type;
+	private final JavaType type;
 
-	public ArrayType(int dimensions, JavaTypeSignature type) {
+	public ArrayType(int dimensions, JavaType type) {
 		this.dimensions = dimensions;
 		this.type = type;
 	}
 
 	@Override
-	public String toJavaType() {
+	public String asSourceCodeString() {
 		String suffix = IntStream.rangeClosed(1, dimensions)
 				.mapToObj(i -> "[]")
 				.collect(joining(""));
 
-		return String.format("%s%s", type.toJavaType(), suffix);
+		return String.format("%s%s", type.asSourceCodeString(), suffix);
 	}
 
 	@Override
 	public String toString() {
-		return toJavaType();
+		return asSourceCodeString();
 	}
 
 }

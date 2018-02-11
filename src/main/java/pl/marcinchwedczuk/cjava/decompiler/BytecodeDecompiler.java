@@ -7,15 +7,15 @@ import pl.marcinchwedczuk.cjava.bytecode.JavaClassFile;
 import java.util.Arrays;
 
 public class BytecodeDecompiler {
-	private ClassDeclarationDecompiler classDeclarationDecompiler;
+	private final ClassDeclarationDecompiler classDeclarationDecompiler;
 
-	public BytecodeDecompiler() {
-		this.classDeclarationDecompiler = new ClassDeclarationDecompiler();
+	public BytecodeDecompiler(JavaClassFile classFile) {
+		this.classDeclarationDecompiler = new ClassDeclarationDecompiler(classFile);
 	}
 
-	public CompilationUnitAst decompile(JavaClassFile classFile) {
+	public CompilationUnitAst decompile() {
 		ClassDeclarationAst classDeclarationAst =
-				classDeclarationDecompiler.decompile(classFile);
+				classDeclarationDecompiler.decompile();
 
 		return new CompilationUnitAst(Arrays.asList(classDeclarationAst));
 	}

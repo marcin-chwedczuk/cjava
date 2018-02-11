@@ -11,7 +11,7 @@ public class SignatureAttribute extends Attribute {
 		this.utf8SignatureString = utf8SignatureString;
 	}
 
-	public ConstantPoolIndex getUtf8SignatureString() {
+	public ConstantPoolIndex getSignatureText() {
 		return utf8SignatureString;
 	}
 }
