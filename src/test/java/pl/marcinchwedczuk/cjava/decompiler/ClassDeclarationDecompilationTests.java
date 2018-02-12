@@ -12,34 +12,17 @@ import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericClass;
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static pl.marcinchwedczuk.cjava.bytecode.TestUtils.readClassBytes;
 
-public class BytecodeDecompilerTests {
-	private JavaClassFile FIXTURE_COMPLEX_CLASS_WITHOUT_CODE;
-	private JavaClassFile FIXTURE_GENERIC_CLASS;
-	private JavaClassFile FXITURE_CLASS_EXTENDING_NESTED_CLASSES;
-
-	@Before
-	public void setUp() throws Exception {
-		JavaClassFileLoader loader = new JavaClassFileLoader();
-
-		FIXTURE_COMPLEX_CLASS_WITHOUT_CODE =
-				loader.load(readClassBytes(Fixture_ComplexClassWithoutCode.class));
-
-		FIXTURE_GENERIC_CLASS =
-				loader.load(readClassBytes(Fixture_GenericClass.class));
-
-		FXITURE_CLASS_EXTENDING_NESTED_CLASSES =
-			loader.load(readClassBytes(Fixture_ClassExtendingNestedClasses.class));
-	}
-
+public class ClassDeclarationDecompilationTests extends BaseDecompilerTests {
 	@Test
 	public void canDecompileClassName() throws Exception {
-		ClassDeclarationAst classDeclaration = decompile(FIXTURE_COMPLEX_CLASS_WITHOUT_CODE);
+		ClassDeclarationAst classDeclaration = decompile(Fixture_ComplexClassWithoutCode.class);
 
 		assertThat(classDeclaration.getClassName().asSourceCodeString())
 				.isEqualTo("pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ComplexClassWithoutCode");
@@ -47,7 +30,7 @@ public class BytecodeDecompilerTests {
 
 	@Test
 	public void canDecompileSuperClass() throws Exception {
-		ClassDeclarationAst classDeclaration = decompile(FIXTURE_COMPLEX_CLASS_WITHOUT_CODE);
+		ClassDeclarationAst classDeclaration = decompile(Fixture_ComplexClassWithoutCode.class);
 
 		assertThat(classDeclaration.getSuperClassName().asSourceCodeString())
 				.isEqualTo("pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_EmptyClass");
@@ -55,7 +38,7 @@ public class BytecodeDecompilerTests {
 
 	@Test
 	public void canDecompileListOfImplementedInterfaces() throws Exception {
-		ClassDeclarationAst classDeclaration = decompile(FIXTURE_COMPLEX_CLASS_WITHOUT_CODE);
+		ClassDeclarationAst classDeclaration = decompile(Fixture_ComplexClassWithoutCode.class);
 
 		List<JavaType> implementedInterfaces =
 				classDeclaration.getImplementedInterfaces();
@@ -71,8 +54,8 @@ public class BytecodeDecompilerTests {
 	}
 
 	@Test
-	public void canDecompileNestedSuperClassAndNestedInterfaces() {
-		ClassDeclarationAst classDeclaration = decompile(FXITURE_CLASS_EXTENDING_NESTED_CLASSES);
+	public void canDecompileNestedSuperClassAndNestedInterfaces() throws IOException {
+		ClassDeclarationAst classDeclaration = decompile(Fixture_ClassExtendingNestedClasses.class);
 
 		assertThat(classDeclaration.getSuperClassName().asSourceCodeString())
 				.isEqualTo("pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithNestedClasses.NestedClass");
@@ -82,8 +65,8 @@ public class BytecodeDecompilerTests {
 	}
 
 	@Test
-	public void canDecompileGenericClassTypeParameters() {
-		ClassDeclarationAst classDeclaration = decompile(FIXTURE_GENERIC_CLASS);
+	public void canDecompileGenericClassTypeParameters() throws IOException {
+		ClassDeclarationAst classDeclaration = decompile(Fixture_GenericClass.class);
 
 		assertThat(classDeclaration.getClassName().asSourceCodeString())
 				.isEqualTo("pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericClass");
@@ -119,7 +102,7 @@ public class BytecodeDecompilerTests {
 
 	@Test
 	public void canDecompileGenericSuperclass() throws Exception {
-		ClassDeclarationAst classDeclaration = decompile(FIXTURE_GENERIC_CLASS);
+		ClassDeclarationAst classDeclaration = decompile(Fixture_GenericClass.class);
 
 		assertThat(classDeclaration.getSuperClassName().asSourceCodeString())
 				.isEqualTo("java.util.ArrayDeque<ParamA>");
@@ -127,19 +110,9 @@ public class BytecodeDecompilerTests {
 
 	@Test
 	public void canDecompileImplementedGenericInterface() throws Exception {
-		ClassDeclarationAst classDeclaration = decompile(FIXTURE_GENERIC_CLASS);
+		ClassDeclarationAst classDeclaration = decompile(Fixture_GenericClass.class);
 
 		assertThat(classDeclaration.getImplementedInterfaces().get(0).asSourceCodeString())
 				.isEqualTo("pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericInterface<ParamA>");
-	}
-
-	private static ClassDeclarationAst decompile(JavaClassFile classFile) {
-		CompilationUnitAst compilationUnit =
-				new BytecodeDecompiler(classFile).decompile();
-
-		ClassDeclarationAst classDeclaration =
-				(ClassDeclarationAst) compilationUnit.getDeclaredTypes().get(0);
-
-		return classDeclaration;
 	}
 }
