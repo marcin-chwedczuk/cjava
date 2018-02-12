@@ -1,9 +1,11 @@
 package pl.marcinchwedczuk.cjava.decompiler;
 
+import pl.marcinchwedczuk.cjava.ast.AnnotationAst;
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.Visibility;
 import pl.marcinchwedczuk.cjava.bytecode.AccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFile;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.RuntimeVisibleAnnotationsAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.SignatureAttribute;
 import pl.marcinchwedczuk.cjava.decompiler.signature.ClassSignature;
 import pl.marcinchwedczuk.cjava.decompiler.signature.ClassSignatureParser;
@@ -40,6 +42,7 @@ public class ClassDeclarationDecompiler {
 				.orElseGet(this::createDeclarationFromRawTypes);
 
 		addClassModifiers(declaration, classFile.getAccessFlags());
+		addAnnotations(declaration, classFile);
 
 		return declaration;
 	}
@@ -87,5 +90,22 @@ public class ClassDeclarationDecompiler {
 				EMPTY_GENERIC_PARAMETERS,
 				superClassName,
 				implementedInterfaces);
+	}
+
+	private void addAnnotations(ClassDeclarationAst declaration, JavaClassFile classFile) {
+		Optional<RuntimeVisibleAnnotationsAttribute> annotationsAttribute = classFile
+				.getAttributes()
+				.findRuntimeVisibleAnnotationsAttribute();
+
+		if (!annotationsAttribute.isPresent()) {
+			return;
+		}
+
+		AnnotationDecompiler annotationDecompiler =
+				new AnnotationDecompiler(annotationsAttribute.get(), classFile.getConstantPool());
+
+		List<AnnotationAst> annotations = annotationDecompiler.decompile();
+
+		declaration.setAnnotations(annotations);
 	}
 }

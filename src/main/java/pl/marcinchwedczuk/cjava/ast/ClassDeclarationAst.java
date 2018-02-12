@@ -25,6 +25,8 @@ public class ClassDeclarationAst extends TypeDeclarationAst {
 	private boolean isFinal;
 	private Visibility visibility;
 
+	private List<AnnotationAst> annotations = Lists.newArrayList();
+
 	public ClassDeclarationAst(ClassType className,
 							   List<TypeParameter> typeParameters,
 							   JavaType superClassName,
@@ -34,6 +36,14 @@ public class ClassDeclarationAst extends TypeDeclarationAst {
 		this.typeParameters = readOnlyCopy(typeParameters);
 		this.superClassName = requireNonNull(superClassName);
 		this.implementedInterfaces = readOnlyCopy(implementedInterfaces);
+	}
+
+	public boolean isGenericClassDeclaration() {
+		return !getTypeParameters().isEmpty();
+	}
+
+	public boolean isImplementingInterfaces() {
+		return !getImplementedInterfaces().isEmpty();
 	}
 
 	public ClassType getClassName() {
@@ -76,11 +86,11 @@ public class ClassDeclarationAst extends TypeDeclarationAst {
 		this.visibility = visibility;
 	}
 
-	public boolean isGenericClassDeclaration() {
-		return !getTypeParameters().isEmpty();
+	public List<AnnotationAst> getAnnotations() {
+		return annotations;
 	}
 
-	public boolean isImplementingInterfaces() {
-		return !getImplementedInterfaces().isEmpty();
+	public void setAnnotations(List<AnnotationAst> annotations) {
+		this.annotations = annotations;
 	}
 }

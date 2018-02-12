@@ -20,9 +20,17 @@ public class Attributes {
 	}
 
 	public Optional<SignatureAttribute> findSignatureAttribute() {
+		return findOne(SignatureAttribute.class);
+	}
+
+	public Optional<RuntimeVisibleAnnotationsAttribute> findRuntimeVisibleAnnotationsAttribute() {
+		return findOne(RuntimeVisibleAnnotationsAttribute.class);
+	}
+
+	private <T extends Attribute> Optional<T> findOne(Class<T> attributeClass) {
 		return attributes.stream()
-				.filter(SignatureAttribute.class::isInstance)
-				.map(SignatureAttribute.class::cast)
+				.filter(attributeClass::isInstance)
+				.map(attributeClass::cast)
 				.findFirst();
 	}
 }

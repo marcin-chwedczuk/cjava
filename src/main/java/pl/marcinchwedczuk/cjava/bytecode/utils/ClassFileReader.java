@@ -30,12 +30,16 @@ public class ClassFileReader implements AutoCloseable {
 		return inner.readShort();
 	}
 
+	public int readUnsignedShort() throws IOException {
+		return Short.toUnsignedInt(inner.readShort());
+	}
+
 	public int readInt() throws IOException {
 		return inner.readInt();
 	}
 
-	public int readUnsignedShort() throws IOException {
-		return Short.toUnsignedInt(inner.readShort());
+	public float readFloat() throws IOException {
+		return inner.readFloat();
 	}
 
 	public byte[] readBytes(int count) throws IOException {

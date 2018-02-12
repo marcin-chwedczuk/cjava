@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 public enum AttributeType {
 	SIGNATURE("Signature"),
 	SYNTHETIC("Synthetic"),
+	RUNTIME_VISIBLE_ANNOTATIONS("RuntimeVisibleAnnotations"),
 
 	UNKNOWN(null);
 

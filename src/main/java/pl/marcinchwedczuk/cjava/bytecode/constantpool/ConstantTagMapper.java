@@ -16,7 +16,7 @@ public class ConstantTagMapper {
 		this.constantTagByByteCodeConstant = createMapping();
 	}
 
-	public ConstantTag mapByteCodeTagConstantToConstantTag(byte byteCodeConstant) {
+	public ConstantTag mapByteCodeTagToConstantTag(byte byteCodeConstant) {
 		ConstantTag constantTag =
 				constantTagByByteCodeConstant.get(byteCodeConstant);
 

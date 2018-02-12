@@ -1,6 +1,8 @@
 package pl.marcinchwedczuk.cjava.bytecode.attribute;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.RuntimeVisibleAnnotationsAttribute.Annotation;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.Utf8Constant;
@@ -50,12 +52,33 @@ public class AttributesReader {
 			case SIGNATURE:
 				return readSignatureAttribute();
 
+			case RUNTIME_VISIBLE_ANNOTATIONS:
+				return readRuntimeVisibleAnnotationsAttribute();
+
 			case SYNTHETIC:
 			case UNKNOWN:
 				return readUnknownAttribute(attributeNameIndex);
 		}
 
 		throw new AssertionError("Unsupported attribute type: " + type + ".");
+	}
+
+	private Attribute readRuntimeVisibleAnnotationsAttribute() throws IOException {
+		// Read attribute length (u4 field) - we ignore this value in the decompiler.
+		classFileReader.readInt();
+
+		int numberOfAnnotations = classFileReader.readUnsignedShort();
+
+		List<Annotation> annotations = new ArrayList<>();
+		for (int i = 0; i < numberOfAnnotations; i++) {
+			annotations.add(readAnnotation());
+		}
+
+		return new RuntimeVisibleAnnotationsAttribute(annotations);
+	}
+
+	private Annotation readAnnotation() {
+		return new Annotation();
 	}
 
 	private SignatureAttribute readSignatureAttribute() throws IOException {

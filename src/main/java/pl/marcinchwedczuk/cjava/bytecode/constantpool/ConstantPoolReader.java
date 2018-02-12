@@ -35,40 +35,43 @@ public class ConstantPoolReader {
 		return constants;
 	}
 
-	public Constant readConstant(ClassFileReader bytes) throws IOException {
-		byte byteCodeTagConstant = bytes.readByte();
+	public Constant readConstant(ClassFileReader classFileReader) throws IOException {
+		byte byteCodeTag = classFileReader.readByte();
 
 		ConstantTag tag = constantTagMapper
-				.mapByteCodeTagConstantToConstantTag(byteCodeTagConstant);
+				.mapByteCodeTagToConstantTag(byteCodeTag);
 
 		switch (tag) {
 			case CLASS:
-				return readClassConstant(bytes);
+				return readClassConstant(classFileReader);
 
 			case FIELD_REF:
-				return readFieldRefConstant(bytes);
+				return readFieldRefConstant(classFileReader);
 
 			case METHOD_REF:
-				return readMethodRefConstant(bytes);
+				return readMethodRefConstant(classFileReader);
 
 			case INTERFACE_METHOD_REF:
 				break;
 			case STRING:
-				return readStringConstant(bytes);
+				return readStringConstant(classFileReader);
+
 			case INTEGER:
-				break;
+				return readIntegerConstant(classFileReader);
+
 			case FLOAT:
-				break;
+				return readFloatConstant(classFileReader);
+
 			case LONG:
 				break;
 			case DOUBLE:
 				break;
 
 			case NAME_AND_TYPE:
-				return readNameAndTypeConstant(bytes);
+				return readNameAndTypeConstant(classFileReader);
 
 			case UTF8:
-				return readUtf8Constant(bytes);
+				return readUtf8Constant(classFileReader);
 
 			case METHOD_HANDLE:
 				break;
@@ -104,6 +107,16 @@ public class ConstantPoolReader {
 		ConstantPoolIndex utf8Index = readFrom(bytes);
 
 		return new StringConstant(utf8Index);
+	}
+
+	private Constant readIntegerConstant(ClassFileReader classFileReader) throws IOException {
+		int value = classFileReader.readInt();
+		return new IntegerConstant(value);
+	}
+
+	private Constant readFloatConstant(ClassFileReader classFileReader) throws IOException {
+		float value = classFileReader.readFloat();
+		return new FloatConstant(value);
 	}
 
 	private Constant readNameAndTypeConstant(ClassFileReader classFileReader) throws IOException {
