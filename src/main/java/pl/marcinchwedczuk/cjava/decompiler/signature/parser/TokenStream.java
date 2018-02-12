@@ -95,4 +95,9 @@ public class TokenStream {
 	public boolean ended() {
 		return currentPosition >= input.length();
 	}
+
+	@Override
+	public String toString() {
+		return input;
+	}
 }

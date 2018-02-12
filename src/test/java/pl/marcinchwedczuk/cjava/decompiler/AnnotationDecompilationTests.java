@@ -1,6 +1,7 @@
 package pl.marcinchwedczuk.cjava.decompiler;
 
 import org.junit.Test;
+import pl.marcinchwedczuk.cjava.ast.AnnotationAst;
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithAnnotations;
 
@@ -14,5 +15,10 @@ public class AnnotationDecompilationTests extends BaseDecompilerTests {
 
 		assertThat(classDeclaration.getAnnotations())
 				.hasSize(1);
+
+		AnnotationAst ast = classDeclaration.getAnnotations().get(0);
+
+		assertThat(ast.getAnnotationType().asSourceCodeString())
+				.isEqualTo("pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_Annotation");
 	}
 }

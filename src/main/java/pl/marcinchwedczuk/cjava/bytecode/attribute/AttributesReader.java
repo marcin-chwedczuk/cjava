@@ -1,7 +1,6 @@
 package pl.marcinchwedczuk.cjava.bytecode.attribute;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.RuntimeVisibleAnnotationsAttribute.Annotation;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
@@ -77,8 +76,12 @@ public class AttributesReader {
 		return new RuntimeVisibleAnnotationsAttribute(annotations);
 	}
 
-	private Annotation readAnnotation() {
-		return new Annotation();
+	private Annotation readAnnotation() throws IOException {
+		ConstantPoolIndex type = readFrom(classFileReader);
+
+		// TODO: read values
+
+		return new Annotation(type);
 	}
 
 	private SignatureAttribute readSignatureAttribute() throws IOException {

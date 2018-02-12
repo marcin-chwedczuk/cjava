@@ -3,6 +3,7 @@ package pl.marcinchwedczuk.cjava.decompiler;
 import pl.marcinchwedczuk.cjava.ast.AnnotationAst;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.RuntimeVisibleAnnotationsAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
+import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
 
 import java.util.List;
 
@@ -28,6 +29,11 @@ public class AnnotationDecompiler {
 	}
 
 	private AnnotationAst decompileAnnotation(RuntimeVisibleAnnotationsAttribute.Annotation bytecodeAnnotation) {
-		return new AnnotationAst();
+		AnnotationAst ast = new AnnotationAst();
+
+		JavaType annotationType = cp.getFieldDescriptor(bytecodeAnnotation.getType());
+		ast.setAnnotationType(annotationType);
+
+		return ast;
 	}
 }

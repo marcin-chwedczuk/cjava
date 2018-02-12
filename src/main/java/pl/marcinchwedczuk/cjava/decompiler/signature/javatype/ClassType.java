@@ -1,7 +1,11 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
 
+import com.google.common.collect.Lists;
+
+import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
 
 public class ClassType implements JavaType {
@@ -11,6 +15,10 @@ public class ClassType implements JavaType {
 	public ClassType(List<String> packageSpecifier, List<SimpleClassType> classes) {
 		this.packageSpecifier = packageSpecifier;
 		this.classes = classes;
+	}
+
+	public ClassType(List<String> packagePart, SimpleClassType klass) {
+		this(packagePart, singletonList(klass));
 	}
 
 	@Override

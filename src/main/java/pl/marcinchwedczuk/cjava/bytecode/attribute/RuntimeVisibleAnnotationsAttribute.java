@@ -1,7 +1,11 @@
 package pl.marcinchwedczuk.cjava.bytecode.attribute;
 
-import java.util.List;
+import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
 
+import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 import static pl.marcinchwedczuk.cjava.util.ListUtils.readOnlyCopy;
 
 public class RuntimeVisibleAnnotationsAttribute extends Attribute {
@@ -18,6 +22,14 @@ public class RuntimeVisibleAnnotationsAttribute extends Attribute {
 	}
 
 	public static class Annotation {
+		private final ConstantPoolIndex type;
 
+		public Annotation(ConstantPoolIndex type) {
+			this.type = requireNonNull(type);
+		}
+
+		public ConstantPoolIndex getType() {
+			return type;
+		}
 	}
 }

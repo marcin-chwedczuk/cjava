@@ -1,5 +1,6 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
@@ -16,6 +17,10 @@ public class SimpleClassType {
 	public SimpleClassType(String className, List<TypeArgument> typeArguments) {
 		this.className = className;
 		this.typeArguments = typeArguments;
+	}
+
+	public SimpleClassType(String className) {
+		this(className, emptyList());
 	}
 
 	public String asSourceCodeString() {
