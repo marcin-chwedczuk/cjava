@@ -55,4 +55,8 @@ public class ConstantPool {
 	public NameAndTypeConstant getNameAndType(int index) {
 		return get(index, NameAndTypeConstant.class);
 	}
+
+	public IntegerConstant getInteger(ConstantPoolIndex index) {
+		return get(index.asInteger(), IntegerConstant.class);
+	}
 }

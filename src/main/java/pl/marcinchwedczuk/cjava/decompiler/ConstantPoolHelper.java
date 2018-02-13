@@ -1,9 +1,6 @@
 package pl.marcinchwedczuk.cjava.decompiler;
 
-import pl.marcinchwedczuk.cjava.bytecode.constantpool.ClassConstant;
-import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
-import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex;
-import pl.marcinchwedczuk.cjava.bytecode.constantpool.Utf8Constant;
+import pl.marcinchwedczuk.cjava.bytecode.constantpool.*;
 import pl.marcinchwedczuk.cjava.decompiler.descriptor.field.FieldDescriptorParser;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.BinaryNameParser;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ClassType;
@@ -33,5 +30,10 @@ public class ConstantPoolHelper {
 	public String getString(ConstantPoolIndex utf8Constant) {
 		Utf8Constant constant = constantPool.getUtf8(utf8Constant);
 		return constant.asString();
+	}
+
+	public int getInteger(ConstantPoolIndex index) {
+		IntegerConstant integerConstant = constantPool.getInteger(index);
+		return integerConstant.getValue();
 	}
 }

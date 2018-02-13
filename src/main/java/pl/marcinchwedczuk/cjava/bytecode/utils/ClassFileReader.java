@@ -26,6 +26,11 @@ public class ClassFileReader implements AutoCloseable {
 		return inner.readByte();
 	}
 
+	public char readAsciiCharacter() throws IOException {
+		byte b = inner.readByte();
+		return (char) Byte.toUnsignedInt(b);
+	}
+
 	public short readShort() throws IOException {
 		return inner.readShort();
 	}

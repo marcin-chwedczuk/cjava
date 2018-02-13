@@ -1,6 +1,7 @@
 package pl.marcinchwedczuk.cjava.ast;
 
 import com.google.common.collect.Lists;
+import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ClassType;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;

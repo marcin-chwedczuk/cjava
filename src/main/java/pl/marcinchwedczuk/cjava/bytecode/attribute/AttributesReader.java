@@ -63,25 +63,8 @@ public class AttributesReader {
 	}
 
 	private Attribute readRuntimeVisibleAnnotationsAttribute() throws IOException {
-		// Read attribute length (u4 field) - we ignore this value in the decompiler.
-		classFileReader.readInt();
-
-		int numberOfAnnotations = classFileReader.readUnsignedShort();
-
-		List<Annotation> annotations = new ArrayList<>();
-		for (int i = 0; i < numberOfAnnotations; i++) {
-			annotations.add(readAnnotation());
-		}
-
-		return new RuntimeVisibleAnnotationsAttribute(annotations);
-	}
-
-	private Annotation readAnnotation() throws IOException {
-		ConstantPoolIndex type = readFrom(classFileReader);
-
-		// TODO: read values
-
-		return new Annotation(type);
+		return new RuntimeVisibleAnnotationsAttributeReader(
+				classFileReader, constantPool).read();
 	}
 
 	private SignatureAttribute readSignatureAttribute() throws IOException {

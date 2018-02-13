@@ -1,8 +1,8 @@
 package pl.marcinchwedczuk.cjava.decompiler;
 
-import pl.marcinchwedczuk.cjava.ast.AnnotationAst;
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.Visibility;
+import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.bytecode.AccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFile;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.RuntimeVisibleAnnotationsAttribute;

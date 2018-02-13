@@ -6,6 +6,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Fixture_Annotation {
+	// byte byteField();
+
 	int intField();
 	String stringField();
 
