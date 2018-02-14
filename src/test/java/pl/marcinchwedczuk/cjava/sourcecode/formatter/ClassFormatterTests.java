@@ -14,7 +14,7 @@ import java.io.IOException;
 import static org.junit.Assert.*;
 import static pl.marcinchwedczuk.cjava.bytecode.TestUtils.readExpectedDecompiledSourceCode;
 
-public class ClassDeclarationFormatterTests {
+public class ClassFormatterTests {
 
 	@Test
 	public void printsPrettyClassDeclaration() throws Exception {
@@ -42,8 +42,11 @@ public class ClassDeclarationFormatterTests {
 		ClassDeclarationAst classDeclaration =
 				(ClassDeclarationAst) compilationUnit.getDeclaredTypes().get(0);
 
-		ClassDeclarationFormatter formatter =
-				new ClassDeclarationFormatter(new JavaCodeWriter(), classDeclaration);
-		return formatter.convertToSourceCode();
+		JavaCodeWriter codeWriter = new JavaCodeWriter();
+		ClassFormatter formatter =
+				new ClassFormatter(codeWriter, classDeclaration);
+		formatter.convertAstToJavaCode();
+
+		return codeWriter.dumpSourceCode();
 	}
 }

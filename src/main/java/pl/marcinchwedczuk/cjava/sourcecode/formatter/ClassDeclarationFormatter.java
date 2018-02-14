@@ -10,7 +10,7 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-public class ClassDeclarationFormatter {
+public class ClassDeclarationFormatter implements SourceCodeFormatter {
 	private final JavaCodeWriter codeWriter;
 	private final ClassDeclarationAst classDeclarationAst;
 
@@ -20,33 +20,12 @@ public class ClassDeclarationFormatter {
 		this.classDeclarationAst = requireNonNull(classDeclarationAst);
 	}
 
-	public String convertToSourceCode() {
-		printClassAnnotations();
-
+	@Override
+	public void convertAstToJavaCode() {
 		printClassNameWithModifiers();
-
 		printGenericTypeParameters();
-
 		printSuperclass();
 		printImplementedInterfaces();
-
-		codeWriter.print(" {")
-				.printNewLine()
-				.print("}")
-				.printNewLine();
-
-		return codeWriter.dumpSourceCode();
-	}
-
-	private void printClassAnnotations() {
-		for (AnnotationAst annotationAst : classDeclarationAst.getAnnotations()) {
-			new AnnotationSourceCodeFormatter(annotationAst, codeWriter)
-					.convertAstToJavaCode();
-
-			codeWriter
-					.printNewLine()
-					.printIndent();
-		}
 	}
 
 	private void printClassNameWithModifiers() {

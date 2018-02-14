@@ -47,10 +47,11 @@ public class Main {
 			ClassDeclarationAst classDeclaration =
 					(ClassDeclarationAst) compilationUnit.getDeclaredTypes().get(0);
 
+			JavaCodeWriter codeWriter = new JavaCodeWriter();
 			ClassDeclarationFormatter formatter =
-					new ClassDeclarationFormatter(new JavaCodeWriter(), classDeclaration);
+					new ClassDeclarationFormatter(codeWriter, classDeclaration);
 
-			String sourceCode = formatter.convertToSourceCode();
+			String sourceCode = codeWriter.dumpSourceCode();
 
 			Files.write(Paths.get(sourceCodePath), sourceCode.getBytes("UTF-8"));
 		}
