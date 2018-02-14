@@ -74,7 +74,7 @@ public class TokenStream {
 		// Remember that constructor has <init> name that is
 		// valid identifier.
 		char c = current();
-		while (!IDENTIFIER_DELIMITERS.contains(c)) {
+		while (!IDENTIFIER_DELIMITERS.contains(c) && !ended()) {
 			identifier.append(c);
 
 			currentPosition++;

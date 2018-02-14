@@ -4,7 +4,9 @@ import org.junit.Test;
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.Visibility;
+import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithGenericMethodSignatures;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithTwoMethods;
+import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
 
 import java.util.Optional;
 
@@ -40,6 +42,41 @@ public class MethodDecompilerTests extends BaseDecompilerTests {
 				.isEqualTo("void()");
 		assertThat(constructor.getVisibility())
 				.isEqualTo(Visibility.PUBLIC);
+	}
+
+	@Test
+	public void canDecompileGenericMethodSignature() throws Exception {
+		ClassDeclarationAst classDeclaration =
+				decompile(Fixture_ClassWithGenericMethodSignatures.class);
+
+		MethodDeclarationAst listOf = findMethodByName(classDeclaration, "listOf");
+		MethodSignature listOfSignature = listOf.getMethodSignature();
+
+		assertThat(listOfSignature.asJavaSoucrceCode())
+				.isEqualTo("<E extends java.lang.Object> java.util.List<E>(E, E)");
+
+		assertThat(listOfSignature.getGenericTypeParameters())
+				.hasSize(1);
+		assertThat(listOfSignature.getGenericTypeParameters().get(0).getName())
+				.isEqualTo("E");
+
+		assertThat(listOfSignature.getThrowsExceptions())
+				.isEmpty();
+	}
+
+	@Test
+	public void canDecompileMethodWithGenericThrowsSignature() throws Exception {
+		ClassDeclarationAst classDeclaration =
+				decompile(Fixture_ClassWithGenericMethodSignatures.class);
+
+		MethodDeclarationAst throwsSometing = findMethodByName(classDeclaration, "throwsSometing");
+		MethodSignature throwsSometingSignature = throwsSometing.getMethodSignature();
+
+		assertThat(throwsSometingSignature.getThrowsExceptions())
+				.hasSize(1);
+
+		assertThat(throwsSometingSignature.getThrowsExceptions().get(0).asSourceCodeString())
+				.isEqualTo("T");
 	}
 
 	private MethodDeclarationAst findMethodByName(ClassDeclarationAst classDeclaration, String methodName) {

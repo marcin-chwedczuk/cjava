@@ -33,7 +33,7 @@ public class ClassSignatureParser {
 		return interfaces;
 	}
 
-	private List<TypeParameter> parseTypeParameters() {
+	List<TypeParameter> parseTypeParameters() {
 		List<TypeParameter> typeParameters = new ArrayList<>();
 
 		if (tokenStream.currentIs('<')) {

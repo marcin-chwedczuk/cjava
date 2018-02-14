@@ -2,13 +2,17 @@ package pl.marcinchwedczuk.cjava.decompiler;
 
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.Visibility;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.SignatureAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.fields.FieldAccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.method.MethodAccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.method.MethodInfo;
 import pl.marcinchwedczuk.cjava.bytecode.method.Methods;
 import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
+import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignatureParser;
+import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,7 +49,20 @@ public class MethodDecompiler {
 	}
 
 	private MethodSignature decompileMethodSignature(MethodInfo methodInfo) {
-		// TODO: Add reading signature attribute
+		Optional<SignatureAttribute> signatureAttribute =
+				methodInfo.getAttributes().findSignatureAttribute();
+
+		if (signatureAttribute.isPresent()) {
+			String methodSignatureText =
+					cp.getString(signatureAttribute.get().getSignatureText());
+
+			MethodSignature methodSignature =
+					new MethodSignatureParser(new TokenStream(methodSignatureText))
+						.parseMethodSignature();
+
+			return methodSignature;
+		}
+
 		return cp.getMethodDescriptor(methodInfo.getDescriptor());
 	}
 
