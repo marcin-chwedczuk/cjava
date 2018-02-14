@@ -27,6 +27,7 @@ public class ClassDeclarationAst extends TypeDeclarationAst {
 	private Visibility visibility;
 
 	private List<AnnotationAst> annotations = Lists.newArrayList();
+	private List<FieldDeclarationAst> fields;
 
 	public ClassDeclarationAst(ClassType className,
 							   List<TypeParameter> typeParameters,
@@ -93,5 +94,13 @@ public class ClassDeclarationAst extends TypeDeclarationAst {
 
 	public void setAnnotations(List<AnnotationAst> annotations) {
 		this.annotations = annotations;
+	}
+
+	public List<FieldDeclarationAst> getFields() {
+		return fields;
+	}
+
+	public void setFields(List<FieldDeclarationAst> fields) {
+		this.fields = fields;
 	}
 }

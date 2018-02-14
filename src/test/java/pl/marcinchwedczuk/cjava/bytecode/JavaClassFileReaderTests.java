@@ -179,10 +179,10 @@ public class JavaClassFileReaderTests {
 		FieldInfo field3 = fields.get(2);
 
 		assertThat(field3.getName())
-				.isEqualTo(idx(9));
+				.isEqualTo(idx(11));
 
 		assertThat(field3.getDescriptor())
-				.isEqualTo(idx(10));
+				.isEqualTo(idx(12));
 
 		assertThat(field3.getAccessFlags())
 				.containsExactly(FieldAccessFlag.ACC_PROTECTED, FieldAccessFlag.ACC_FINAL);

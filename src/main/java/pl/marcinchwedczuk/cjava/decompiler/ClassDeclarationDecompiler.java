@@ -42,21 +42,8 @@ public class ClassDeclarationDecompiler {
 				.orElseGet(this::createDeclarationFromRawTypes);
 
 		addClassModifiers(declaration, classFile.getAccessFlags());
-		addAnnotations(declaration, classFile);
 
 		return declaration;
-	}
-
-	private void addClassModifiers(ClassDeclarationAst declaration, EnumSet<AccessFlag> accessFlags) {
-		if (accessFlags.contains(AccessFlag.ACC_PUBLIC)) {
-			declaration.setVisibility(Visibility.PUBLIC);
-		}
-		else {
-			declaration.setVisibility(Visibility.PACKAGE);
-		}
-
-		declaration.setAbstract(accessFlags.contains(AccessFlag.ACC_ABSTRACT));
-		declaration.setFinal(accessFlags.contains(AccessFlag.ACC_FINAL));
 	}
 
 	private ClassDeclarationAst createDeclarationFromSignatureAttribute(SignatureAttribute signatureAttribute) {
@@ -92,20 +79,15 @@ public class ClassDeclarationDecompiler {
 				implementedInterfaces);
 	}
 
-	private void addAnnotations(ClassDeclarationAst declaration, JavaClassFile classFile) {
-		Optional<RuntimeVisibleAnnotationsAttribute> annotationsAttribute = classFile
-				.getAttributes()
-				.findRuntimeVisibleAnnotationsAttribute();
-
-		if (!annotationsAttribute.isPresent()) {
-			return;
+	private void addClassModifiers(ClassDeclarationAst declaration, EnumSet<AccessFlag> accessFlags) {
+		if (accessFlags.contains(AccessFlag.ACC_PUBLIC)) {
+			declaration.setVisibility(Visibility.PUBLIC);
+		}
+		else {
+			declaration.setVisibility(Visibility.PACKAGE);
 		}
 
-		AnnotationDecompiler annotationDecompiler =
-				new AnnotationDecompiler(annotationsAttribute.get(), classFile.getConstantPool());
-
-		List<AnnotationAst> annotations = annotationDecompiler.decompile();
-
-		declaration.setAnnotations(annotations);
+		declaration.setAbstract(accessFlags.contains(AccessFlag.ACC_ABSTRACT));
+		declaration.setFinal(accessFlags.contains(AccessFlag.ACC_FINAL));
 	}
 }

@@ -16,6 +16,10 @@ public class Fields {
 		this.fields = Collections.unmodifiableList(Lists.newArrayList(fields));
 	}
 
+	public List<FieldInfo> getFields() {
+		return fields;
+	}
+
 	public int getCount() {
 		return count;
 	}

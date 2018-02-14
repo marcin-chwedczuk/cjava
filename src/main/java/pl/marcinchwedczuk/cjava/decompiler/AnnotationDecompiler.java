@@ -30,6 +30,12 @@ public class AnnotationDecompiler {
 		this.cp = new ConstantPoolHelper(constantPool);
 	}
 
+	public AnnotationDecompiler(
+			RuntimeVisibleAnnotationsAttribute annotationsAttribute, ConstantPoolHelper cp) {
+		this.annotationsAttribute = requireNonNull(annotationsAttribute);
+		this.cp = requireNonNull(cp);
+	}
+
 	public List<AnnotationAst> decompile() {
 		return annotationsAttribute.getAnnotations().stream()
 				.map(this::decompileAnnotation)

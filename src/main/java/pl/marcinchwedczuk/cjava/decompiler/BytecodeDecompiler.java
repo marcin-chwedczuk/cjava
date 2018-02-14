@@ -5,18 +5,21 @@ import pl.marcinchwedczuk.cjava.ast.CompilationUnitAst;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFile;
 
 import java.util.Arrays;
+import java.util.Collections;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 public class BytecodeDecompiler {
-	private final ClassDeclarationDecompiler classDeclarationDecompiler;
+	private final ClassDecompiler classDecompiler;
 
 	public BytecodeDecompiler(JavaClassFile classFile) {
-		this.classDeclarationDecompiler = new ClassDeclarationDecompiler(classFile);
+		this.classDecompiler = new ClassDecompiler(classFile);
 	}
 
 	public CompilationUnitAst decompile() {
-		ClassDeclarationAst classDeclarationAst =
-				classDeclarationDecompiler.decompile();
+		ClassDeclarationAst declarationAst = classDecompiler.decompile();
 
-		return new CompilationUnitAst(Arrays.asList(classDeclarationAst));
+		return new CompilationUnitAst(singletonList(declarationAst));
 	}
 }
