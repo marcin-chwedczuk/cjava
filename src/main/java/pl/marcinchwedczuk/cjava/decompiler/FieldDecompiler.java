@@ -4,10 +4,13 @@ import pl.marcinchwedczuk.cjava.ast.FieldDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.Visibility;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.RuntimeVisibleAnnotationsAttribute;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.SignatureAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.fields.FieldAccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.fields.FieldInfo;
 import pl.marcinchwedczuk.cjava.bytecode.fields.Fields;
+import pl.marcinchwedczuk.cjava.decompiler.signature.FieldSignatureParser;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +34,7 @@ public class FieldDecompiler {
 	}
 
 	private FieldDeclarationAst decompileField(FieldInfo fieldInfo) {
-		JavaType fieldType = cp.getFieldDescriptor(fieldInfo.getDescriptor());
+		JavaType fieldType = decompileFieldType(fieldInfo);
 		String fieldName = cp.getString(fieldInfo.getName());
 
 		FieldDeclarationAst declarationAst = new FieldDeclarationAst(fieldType, fieldName);
@@ -43,6 +46,23 @@ public class FieldDecompiler {
 		addAnnotations(declarationAst, fieldInfo);
 
 		return declarationAst;
+	}
+
+	private JavaType decompileFieldType(FieldInfo fieldInfo) {
+		Optional<SignatureAttribute> signatureAttribute =
+				fieldInfo
+						.getAttributes()
+						.findSignatureAttribute();
+
+		if (signatureAttribute.isPresent()) {
+			String fieldSignature =
+					cp.getString(signatureAttribute.get().getSignatureText());
+
+			return new FieldSignatureParser(new TokenStream(fieldSignature))
+					.parse();
+		}
+
+		return cp.getFieldDescriptor(fieldInfo.getDescriptor());
 	}
 
 	private Visibility computeVisibility(Set<FieldAccessFlag> accessFlags) {
