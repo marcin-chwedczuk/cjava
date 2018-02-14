@@ -1,6 +1,7 @@
 package pl.marcinchwedczuk.cjava.sourcecode.formatter;
 
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
+import pl.marcinchwedczuk.cjava.ast.FieldDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 
 import static java.util.Objects.requireNonNull;
@@ -19,8 +20,13 @@ public class ClassFormatter implements SourceCodeFormatter {
 		printClassAnnotations();
 		printClassDeclaration();
 
-		codeWriter.print(" {")
+		codeWriter.print(" {");
+
+		printClassFields();
+
+		codeWriter
 				.printNewLine()
+				.printIndent()
 				.print("}")
 				.printNewLine();
 	}
@@ -40,4 +46,21 @@ public class ClassFormatter implements SourceCodeFormatter {
 		new ClassDeclarationFormatter(codeWriter, classDeclarationAst)
 				.convertAstToJavaCode();
 	}
+
+	private void printClassFields() {
+		codeWriter.increaseIndent(1);
+
+		for (FieldDeclarationAst fieldDeclarationAst : classDeclarationAst.getFields()) {
+			codeWriter
+					.printNewLine()
+					.printNewLine()
+					.printIndent();
+
+			new FieldSouceCodeFormatter(fieldDeclarationAst, codeWriter)
+					.convertAstToJavaCode();
+		}
+
+		codeWriter.decreaseIndent(1);
+	}
+
 }

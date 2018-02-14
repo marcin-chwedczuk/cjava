@@ -2,9 +2,11 @@ package pl.marcinchwedczuk.cjava.ast.annotation;
 
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static java.util.Collections.emptyList;
 import static pl.marcinchwedczuk.cjava.util.ListUtils.readOnlyCopy;
 
 public class AnnotationAst {
@@ -14,6 +16,10 @@ public class AnnotationAst {
 	public AnnotationAst(JavaType annotationType, List<AnnotationPropertyAssignmentAst> elementValuePairs) {
 		this.annotationType = Objects.requireNonNull(annotationType);
 		this.elementValuePairs = readOnlyCopy(elementValuePairs);
+	}
+
+	public AnnotationAst(JavaType annotationType) {
+		this(annotationType, emptyList());
 	}
 
 	public boolean hasPropertiesAssignments() {

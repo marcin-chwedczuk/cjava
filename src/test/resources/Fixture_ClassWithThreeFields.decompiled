@@ -1,0 +1,10 @@
+public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithThreeFields
+		extends java.lang.Object {
+
+	public static java.lang.String field1;
+
+	@pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_EmptyAnnotation
+	private int field2;
+
+	protected final java.lang.Boolean field3;
+}

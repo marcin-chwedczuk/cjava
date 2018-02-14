@@ -6,6 +6,7 @@ import pl.marcinchwedczuk.cjava.ast.CompilationUnitAst;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFileLoader;
 import pl.marcinchwedczuk.cjava.bytecode.TestUtils;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithAnnotations;
+import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithThreeFields;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericClass;
 import pl.marcinchwedczuk.cjava.decompiler.BytecodeDecompiler;
 
@@ -32,6 +33,14 @@ public class ClassFormatterTests {
 		assertEquals(expected, decompiled);
 	}
 
+	@Test
+	public void printsClassFields() throws Exception {
+		String decompiled = decompile(Fixture_ClassWithThreeFields.class);
+		String expected = readExpectedDecompiledSourceCode(Fixture_ClassWithThreeFields.class);
+
+		assertEquals(expected, decompiled);
+	}
+
 	private static String decompile(Class<?> klass) throws IOException {
 		byte[] klassBytes = TestUtils.readClassBytes(klass);
 
@@ -43,9 +52,9 @@ public class ClassFormatterTests {
 				(ClassDeclarationAst) compilationUnit.getDeclaredTypes().get(0);
 
 		JavaCodeWriter codeWriter = new JavaCodeWriter();
-		ClassFormatter formatter =
-				new ClassFormatter(codeWriter, classDeclaration);
-		formatter.convertAstToJavaCode();
+
+		new ClassFormatter(codeWriter, classDeclaration)
+			.convertAstToJavaCode();
 
 		return codeWriter.dumpSourceCode();
 	}
