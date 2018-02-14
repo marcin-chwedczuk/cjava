@@ -16,11 +16,15 @@ public class AnnotationAst {
 		this.elementValuePairs = readOnlyCopy(elementValuePairs);
 	}
 
+	public boolean hasPropertiesAssignments() {
+		return !elementValuePairs.isEmpty();
+	}
+
 	public JavaType getAnnotationType() {
 		return annotationType;
 	}
 
-	public List<AnnotationPropertyAssignmentAst> getElementValuePairs() {
+	public List<AnnotationPropertyAssignmentAst> getPropertiesAssignments() {
 		return elementValuePairs;
 	}
 }

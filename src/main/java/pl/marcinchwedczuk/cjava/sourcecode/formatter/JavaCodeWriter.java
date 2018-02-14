@@ -8,7 +8,7 @@ public class JavaCodeWriter {
 		sourceCode = new StringBuilder();
 	}
 
-	public String asString() {
+	public String dumpSourceCode() {
 		return sourceCode.toString();
 	}
 

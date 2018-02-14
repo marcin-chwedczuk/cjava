@@ -5,6 +5,7 @@ import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.CompilationUnitAst;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFileLoader;
 import pl.marcinchwedczuk.cjava.bytecode.TestUtils;
+import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithAnnotations;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericClass;
 import pl.marcinchwedczuk.cjava.decompiler.BytecodeDecompiler;
 
@@ -19,6 +20,14 @@ public class ClassDeclarationFormatterTests {
 	public void printsPrettyClassDeclaration() throws Exception {
 		String decompiled = decompile(Fixture_GenericClass.class);
 		String expected = readExpectedDecompiledSourceCode(Fixture_GenericClass.class);
+
+		assertEquals(expected, decompiled);
+	}
+
+	@Test
+	public void printsAnnotationsOnClassDeclaration() throws Exception {
+		String decompiled = decompile(Fixture_ClassWithAnnotations.class);
+		String expected = readExpectedDecompiledSourceCode(Fixture_ClassWithAnnotations.class);
 
 		assertEquals(expected, decompiled);
 	}

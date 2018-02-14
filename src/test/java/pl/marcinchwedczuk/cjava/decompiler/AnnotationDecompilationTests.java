@@ -25,16 +25,16 @@ public class AnnotationDecompilationTests extends BaseDecompilerTests {
 		assertThat(ast.getAnnotationType().asSourceCodeString())
 				.isEqualTo(FIXTURE_PACKAGE + ".Fixture_Annotation");
 
-		assertThat(ast.getElementValuePairs())
+		assertThat(ast.getPropertiesAssignments())
 				.hasSize(3);
 
-		assertAssignsValueToProperty(ast.getElementValuePairs().get(0),
+		assertAssignsValueToProperty(ast.getPropertiesAssignments().get(0),
 				"intField", 123);
 
-		assertAssignsValueToProperty(ast.getElementValuePairs().get(1),
+		assertAssignsValueToProperty(ast.getPropertiesAssignments().get(1),
 				"stringField", "foo");
 
-		assertAssignsValueToProperty(ast.getElementValuePairs().get(2),
+		assertAssignsValueToProperty(ast.getPropertiesAssignments().get(2),
 				"stringArrayField", new Object[] { "foo", "bar" });
 
 		// Fixture_EmptyAnnotation
@@ -43,7 +43,7 @@ public class AnnotationDecompilationTests extends BaseDecompilerTests {
 		assertThat(ast.getAnnotationType().asSourceCodeString())
 				.isEqualTo(FIXTURE_PACKAGE + ".Fixture_EmptyAnnotation");
 
-		assertThat(ast.getElementValuePairs())
+		assertThat(ast.getPropertiesAssignments())
 				.isEmpty();
 
 	}

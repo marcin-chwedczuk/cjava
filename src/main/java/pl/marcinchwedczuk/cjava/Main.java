@@ -1,6 +1,5 @@
 package pl.marcinchwedczuk.cjava;
 
-import com.google.common.base.Charsets;
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.CompilationUnitAst;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFileLoader;

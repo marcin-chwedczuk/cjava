@@ -2,6 +2,7 @@ package pl.marcinchwedczuk.cjava.sourcecode.formatter;
 
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.Visibility;
+import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
 
@@ -20,6 +21,8 @@ public class ClassDeclarationFormatter {
 	}
 
 	public String convertToSourceCode() {
+		printClassAnnotations();
+
 		printClassNameWithModifiers();
 
 		printGenericTypeParameters();
@@ -32,7 +35,18 @@ public class ClassDeclarationFormatter {
 				.print("}")
 				.printNewLine();
 
-		return codeWriter.asString();
+		return codeWriter.dumpSourceCode();
+	}
+
+	private void printClassAnnotations() {
+		for (AnnotationAst annotationAst : classDeclarationAst.getAnnotations()) {
+			new AnnotationSourceCodeFormatter(annotationAst, codeWriter)
+					.convertAstToJavaCode();
+
+			codeWriter
+					.printNewLine()
+					.printIndent();
+		}
 	}
 
 	private void printClassNameWithModifiers() {

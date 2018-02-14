@@ -2,6 +2,7 @@ package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
 
 import com.google.common.collect.Lists;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,6 +10,12 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
 
 public class ClassType implements JavaType {
+	public static ClassType fromPackageAndClassName(String package_, String className) {
+		return new ClassType(
+				Arrays.asList(package_.split("\\.")),
+				new SimpleClassType(className));
+	}
+
 	private final List<String> packageSpecifier;
 	private final List<SimpleClassType> classes;
 

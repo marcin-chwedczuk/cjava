@@ -7,6 +7,10 @@ public class IntegerLiteral extends LiteralAst {
 		this.value = value;
 	}
 
+	public int getValue() {
+		return value;
+	}
+
 	@Override
 	public Object getRawValue() {
 		return value;
