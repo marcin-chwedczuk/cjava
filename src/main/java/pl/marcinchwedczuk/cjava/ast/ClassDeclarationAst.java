@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static pl.marcinchwedczuk.cjava.util.ListUtils.readOnlyCopy;
@@ -26,8 +27,9 @@ public class ClassDeclarationAst extends TypeDeclarationAst {
 	private boolean isFinal;
 	private Visibility visibility;
 
-	private List<AnnotationAst> annotations = Lists.newArrayList();
-	private List<FieldDeclarationAst> fields;
+	private List<AnnotationAst> annotations = emptyList();
+	private List<FieldDeclarationAst> fields = emptyList();
+	private List<MethodDeclarationAst> methods = emptyList();
 
 	public ClassDeclarationAst(ClassType className,
 							   List<TypeParameter> typeParameters,
@@ -102,5 +104,13 @@ public class ClassDeclarationAst extends TypeDeclarationAst {
 
 	public void setFields(List<FieldDeclarationAst> fields) {
 		this.fields = fields;
+	}
+
+	public List<MethodDeclarationAst> getMethods() {
+		return methods;
+	}
+
+	public void setMethods(List<MethodDeclarationAst> methods) {
+		this.methods = methods;
 	}
 }

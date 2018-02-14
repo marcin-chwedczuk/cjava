@@ -2,6 +2,7 @@ package pl.marcinchwedczuk.cjava.decompiler;
 
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.FieldDeclarationAst;
+import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFile;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.RuntimeVisibleAnnotationsAttribute;
@@ -25,6 +26,7 @@ public class ClassDecompiler {
 
 		addAnnotations(declaration);
 		addFields(declaration);
+		addMethods(declaration);
 
 		return declaration;
 	}
@@ -51,5 +53,13 @@ public class ClassDecompiler {
 					.decompile();
 
 		declaration.setFields(fieldDeclarations);
+	}
+
+	private void addMethods(ClassDeclarationAst declaration) {
+		List<MethodDeclarationAst> methodDeclarations =
+				new MethodDecompiler(classFile.getClassMethods(), cp)
+					.decompile();
+
+		declaration.setMethods(methodDeclarations);
 	}
 }

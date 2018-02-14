@@ -5,7 +5,7 @@ public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericClas
 		extends java.util.ArrayDeque<ParamA>
 		implements pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericInterface<ParamA> {
 
-	private java.io.Serializable key;
+	private ParamA key;
 
-	private java.util.ArrayList values;
+	private ParamB values;
 }

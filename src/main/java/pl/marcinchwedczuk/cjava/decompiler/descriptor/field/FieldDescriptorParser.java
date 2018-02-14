@@ -3,11 +3,9 @@ package pl.marcinchwedczuk.cjava.decompiler.descriptor.field;
 import pl.marcinchwedczuk.cjava.bytecode.InvalidJavaClassFileException;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.*;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
-import pl.marcinchwedczuk.cjava.util.ListUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 import static pl.marcinchwedczuk.cjava.util.ListUtils.lastElement;
@@ -31,7 +29,7 @@ public class FieldDescriptorParser {
 		return type;
 	}
 
-	private JavaType parseFieldType() {
+	public JavaType parseFieldType() {
 		if (input.currentIsAnyOf("BCDFIJSZ")) {
 			return parseBaseType();
 		} else if (input.currentIs('L')) {

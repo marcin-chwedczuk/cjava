@@ -21,4 +21,8 @@ public class Methods {
 	public MethodInfo get(int index) {
 		return methods.get(index);
 	}
+
+	public List<MethodInfo> getMethods() {
+		return methods;
+	}
 }

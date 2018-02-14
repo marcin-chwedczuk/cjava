@@ -2,6 +2,8 @@ package pl.marcinchwedczuk.cjava.decompiler;
 
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.*;
 import pl.marcinchwedczuk.cjava.decompiler.descriptor.field.FieldDescriptorParser;
+import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodDescriptorParser;
+import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.BinaryNameParser;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ClassType;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
@@ -35,5 +37,12 @@ public class ConstantPoolHelper {
 	public int getInteger(ConstantPoolIndex index) {
 		IntegerConstant integerConstant = constantPool.getInteger(index);
 		return integerConstant.getValue();
+	}
+
+	public MethodSignature getMethodDescriptor(ConstantPoolIndex descriptorIndex) {
+		String methodDescriptor = getString(descriptorIndex);
+
+		return new MethodDescriptorParser(
+				new TokenStream(methodDescriptor)).parse();
 	}
 }
