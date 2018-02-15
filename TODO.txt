@@ -1,5 +1,7 @@
 - Formatting methods + integration tests
-- Generic field declaration + tests
 - Method parameter names should be taken from AST structure.
     Compute them either at decompiling time or as a separate pass
     after decompilation.
+- Decompilation of static constructors
+- Class block initializers and static initializers
+- Constants for static/const fields e.g. `public static final int = 32`
