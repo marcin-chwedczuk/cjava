@@ -1,0 +1,3 @@
+- Formatting methods + integration tests
+- Generic field declaration + tests
+- Method varargs parameter
