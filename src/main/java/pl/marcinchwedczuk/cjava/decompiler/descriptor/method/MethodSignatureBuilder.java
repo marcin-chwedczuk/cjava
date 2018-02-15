@@ -29,6 +29,11 @@ public class MethodSignatureBuilder {
 		return this;
 	}
 
+	public MethodSignatureBuilder throwz(JavaType... exceptionTypes) {
+		this.throwsExceptions = asList(exceptionTypes);
+		return this;
+	}
+
 	public MethodSignature build() {
 		return new MethodSignature(
 				genericTypeParameters,

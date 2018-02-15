@@ -13,6 +13,7 @@ public class ListWriter<T> {
 	}
 
 	private Runnable beforeAction = NO_ACTION;
+	private Runnable beforeNonEmpty = NO_ACTION;
 	private Runnable afterAction = NO_ACTION;
 	private BiConsumer<T, ElementPosition> elementAction = this::throwExceptionIfNotSet;
 	private Runnable betweenAction = NO_ACTION;
@@ -29,6 +30,11 @@ public class ListWriter<T> {
 
 	public ListWriter<T> before(Runnable action) {
 		beforeAction = requireNonNull(action);
+		return this;
+	}
+
+	public ListWriter<T> beforeNonEmpty(Runnable action) {
+		beforeNonEmpty = requireNonNull(action);
 		return this;
 	}
 
@@ -49,6 +55,10 @@ public class ListWriter<T> {
 
 	public final void write() {
 		beforeAction.run();
+
+		if (!list.isEmpty()) {
+			beforeNonEmpty.run();
+		}
 
 		final int LAST_INDEX = list.size()-1;
 

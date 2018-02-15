@@ -139,6 +139,23 @@ public class MethodSourceCodeFormatterTests {
 				.isEqualToIgnoringWhitespace(expected);
 	}
 
+	@Test
+	public void canPrintThrowsDeclaration() throws Exception {
+		MethodDeclarationAst methodDeclaration = new MethodDeclarationAst(
+				"throwEx",
+				MethodSignature.builder()
+					.signature(BaseType.VOID)
+					.throwz(ClassType.fromPackageAndClassName("java.lang", "Exception"))
+					.build());
+
+		String sourceCode = format(methodDeclaration);
+
+		String expected = "void throwEx() throws java.lang.Exception { }";
+		assertThat(sourceCode)
+				.isEqualToIgnoringWhitespace(expected);
+
+	}
+
 	private String format(MethodDeclarationAst methodDeclaration) {
 		JavaCodeWriter codeWriter = new JavaCodeWriter();
 		new MethodSourceCodeFormatter(methodDeclaration, codeWriter)

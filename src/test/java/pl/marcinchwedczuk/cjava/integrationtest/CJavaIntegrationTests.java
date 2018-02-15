@@ -5,10 +5,7 @@ import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.CompilationUnitAst;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFileLoader;
 import pl.marcinchwedczuk.cjava.bytecode.TestUtils;
-import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithAnnotations;
-import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithThreeFields;
-import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithTwoMethods;
-import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericClass;
+import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.*;
 import pl.marcinchwedczuk.cjava.decompiler.BytecodeDecompiler;
 import pl.marcinchwedczuk.cjava.sourcecode.formatter.ClassFormatter;
 import pl.marcinchwedczuk.cjava.sourcecode.formatter.JavaCodeWriter;
@@ -16,6 +13,7 @@ import pl.marcinchwedczuk.cjava.sourcecode.formatter.JavaCodeWriter;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static pl.marcinchwedczuk.cjava.bytecode.TestUtils.readExpectedDecompiledSourceCode;
 
 public class CJavaIntegrationTests {
@@ -48,6 +46,14 @@ public class CJavaIntegrationTests {
 	public void canDecompileClassMethods() throws Exception {
 		String decompiled = decompile(Fixture_ClassWithTwoMethods.class);
 		String expected = readExpectedDecompiledSourceCode(Fixture_ClassWithTwoMethods.class);
+
+		assertThat(decompiled).isEqualToIgnoringWhitespace(expected);
+	}
+
+	@Test
+	public void canDecompileGenericClassMethods() throws Exception {
+		String decompiled = decompile(Fixture_ClassWithGenericMethodSignatures.class);
+		String expected = readExpectedDecompiledSourceCode(Fixture_ClassWithGenericMethodSignatures.class);
 
 		assertThat(decompiled).isEqualToIgnoringWhitespace(expected);
 	}

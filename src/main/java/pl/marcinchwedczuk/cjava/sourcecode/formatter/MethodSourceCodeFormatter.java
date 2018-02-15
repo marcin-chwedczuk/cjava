@@ -31,6 +31,8 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 		printMethodTypeParameters(methodSignature.getGenericTypeParameters());
 		printMethodSignature(methodSignature);
 
+		printThrowsDeclaration(methodSignature);
+
 		printMethodBody();
 	}
 
@@ -133,6 +135,20 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 		}
 	}
 
+	private void printThrowsDeclaration(MethodSignature methodSignature) {
+		if (methodSignature.getThrowsExceptions().isEmpty()) {
+			return;
+		}
+
+		ListWriter.writeList(methodSignature.getThrowsExceptions())
+				.beforeNonEmpty(codeWriter.printAction(" throws "))
+				.element((exceptionType, pos) -> {
+					codeWriter.print(exceptionType.asSourceCodeString());
+				})
+				.between(codeWriter.printAction(", "))
+				.write();
+	}
+
 	private void printMethodBody() {
 		if (methodDeclaration.isAbstract()) {
 			codeWriter.print(";");
@@ -140,4 +156,5 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 			codeWriter.print(" { }");
 		}
 	}
+
 }
