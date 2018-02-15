@@ -43,6 +43,37 @@ public class InstructionReader {
 			case "":
 				// no operands to read
 				return new BasicInstruction(opcode);
+
+			case "u1": {
+				// single operand of type unsigned byte
+				int operand = Byte.toUnsignedInt(machineInstructions[current++]);
+				return new SingleOperandInstruction(opcode, operand);
+			}
+
+			case "u2": {
+				// single operand of type *singed* short
+				int first = Byte.toUnsignedInt(machineInstructions[current++]);
+				int second = Byte.toUnsignedInt(machineInstructions[current++]);
+				int operand = (first << 8) | second;
+				return new SingleOperandInstruction(opcode, operand);
+			}
+
+			case "s2": {
+				// single operand of type *singed* short
+				int first = Byte.toUnsignedInt(machineInstructions[current++]);
+				int second = Byte.toUnsignedInt(machineInstructions[current++]);
+				int operand = (short)((first << 8) | second);
+
+				return new SingleOperandInstruction(opcode, operand);
+			}
+
+			case "u1s1": {
+				// two operands with types u1 and s1
+				int first = Byte.toUnsignedInt(machineInstructions[current++]);
+				int second = machineInstructions[current++];
+
+				return new DoubleOperandInstruction(opcode, first, second);
+			}
 		}
 
 		throw new IllegalStateException("Opcode still under development: " + opcode);

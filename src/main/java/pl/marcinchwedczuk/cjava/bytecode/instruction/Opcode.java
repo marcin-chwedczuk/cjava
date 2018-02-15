@@ -126,7 +126,8 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK ..., value1, value2 -> ..., result }
 	 */
-	dadd(0x63),
+	dadd(0x63, ""),
+
 	/**
 	 * Load double from array.
 	 * <p>
@@ -145,12 +146,14 @@ public enum Opcode {
 	 * {@code STACK ..., value1, value2 -> ..., result }
 	 */
 	dcmpg(0x98),
+
 	/**
-	 * Push double.
+	 * Push double 0.0 onto stack.
 	 * <p>
 	 * {@code STACK ... -> ..., <d> }
 	 */
-	dconst_0(0xe),
+	dconst_0(0xe, ""),
+
 	/**
 	 * Divide double.
 	 * <p>
@@ -163,12 +166,17 @@ public enum Opcode {
 	 * {@code STACK ... -> ..., value }
 	 */
 	dload(0x18),
+
 	/**
 	 * Load double from local variable.
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
-	dload_0(0x26),
+	dload_0(0x26, ""),
+	dload_1(0x27, ""),
+	dload_2(0x28, ""),
+	dload_3(0x29, ""),
+
 	/**
 	 * Multiply double.
 	 * <p>
@@ -199,12 +207,17 @@ public enum Opcode {
 	 * {@code STACK ..., value -> ... }
 	 */
 	dstore(0x39),
+
 	/**
-	 * Store double into local variable.
+	 * Store double into local variable with index 0.
 	 * <p>
 	 * {@code STACK ..., value -> ... }
 	 */
-	dstore_0(0x47),
+	dstore_0(0x47, ""),
+	dstore_1(0x48, ""),
+	dstore_2(0x49, ""),
+	dstore_3(0x4a, ""),
+
 	/**
 	 * Subtract double.
 	 * <p>
@@ -391,12 +404,14 @@ public enum Opcode {
 	 * {@code STACK ..., value -> ..., result }
 	 */
 	i2c(0x92),
+
 	/**
 	 * Convert int to double.
 	 * <p>
 	 * {@code STACK ..., value -> ..., result }
 	 */
-	i2d(0x87),
+	i2d(0x87, ""),
+
 	/**
 	 * Convert int to float.
 	 * <p>
@@ -457,12 +472,19 @@ public enum Opcode {
 	 * {@code STACK ..., value1, value2 -> ... }
 	 */
 	if_acmpeq(0xa5),
+
 	/**
 	 * Branch if int comparison succeeds.
 	 * <p>
 	 * {@code STACK ..., value1, value2 -> ... }
 	 */
-	if_icmpeq(0x9f),
+	if_icmpeq(0x9f, "s2"),
+	if_icmpne(0xa0, "s2"),
+	if_icmplt(0xa1, "s2"),
+	if_icmpge(0xa2, "s2"),
+	if_icmpgt(0xa3, "s2"),
+	if_icmple(0xa4, "s2"),
+
 	/**
 	 * Branch if int comparison with zero succeeds.
 	 * <p>
@@ -486,19 +508,25 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK No change }
 	 */
-	iinc(0x84),
+	iinc(0x84, "u1s1"),
+
 	/**
 	 * Load int from local variable.
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
-	iload(0x15),
+	iload(0x15, "u1"),
+
 	/**
-	 * Load int from local variable.
+	 * Load int from local variable with index 0.
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
-	iload_0(0x1a),
+	iload_0(0x1a, ""),
+	iload_1(0x1b, ""),
+	iload_2(0x1c, ""),
+	iload_3(0x1d, ""),
+
 	/**
 	 * Multiply int.
 	 * <p>
@@ -535,12 +563,14 @@ public enum Opcode {
 	 * {@code STACK ..., objectref, [arg1, [arg2 ...]] -> ... }
 	 */
 	invokespecial(0xb7),
+
 	/**
 	 * Invoke a class (static) method.
 	 * <p>
 	 * {@code STACK ..., [arg1, [arg2 ...]] -> ... }
 	 */
-	invokestatic(0xb8),
+	invokestatic(0xb8, "u2"),
+
 	/**
 	 * Invoke instance method; dispatch based on class.
 	 * <p>
@@ -577,12 +607,14 @@ public enum Opcode {
 	 * {@code STACK ..., value1, value2 -> ..., result }
 	 */
 	ishr(0x7a),
+
 	/**
 	 * Store int into local variable.
 	 * <p>
 	 * {@code STACK ..., value -> ... }
 	 */
-	istore(0x36),
+	istore(0x36, "u1"),
+
 	/**
 	 * Store int into local variable.
 	 * <p>

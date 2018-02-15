@@ -1,5 +1,8 @@
 package pl.marcinchwedczuk.cjava.bytecode;
 
+import com.google.common.primitives.UnsignedBytes;
+import com.google.common.primitives.UnsignedInteger;
+import com.google.common.primitives.UnsignedInts;
 import org.junit.Ignore;
 import org.junit.Test;
 import pl.marcinchwedczuk.cjava.bytecode.instruction.Instruction;
@@ -15,7 +18,6 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 
 public class JavaClassFileReader_InstructionsTests extends BaseJavaClassFileReaderTests {
 
-	@Ignore
 	@Test
 	public void canReadCodeAttribute() throws Exception {
 		JavaClassFile classWithCode = load(Fixture_ClassWithCode.class);
@@ -41,5 +43,37 @@ public class JavaClassFileReader_InstructionsTests extends BaseJavaClassFileRead
 		assertThat(instructions.size())
 				.isEqualTo(92);
 
+	}
+
+	@Test
+	public void demoHowJavaBinaryOperatorsWork() throws Exception {
+		byte b = UnsignedBytes.parseUnsignedByte("11100010", 2);
+		byte b2 = UnsignedBytes.parseUnsignedByte("10000111", 2);
+
+		int i = Byte.toUnsignedInt(b);
+		int i2 = Byte.toUnsignedInt(b2);
+		int result = (i << 8) | i2;
+
+		assertThat(Integer.toString(result, 2))
+				.isEqualTo("1110001010000111");
+	}
+
+	@Test
+	public void demoHowJavaBinaryOperatorsWork2() throws Exception {
+		byte b = UnsignedBytes.parseUnsignedByte("11100010", 2);
+		byte b2 = UnsignedBytes.parseUnsignedByte("10000111", 2);
+
+		int i = Byte.toUnsignedInt(b);
+		int i2 = Byte.toUnsignedInt(b2);
+		int result = (i << 8) | i2;
+
+		assertThat(Integer.toString(result, 2))
+				.isEqualTo("1110001010000111");
+
+		short s = (short)result;
+		assertThat(UnsignedInts.toString(Short.toUnsignedInt(s), 2))
+				.isEqualTo("1110001010000111");
+
+		assertThat(s).isLessThan((short)0);
 	}
 }
