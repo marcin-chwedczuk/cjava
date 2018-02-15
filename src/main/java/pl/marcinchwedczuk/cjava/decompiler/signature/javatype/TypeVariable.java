@@ -1,6 +1,10 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
 
 public class TypeVariable implements JavaType {
+	public static TypeVariable forTypeParameter(String typeParameterName) {
+		return new TypeVariable(typeParameterName);
+	}
+
 	private final String identifier;
 
 	public TypeVariable(String identifier) {

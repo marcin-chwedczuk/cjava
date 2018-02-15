@@ -56,7 +56,7 @@ public class ClassFormatter implements SourceCodeFormatter {
 					.printNewLine()
 					.printIndent();
 
-			new FieldSouceCodeFormatter(fieldDeclarationAst, codeWriter)
+			new FieldSourceCodeFormatter(fieldDeclarationAst, codeWriter)
 					.convertAstToJavaCode();
 		}
 

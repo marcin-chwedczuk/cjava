@@ -1,5 +1,7 @@
 package pl.marcinchwedczuk.cjava.sourcecode.formatter;
 
+import java.util.function.Consumer;
+
 public class JavaCodeWriter {
 	private final StringBuilder sourceCode;
 	private int indentationLevel;
@@ -12,9 +14,18 @@ public class JavaCodeWriter {
 		return sourceCode.toString();
 	}
 
+	public JavaCodeWriter print(long num) {
+		print(String.valueOf(num));
+		return this;
+	}
+
 	public JavaCodeWriter print(String text) {
 		sourceCode.append(text);
 		return this;
+	}
+
+	public Runnable printAction(String text) {
+		return () -> this.print(text);
 	}
 
 	public JavaCodeWriter increaseIndent(int numberOfTabs) {

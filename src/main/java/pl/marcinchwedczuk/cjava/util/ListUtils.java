@@ -5,8 +5,11 @@ import com.google.common.collect.Lists;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 public class ListUtils {
 	private ListUtils() { }
+
 
 	public static <T> List<T> withoutLastElement(List<T> source) {
 		if (source.size() <= 1) {
@@ -16,8 +19,16 @@ public class ListUtils {
 		return source.subList(0, source.size()-1);
 	}
 
+	public static <T> List<T> withoutLastElement(T[] source) {
+		return withoutLastElement(asList(source));
+	}
+
 	public static <T> T lastElement(List<T> source) {
 		return source.get(source.size()-1);
+	}
+
+	public static <T> T lastElement(T[] source) {
+		return lastElement(asList(source));
 	}
 
 	public static <T> List<T> readOnlyCopy(List<T> source) {

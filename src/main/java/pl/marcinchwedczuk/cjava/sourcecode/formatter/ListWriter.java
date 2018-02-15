@@ -55,8 +55,8 @@ public class ListWriter<T> {
 		for (int i = 0; i < list.size(); i++) {
 			//@formatter:off
 			ElementPosition position =
-					(i == 0) ? ElementPosition.FIRST :
 					(i == LAST_INDEX) ? ElementPosition.LAST :
+					(i == 0) ? ElementPosition.FIRST :
 					ElementPosition.MIDDLE;
 			//@formatter:on
 

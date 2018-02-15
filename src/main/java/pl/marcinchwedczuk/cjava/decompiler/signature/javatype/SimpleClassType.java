@@ -3,12 +3,17 @@ package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 
 public class SimpleClassType {
 	public static SimpleClassType fromClassName(String className) {
 		return new SimpleClassType(className, emptyList());
+	}
+
+	public static SimpleClassType forGenericClass(String className, TypeArgument... typeArguments) {
+		return new SimpleClassType(className, asList(typeArguments));
 	}
 
 	private final String className;

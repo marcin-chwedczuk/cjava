@@ -47,7 +47,8 @@ public class FieldFormatterTests {
 
 	private String format(FieldDeclarationAst declarationAst) {
 		JavaCodeWriter codeWriter = new JavaCodeWriter();
-		new FieldSouceCodeFormatter(declarationAst, codeWriter)
+
+		new FieldSourceCodeFormatter(declarationAst, codeWriter)
 				.convertAstToJavaCode();
 
 		return codeWriter.dumpSourceCode();

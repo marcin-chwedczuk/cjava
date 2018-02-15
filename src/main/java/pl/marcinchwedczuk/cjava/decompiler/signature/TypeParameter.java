@@ -1,5 +1,6 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature;
 
+import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ClassType;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
 
 import javax.annotation.Nullable;
@@ -9,12 +10,21 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 import static pl.marcinchwedczuk.cjava.util.ListUtils.readOnlyCopy;
 
 public class TypeParameter {
+
+	public static TypeParameter basic(String parameterName) {
+		return new TypeParameter(
+				parameterName,
+				ClassType.fromPackageAndClassName("java.lang", "Object"),
+				emptyList());
+	}
+
 	private final String name;
 	@Nullable
 	private final JavaType classBound;
@@ -54,4 +64,5 @@ public class TypeParameter {
 
 		return name.concat(parameterBound);
 	}
+
 }

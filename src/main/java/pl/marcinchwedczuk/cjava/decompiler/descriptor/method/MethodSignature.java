@@ -2,6 +2,7 @@ package pl.marcinchwedczuk.cjava.decompiler.descriptor.method;
 
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.util.ListUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -10,9 +11,19 @@ import java.util.Objects;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
+import static pl.marcinchwedczuk.cjava.util.ListUtils.lastElement;
 import static pl.marcinchwedczuk.cjava.util.ListUtils.readOnlyCopy;
+import static pl.marcinchwedczuk.cjava.util.ListUtils.withoutLastElement;
 
 public class MethodSignature {
+	public static MethodSignature basic(JavaType... types) {
+		return new MethodSignature(withoutLastElement(types), lastElement(types));
+	}
+
+	public static MethodSignatureBuilder builder() {
+		return new MethodSignatureBuilder();
+	}
+
 	private final List<JavaType> parameterTypes;
 	private final JavaType returnType;
 	private final List<TypeParameter> genericTypeParameters;

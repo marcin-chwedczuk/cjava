@@ -1,16 +1,20 @@
 package pl.marcinchwedczuk.cjava.ast;
 
+import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
 
+import java.util.List;
 import java.util.Objects;
 
+import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 
 public class MethodDeclarationAst {
 	private final String methodName;
 	private final MethodSignature methodSignature;
-	private boolean isStatic;
+
 	private Visibility visibility;
+	private boolean isStatic;
 	private boolean isAbstract;
 	private boolean isFinal;
 	private boolean isNative;
@@ -18,9 +22,12 @@ public class MethodDeclarationAst {
 	private boolean isVarargs;
 	private boolean isStrictFP;
 
+	private List<AnnotationAst> annotations = emptyList();
+
 	public MethodDeclarationAst(String methodName, MethodSignature methodSignature) {
 		this.methodName = requireNonNull(methodName);
 		this.methodSignature = requireNonNull(methodSignature);
+		this.visibility = Visibility.PACKAGE;
 	}
 
 	public String getMethodName() {
@@ -93,5 +100,13 @@ public class MethodDeclarationAst {
 
 	public boolean isStrictFP() {
 		return isStrictFP;
+	}
+
+	public List<AnnotationAst> getAnnotations() {
+		return annotations;
+	}
+
+	public void setAnnotations(List<AnnotationAst> annotations) {
+		this.annotations = annotations;
 	}
 }
