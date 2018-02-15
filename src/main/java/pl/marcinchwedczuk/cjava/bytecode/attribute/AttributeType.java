@@ -6,6 +6,7 @@ public enum AttributeType {
 	SIGNATURE("Signature"),
 	SYNTHETIC("Synthetic"),
 	RUNTIME_VISIBLE_ANNOTATIONS("RuntimeVisibleAnnotations"),
+	CODE("Code"),
 
 	UNKNOWN(null);
 

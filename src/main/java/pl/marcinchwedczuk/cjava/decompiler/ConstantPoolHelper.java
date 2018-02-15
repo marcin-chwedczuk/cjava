@@ -18,6 +18,10 @@ public class ConstantPoolHelper {
 		this.constantPool = Objects.requireNonNull(constantPool);
 	}
 
+	public ConstantPool getConstantPool() {
+		return constantPool;
+	}
+
 	public ClassType getClassName(ConstantPoolIndex indexToClassConstant) {
 		ClassConstant classConstant = constantPool.getClass(indexToClassConstant);
 		String classBinaryName = getString(classConstant.getName());

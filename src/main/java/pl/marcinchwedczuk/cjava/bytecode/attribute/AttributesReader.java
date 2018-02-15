@@ -54,12 +54,19 @@ public class AttributesReader {
 			case RUNTIME_VISIBLE_ANNOTATIONS:
 				return readRuntimeVisibleAnnotationsAttribute();
 
+			case CODE:
+				return readCodeAttribute();
+
 			case SYNTHETIC:
 			case UNKNOWN:
 				return readUnknownAttribute(attributeNameIndex);
 		}
 
 		throw new AssertionError("Unsupported attribute type: " + type + ".");
+	}
+
+	private Attribute readCodeAttribute() throws IOException {
+		return new CodeAttributeReader(classFileReader, constantPool).read();
 	}
 
 	private Attribute readRuntimeVisibleAnnotationsAttribute() throws IOException {

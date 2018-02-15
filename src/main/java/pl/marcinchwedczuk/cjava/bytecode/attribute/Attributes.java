@@ -33,4 +33,8 @@ public class Attributes {
 				.map(attributeClass::cast)
 				.findFirst();
 	}
+
+	public Optional<CodeAttribute> findCodeAttribute() {
+		return findOne(CodeAttribute.class);
+	}
 }
