@@ -28,6 +28,14 @@ public class SimpleClassType {
 		this(className, emptyList());
 	}
 
+	public String getClassName() {
+		return className;
+	}
+
+	public List<TypeArgument> getTypeArguments() {
+		return typeArguments;
+	}
+
 	public String asSourceCodeString() {
 		StringBuilder javaType = new StringBuilder();
 

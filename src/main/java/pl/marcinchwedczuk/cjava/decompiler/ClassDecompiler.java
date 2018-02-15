@@ -60,6 +60,11 @@ public class ClassDecompiler {
 				new MethodDecompiler(classFile.getClassMethods(), cp)
 					.decompile();
 
+		String className = declaration.getClassName().computeSimpleClassName();
+		methodDeclarations.stream()
+				.filter(MethodDeclarationAst::isConstructor)
+				.forEach(m -> m.fillConstructorName(className));
+
 		declaration.setMethods(methodDeclarations);
 	}
 }

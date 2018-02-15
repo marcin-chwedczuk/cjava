@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FieldFormatterTests {
 	@Test
-	public void canFormatSimpleField() throws Exception {
+	public void canPrintJavaCodeForSimpleField() throws Exception {
 		FieldDeclarationAst declarationAst = new FieldDeclarationAst(
 				ClassType.fromPackageAndClassName("java.lang", "Boolean"),
 				"isValid");
@@ -26,7 +26,7 @@ public class FieldFormatterTests {
 	}
 
 	@Test
-	public void canFormatFieldWithAnnotations() throws Exception {
+	public void canPrintFieldAnnotations() throws Exception {
 		FieldDeclarationAst declarationAst = new FieldDeclarationAst(
 				ClassType.fromPackageAndClassName("java.lang", "Boolean"),
 				"propertyA");

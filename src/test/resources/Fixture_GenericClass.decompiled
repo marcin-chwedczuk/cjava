@@ -8,4 +8,14 @@ public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericClas
 	private ParamA key;
 
 	private ParamB values;
+
+	public Fixture_GenericClass() { }
+
+	public ParamA getKey() { }
+
+	public void setKey(ParamA arg1) { }
+
+	public ParamB getValues() { }
+
+	public void setValues(ParamB arg1) { }
 }

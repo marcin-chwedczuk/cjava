@@ -44,6 +44,7 @@ public class MethodDecompiler {
 		methodDeclaration.setVisibility(visibility);
 
 		addModifiers(methodDeclaration, methodInfo.getAccessFlags());
+		markConstructors(methodDeclaration);
 
 		return methodDeclaration;
 	}
@@ -109,4 +110,9 @@ public class MethodDecompiler {
 		}
 	}
 
+	private void markConstructors(MethodDeclarationAst methodDeclaration) {
+		if ("<init>".equals(methodDeclaration.getMethodName())) {
+			methodDeclaration.setConstructor(true);
+		}
+	}
 }

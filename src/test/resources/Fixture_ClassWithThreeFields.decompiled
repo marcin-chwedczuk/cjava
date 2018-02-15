@@ -7,4 +7,6 @@ public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithTh
 	private int field2;
 
 	protected final java.lang.Boolean field3;
+
+	public Fixture_ClassWithThreeFields(java.lang.Boolean arg1) { }
 }

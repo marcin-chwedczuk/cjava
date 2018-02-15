@@ -1,5 +1,7 @@
 package pl.marcinchwedczuk.cjava.ast;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
 
@@ -10,7 +12,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 
 public class MethodDeclarationAst {
-	private final String methodName;
+	private String methodName;
 	private final MethodSignature methodSignature;
 
 	private Visibility visibility;
@@ -23,6 +25,7 @@ public class MethodDeclarationAst {
 	private boolean isStrictFP;
 
 	private List<AnnotationAst> annotations = emptyList();
+	private boolean constructor;
 
 	public MethodDeclarationAst(String methodName, MethodSignature methodSignature) {
 		this.methodName = requireNonNull(methodName);
@@ -32,6 +35,11 @@ public class MethodDeclarationAst {
 
 	public String getMethodName() {
 		return methodName;
+	}
+
+	public void fillConstructorName(String className) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(className));
+		methodName = className;
 	}
 
 	public MethodSignature getMethodSignature() {
@@ -108,5 +116,13 @@ public class MethodDeclarationAst {
 
 	public void setAnnotations(List<AnnotationAst> annotations) {
 		this.annotations = annotations;
+	}
+
+	public void setConstructor(boolean constructor) {
+		this.constructor = constructor;
+	}
+
+	public boolean isConstructor() {
+		return constructor;
 	}
 }

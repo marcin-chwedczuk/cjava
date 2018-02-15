@@ -37,7 +37,7 @@ public class MethodDecompilerTests extends BaseDecompilerTests {
 		assertThat(foo.getVisibility())
 				.isEqualTo(Visibility.PUBLIC);
 
-		MethodDeclarationAst constructor = findMethodByName(classDeclaration, "<init>");
+		MethodDeclarationAst constructor = findMethodByName(classDeclaration, "Fixture_ClassWithTwoMethods");
 		assertThat(constructor.getMethodSignature().asJavaSoucrceCode())
 				.isEqualTo("void()");
 		assertThat(constructor.getVisibility())

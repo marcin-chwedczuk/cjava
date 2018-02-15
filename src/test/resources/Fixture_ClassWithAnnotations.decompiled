@@ -2,4 +2,6 @@
 @pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_EmptyAnnotation
 public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithAnnotations
 		extends java.lang.Object {
+
+	public Fixture_ClassWithAnnotations() { }
 }

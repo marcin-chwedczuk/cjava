@@ -31,7 +31,7 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 		printMethodTypeParameters(methodSignature.getGenericTypeParameters());
 		printMethodSignature(methodSignature);
 
-		codeWriter.print("{ }");
+		printMethodBody();
 	}
 
 	private void printModifiers() {
@@ -77,10 +77,11 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 
 	private void printMethodSignature(MethodSignature methodSignature) {
 		JavaType returnType = methodSignature.getReturnType();
+		boolean isConstructor = methodDeclaration.isConstructor();
 
 		codeWriter
-				.print(returnType.asSourceCodeString())
-				.print(" ")
+				.printIf(!isConstructor, returnType.asSourceCodeString())
+				.printIf(!isConstructor, " ")
 				.print(methodDeclaration.getMethodName());
 
 		AtomicLong paramCounter = new AtomicLong(1);
@@ -129,6 +130,14 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 		else {
 			return new ArrayType(
 					arrayType.getDimensions()-1, arrayType.getElementType());
+		}
+	}
+
+	private void printMethodBody() {
+		if (methodDeclaration.isAbstract()) {
+			codeWriter.print(";");
+		} else {
+			codeWriter.print(" { }");
 		}
 	}
 }

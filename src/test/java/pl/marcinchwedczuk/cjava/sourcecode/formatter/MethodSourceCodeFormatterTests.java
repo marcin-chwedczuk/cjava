@@ -92,7 +92,7 @@ public class MethodSourceCodeFormatterTests {
 
 		methodDeclaration.setAbstract(true);
 		assertThat(format(methodDeclaration))
-				.isEqualToIgnoringWhitespace("abstract void m() { }");
+				.isEqualToIgnoringWhitespace("abstract void m();");
 		methodDeclaration.setAbstract(false);
 
 		methodDeclaration.setFinal(true);
@@ -120,6 +120,21 @@ public class MethodSourceCodeFormatterTests {
 		String sourceCode = format(methodDeclaration);
 
 		String expected = "void methodName(int... args) { }";
+		assertThat(sourceCode)
+				.isEqualToIgnoringWhitespace(expected);
+	}
+
+	@Test
+	public void canPrintConstructor() throws Exception {
+		MethodDeclarationAst methodDeclaration = new MethodDeclarationAst(
+				"MyClass",
+				MethodSignature.basic(VOID));
+
+		methodDeclaration.setConstructor(true);
+
+		String sourceCode = format(methodDeclaration);
+
+		String expected = "MyClass() { }";
 		assertThat(sourceCode)
 				.isEqualToIgnoringWhitespace(expected);
 	}

@@ -1,0 +1,9 @@
+public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithTwoMethods
+	extends java.lang.Object {
+
+	public Fixture_ClassWithTwoMethods() { }
+
+	public static void main(java.lang.String[] arg1) { }
+
+	public int foo() { }
+}

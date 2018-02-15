@@ -2,6 +2,7 @@ package pl.marcinchwedczuk.cjava.sourcecode.formatter;
 
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.FieldDeclarationAst;
+import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 
 import static java.util.Objects.requireNonNull;
@@ -23,6 +24,7 @@ public class ClassFormatter implements SourceCodeFormatter {
 		codeWriter.print(" {");
 
 		printClassFields();
+		printClassMethods();
 
 		codeWriter
 				.printNewLine()
@@ -57,6 +59,22 @@ public class ClassFormatter implements SourceCodeFormatter {
 					.printIndent();
 
 			new FieldSourceCodeFormatter(fieldDeclarationAst, codeWriter)
+					.convertAstToJavaCode();
+		}
+
+		codeWriter.decreaseIndent(1);
+	}
+
+	private void printClassMethods() {
+		codeWriter.increaseIndent(1);
+
+		for (MethodDeclarationAst methodDeclaration : classDeclarationAst.getMethods()) {
+			codeWriter
+					.printNewLine()
+					.printNewLine()
+					.printIndent();
+
+			new MethodSourceCodeFormatter(methodDeclaration, codeWriter)
 					.convertAstToJavaCode();
 		}
 

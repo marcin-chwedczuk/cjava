@@ -1,6 +1,7 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
 
 import com.google.common.collect.Lists;
+import pl.marcinchwedczuk.cjava.util.ListUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,5 +51,10 @@ public class ClassType implements JavaType {
 
 	public List<SimpleClassType> getClasses() {
 		return classes;
+	}
+
+	public String computeSimpleClassName() {
+		SimpleClassType currentClass = ListUtils.lastElement(classes);
+		return currentClass.getClassName();
 	}
 }
