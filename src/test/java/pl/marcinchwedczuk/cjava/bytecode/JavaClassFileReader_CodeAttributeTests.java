@@ -6,13 +6,11 @@ import pl.marcinchwedczuk.cjava.bytecode.method.MethodInfo;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithCode;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-public class JavaClassFileReader_CodeAttributeTests {
-	// Fixture_ClassWithCode
-
-
+public class JavaClassFileReader_CodeAttributeTests extends BaseJavaClassFileReaderTests {
 	@Test
 	public void canReadCodeAttribute() throws Exception {
 		JavaClassFile classWithCode = load(Fixture_ClassWithCode.class);
@@ -25,6 +23,8 @@ public class JavaClassFileReader_CodeAttributeTests {
 				.getAttributes()
 				.findCodeAttribute()
 				.get();
+
+		System.out.println(Arrays.toString(codeAttribute.getCode().getBytes()));
 
 		// stack=4, locals=6, args_size=3
 		assertThat(codeAttribute.getCode().getMaxStack())
@@ -54,14 +54,5 @@ public class JavaClassFileReader_CodeAttributeTests {
 
 		assertThat(codeAttribute.getAttributes().getCount())
 				.isEqualTo(3);
-	}
-
-	private JavaClassFile load(Class<?> klass) throws IOException {
-		JavaClassFileLoader loader = new JavaClassFileLoader();
-
-		byte[] klassBytes =
-				TestUtils.readClassBytes(Fixture_ClassWithCode.class);
-
-		return loader.load(klassBytes);
 	}
 }

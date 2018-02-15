@@ -21,34 +21,11 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static pl.marcinchwedczuk.cjava.bytecode.TestUtils.idx;
 
-public class JavaClassFileReaderTests {
-	private JavaClassFileLoader loader;
-
-	private byte[] Fixture_EmptyClass_Bytes;
-	private byte[] Fixture_EmptyClassImplementingTwoInterfaces;
-	private byte[] Fixture_ClassWithThreeFields;
-	private byte[] Fixture_ClassWithTwoMethods;
-
-	@Before
-	public void before() {
-		Fixture_EmptyClass_Bytes =
-				TestUtils.readClassBytes(Fixture_EmptyClass.class);
-
-		Fixture_EmptyClassImplementingTwoInterfaces =
-				TestUtils.readClassBytes(Fixture_EmptyClassImplementingTwoInterfaces.class);
-
-		Fixture_ClassWithThreeFields =
-				TestUtils.readClassBytes(Fixture_ClassWithThreeFields.class);
-
-		Fixture_ClassWithTwoMethods =
-				TestUtils.readClassBytes(Fixture_ClassWithTwoMethods.class);
-
-		loader = new JavaClassFileLoader();
-	}
+public class JavaClassFileReaderTests extends BaseJavaClassFileReaderTests {
 
 	@Test
 	public void canReadHeaderFields() throws Exception {
-		JavaClassFile classFile = loader.load(Fixture_EmptyClass_Bytes);
+		JavaClassFile classFile = load(Fixture_EmptyClass.class);
 
 		assertThat(classFile.getMagicNumber())
 				.as("magic_number")
@@ -70,7 +47,7 @@ public class JavaClassFileReaderTests {
 
 	@Test
 	public void canReadConstantPool() throws IOException {
-		JavaClassFile classFile = loader.load(Fixture_EmptyClass_Bytes);
+		JavaClassFile classFile = load(Fixture_EmptyClass.class);
 		ConstantPool constantPool = classFile.getConstantPool();
 
 		assertThat(constantPool.getMethodRef(1))
@@ -100,7 +77,7 @@ public class JavaClassFileReaderTests {
 
 	@Test
 	public void canReadAccessFlags() throws Exception {
-		JavaClassFile classFile = loader.load(Fixture_EmptyClass_Bytes);
+		JavaClassFile classFile = load(Fixture_EmptyClass.class);
 
 		assertThat(classFile.getAccessFlags())
 				.containsExactly(AccessFlag.ACC_PUBLIC, AccessFlag.ACC_SUPER);
@@ -108,7 +85,7 @@ public class JavaClassFileReaderTests {
 
 	@Test
 	public void canReadThisAndSuperClass() throws IOException {
-		JavaClassFile classFile = loader.load(Fixture_EmptyClass_Bytes);
+		JavaClassFile classFile = load(Fixture_EmptyClass.class);
 
 		assertThat(classFile.getThisClass())
 				.as("this_class")
@@ -121,7 +98,7 @@ public class JavaClassFileReaderTests {
 
 	@Test
 	public void canReadEmptyInterfacesList() throws IOException {
-		JavaClassFile classFile = loader.load(Fixture_EmptyClass_Bytes);
+		JavaClassFile classFile = load(Fixture_EmptyClass.class);
 
 		assertThat(classFile.getInterfaces().getCount())
 				.isZero();
@@ -132,7 +109,7 @@ public class JavaClassFileReaderTests {
 
 	@Test
 	public void canReadInterfacesList() throws IOException {
-		JavaClassFile classFile = loader.load(Fixture_EmptyClassImplementingTwoInterfaces);
+		JavaClassFile classFile = load(Fixture_EmptyClassImplementingTwoInterfaces.class);
 
 		assertThat(classFile.getInterfaces().getCount())
 				.isEqualTo(2);
@@ -143,7 +120,7 @@ public class JavaClassFileReaderTests {
 
 	@Test
 	public void canReadFields() throws Exception {
-		JavaClassFile classFile = loader.load(Fixture_ClassWithThreeFields);
+		JavaClassFile classFile = load(Fixture_ClassWithThreeFields.class);
 
 		Fields fields = classFile.getClassFields();
 
@@ -190,7 +167,7 @@ public class JavaClassFileReaderTests {
 
 	@Test
 	public void canReadMethods() throws IOException {
-		JavaClassFile classFile = loader.load(Fixture_ClassWithTwoMethods);
+		JavaClassFile classFile = load(Fixture_ClassWithTwoMethods.class);
 
 		Methods methods = classFile.getClassMethods();
 
@@ -228,7 +205,7 @@ public class JavaClassFileReaderTests {
 
 	@Test
 	public void canReadAttributes() throws Exception {
-		JavaClassFile classFile = loader.load(Fixture_ClassWithTwoMethods);
+		JavaClassFile classFile = load(Fixture_ClassWithTwoMethods.class);
 
 		assertThat(classFile.getAttributes())
 				.isNotNull();
