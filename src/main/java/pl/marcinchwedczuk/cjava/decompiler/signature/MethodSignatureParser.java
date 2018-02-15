@@ -8,7 +8,6 @@ import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
@@ -29,7 +28,7 @@ public class MethodSignatureParser {
 		List<JavaType> throwsExceptions = parseThrows();
 
 		return new MethodSignature(
-				genericTypeParameters, parameterTypes, returnType, throwsExceptions);
+				genericTypeParameters, returnType, parameterTypes, throwsExceptions);
 	}
 
 	private JavaType parseReturnType() {

@@ -21,7 +21,7 @@ public class MethodSourceCodeFormatterTests {
 	public void canPrintMethodNameReturnAndParameterTypes() throws Exception {
 		MethodDeclarationAst methodDeclaration = new MethodDeclarationAst(
 				"methodName",
-				MethodSignature.basic(INT, INT, VOID));
+				MethodSignature.basic(VOID, INT, INT));
 
 		String sourceCode = format(methodDeclaration);
 
@@ -106,6 +106,22 @@ public class MethodSourceCodeFormatterTests {
 		methodDeclaration.setStrictFP(true);
 		assertThat(format(methodDeclaration))
 				.isEqualToIgnoringWhitespace("synchronized native strictfp void m() { }");
+	}
+
+	@Test
+	public void canPrintVarargMethodSignature() {
+		JavaType arrayOfInt = new ArrayType(1, BaseType.INT);
+
+		MethodDeclarationAst methodDeclaration = new MethodDeclarationAst(
+				"methodName",
+				MethodSignature.basic(VOID, arrayOfInt));
+		methodDeclaration.setVarargs(true);
+
+		String sourceCode = format(methodDeclaration);
+
+		String expected = "void methodName(int... args) { }";
+		assertThat(sourceCode)
+				.isEqualToIgnoringWhitespace(expected);
 	}
 
 	private String format(MethodDeclarationAst methodDeclaration) {

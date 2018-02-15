@@ -1,3 +1,5 @@
 - Formatting methods + integration tests
 - Generic field declaration + tests
-- Method varargs parameter
+- Method parameter names should be taken from AST structure.
+    Compute them either at decompiling time or as a separate pass
+    after decompilation.

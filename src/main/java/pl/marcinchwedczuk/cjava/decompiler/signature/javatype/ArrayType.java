@@ -13,6 +13,14 @@ public class ArrayType implements JavaType {
 		this.type = type;
 	}
 
+	public int getDimensions() {
+		return dimensions;
+	}
+
+	public JavaType getElementType() {
+		return type;
+	}
+
 	@Override
 	public String asSourceCodeString() {
 		String suffix = IntStream.rangeClosed(1, dimensions)

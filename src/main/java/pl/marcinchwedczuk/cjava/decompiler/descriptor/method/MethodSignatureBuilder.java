@@ -1,13 +1,8 @@
 package pl.marcinchwedczuk.cjava.decompiler.descriptor.method;
 
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.BaseType;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
-import pl.marcinchwedczuk.cjava.util.ListUtils;
-import sun.reflect.FieldInfo;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -37,8 +32,7 @@ public class MethodSignatureBuilder {
 	public MethodSignature build() {
 		return new MethodSignature(
 				genericTypeParameters,
-				parameterTypes,
-				returnType,
+				returnType, parameterTypes,
 				throwsExceptions);
 	}
 
