@@ -933,12 +933,14 @@ public enum Opcode {
 	 * {@code STACK No change }
 	 */
 	ret(0xa9),
+
 	/**
 	 * Return void from method.
 	 * <p>
 	 * {@code STACK ... -> [empty] }
 	 */
-	return_(0xb1),
+	return_(0xb1, ""),
+
 	/**
 	 * Load short from array.
 	 * <p>

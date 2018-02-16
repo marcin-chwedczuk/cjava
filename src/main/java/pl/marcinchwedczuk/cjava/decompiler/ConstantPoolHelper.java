@@ -49,4 +49,20 @@ public class ConstantPoolHelper {
 		return new MethodDescriptorParser(
 				new TokenStream(methodDescriptor)).parse();
 	}
+
+	public FieldRefConstant getFieldRef(int index) {
+		return constantPool.getFieldRef(index);
+	}
+
+	public NameAndTypeConstant getNameAndType(ConstantPoolIndex index) {
+		return constantPool.getNameAndType(index);
+	}
+
+	public MethodRefConstant getMethodRef(int index) {
+		return constantPool.getMethodRef(index);
+	}
+
+	public Constant getAny(int index) {
+		return constantPool.getAny(index);
+	}
 }

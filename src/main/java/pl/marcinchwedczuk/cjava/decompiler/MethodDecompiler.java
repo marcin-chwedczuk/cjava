@@ -2,6 +2,8 @@ package pl.marcinchwedczuk.cjava.decompiler;
 
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.Visibility;
+import pl.marcinchwedczuk.cjava.ast.statement.StatementBlockAst;
+import pl.marcinchwedczuk.cjava.bytecode.attribute.CodeAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.SignatureAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.fields.FieldAccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.method.MethodAccessFlag;
@@ -46,7 +48,23 @@ public class MethodDecompiler {
 		addModifiers(methodDeclaration, methodInfo.getAccessFlags());
 		markConstructors(methodDeclaration);
 
+		decompileMethodBody(methodDeclaration, methodInfo);
+
 		return methodDeclaration;
+	}
+
+	private void decompileMethodBody(MethodDeclarationAst methodDeclaration, MethodInfo methodInfo) {
+		// TODO: Handle abstract and interface methods
+
+		CodeAttribute codeAttribute = methodInfo.getAttributes()
+				.findCodeAttribute()
+				.get();
+
+		StatementBlockAst methodBody =
+				new InstructionDecompiler(codeAttribute, methodDeclaration, cp)
+					.decompile();
+
+		methodDeclaration.setMethodBody(methodBody);
 	}
 
 	private MethodSignature decompileMethodSignature(MethodInfo methodInfo) {

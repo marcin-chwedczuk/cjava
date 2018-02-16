@@ -78,18 +78,4 @@ public class MethodDecompilerTests extends BaseDecompilerTests {
 		assertThat(throwsSometingSignature.getThrowsExceptions().get(0).asSourceCodeString())
 				.isEqualTo("T");
 	}
-
-	private MethodDeclarationAst findMethodByName(ClassDeclarationAst classDeclaration, String methodName) {
-		Optional<MethodDeclarationAst> methodDeclarationOpt = classDeclaration
-				.getMethods()
-				.stream()
-				.filter(m -> m.getMethodName().equals(methodName))
-				.findFirst();
-
-		if (!methodDeclarationOpt.isPresent()) {
-			fail("Cannot find method with name: " + methodName + ".");
-		}
-
-		return methodDeclarationOpt.get();
-	}
 }

@@ -3,6 +3,7 @@ package pl.marcinchwedczuk.cjava.ast;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
+import pl.marcinchwedczuk.cjava.ast.statement.StatementBlockAst;
 import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import static java.util.Objects.requireNonNull;
 public class MethodDeclarationAst {
 	private String methodName;
 	private final MethodSignature methodSignature;
+	private StatementBlockAst methodBody;
 
 	private Visibility visibility;
 	private boolean isStatic;
@@ -124,5 +126,13 @@ public class MethodDeclarationAst {
 
 	public boolean isConstructor() {
 		return constructor;
+	}
+
+	public StatementBlockAst getMethodBody() {
+		return methodBody;
+	}
+
+	public void setMethodBody(StatementBlockAst methodBody) {
+		this.methodBody = methodBody;
 	}
 }

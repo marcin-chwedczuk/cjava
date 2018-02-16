@@ -1,6 +1,7 @@
 package pl.marcinchwedczuk.cjava.decompiler.descriptor.method;
 
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
+import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.BaseType;
 import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
 
 import java.util.List;
@@ -35,6 +36,10 @@ public class MethodSignature {
 		this.returnType = requireNonNull(returnType);
 		this.genericTypeParameters = readOnlyCopy(genericTypeParameters);
 		this.throwsExceptions = readOnlyCopy(throwsExceptions);
+	}
+
+	public boolean hasVoidReturnType() {
+		return BaseType.VOID.equals(returnType);
 	}
 
 	public MethodSignature(List<JavaType> parameterTypes, JavaType returnType) {
@@ -93,5 +98,9 @@ public class MethodSignature {
 		}
 
 		return javaSignature.toString();
+	}
+
+	public int getNumberOfParameters() {
+		return parameterTypes.size();
 	}
 }

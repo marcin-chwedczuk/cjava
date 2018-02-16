@@ -2,7 +2,6 @@ package pl.marcinchwedczuk.cjava.bytecode.constantpool;
 
 import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -58,5 +57,17 @@ public class ConstantPool {
 
 	public IntegerConstant getInteger(ConstantPoolIndex index) {
 		return get(index.asInteger(), IntegerConstant.class);
+	}
+
+	public FieldRefConstant getFieldRef(int index) {
+		return get(index, FieldRefConstant.class);
+	}
+
+	public NameAndTypeConstant getNameAndType(ConstantPoolIndex index) {
+		return getNameAndType(index.asInteger());
+	}
+
+	public Constant getAny(int index) {
+		return constants.get(index-1);
 	}
 }
