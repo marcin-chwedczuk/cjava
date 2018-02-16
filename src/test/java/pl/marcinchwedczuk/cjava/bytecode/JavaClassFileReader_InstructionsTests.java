@@ -5,9 +5,7 @@ import com.google.common.primitives.UnsignedInteger;
 import com.google.common.primitives.UnsignedInts;
 import org.junit.Ignore;
 import org.junit.Test;
-import pl.marcinchwedczuk.cjava.bytecode.instruction.Instruction;
-import pl.marcinchwedczuk.cjava.bytecode.instruction.InstructionReader;
-import pl.marcinchwedczuk.cjava.bytecode.instruction.OpcodeMapper;
+import pl.marcinchwedczuk.cjava.bytecode.instruction.*;
 import pl.marcinchwedczuk.cjava.bytecode.method.MethodInfo;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithCode;
 import pl.marcinchwedczuk.cjava.decompiler.ConstantPoolHelper;
@@ -41,7 +39,12 @@ public class JavaClassFileReader_InstructionsTests extends BaseJavaClassFileRead
 		List<Instruction> instructions = reader.readInstructions();
 
 		assertThat(instructions.size())
-				.isEqualTo(92);
+				.isEqualTo(46);
+
+		// Check that signed offsets are properly read
+		SingleOperandInstruction goto5 = (SingleOperandInstruction) instructions.get(14);
+		assertThat(goto5.getOperand())
+				.isEqualTo(-18);
 
 	}
 

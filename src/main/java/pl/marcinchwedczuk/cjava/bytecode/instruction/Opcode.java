@@ -31,42 +31,49 @@ public enum Opcode {
 	 * {@code STACK ... -> ..., objectref }
 	 */
 	aload_0(0x2a),
+
 	/**
 	 * Create new array of reference.
 	 * <p>
 	 * {@code STACK ..., count -> ..., arrayref }
 	 */
-	anewarray(0xbd),
+	anewarray(0xbd, "u2"),
+
 	/**
 	 * Return reference from method.
 	 * <p>
 	 * {@code STACK ..., objectref -> [empty] }
 	 */
 	areturn(0xb0),
+
 	/**
 	 * Get length of array.
 	 * <p>
 	 * {@code STACK ..., arrayref -> ..., length }
 	 */
-	arraylength(0xbe),
+	arraylength(0xbe, ""),
+
 	/**
 	 * Store reference into local variable.
 	 * <p>
 	 * {@code STACK ..., objectref -> ... }
 	 */
-	astore(0x3a),
+	astore(0x3a, "u1"),
+
 	/**
 	 * Store reference into local variable.
 	 * <p>
 	 * {@code STACK ..., objectref -> ... }
 	 */
 	astore_0(0x4b),
+
 	/**
 	 * Throw exception or error.
 	 * <p>
 	 * {@code STACK ..., objectref -> objectref }
 	 */
-	athrow(0xbf),
+	athrow(0xbf, ""),
+
 	/**
 	 * Load byte or boolean from array.
 	 * <p>
@@ -224,12 +231,14 @@ public enum Opcode {
 	 * {@code STACK ..., value1, value2 -> ..., result }
 	 */
 	dsub(0x67),
+
 	/**
 	 * Duplicate the top operand stack value.
 	 * <p>
 	 * {@code STACK ..., value -> ..., value, value }
 	 */
-	dup(0x59),
+	dup(0x59, ""),
+
 	/**
 	 * Duplicate the top operand stack value and insert two values down.
 	 * <p>
@@ -374,18 +383,21 @@ public enum Opcode {
 	 * {@code STACK ..., objectref -> ..., value }
 	 */
 	getfield(0xb4),
+
 	/**
 	 * Get static field from class.
 	 * <p>
 	 * {@code STACK ..., -> ..., value }
 	 */
-	getstatic(0xb2),
+	getstatic(0xb2, "u2"),
+
 	/**
 	 * Branch always.
 	 * <p>
 	 * {@code STACK No change }
 	 */
-	goto_(0xa7),
+	goto_(0xa7, "s2"),
+
 	/**
 	 * Branch always (wide index).
 	 * <p>
@@ -454,12 +466,20 @@ public enum Opcode {
 	 * {@code STACK ..., arrayref, index, value -> ... }
 	 */
 	iastore(0x4f),
+
 	/**
 	 * Push int constant.
 	 * <p>
 	 * {@code STACK ... -> ..., <i> }
 	 */
-	iconst_m1(0x2),
+	iconst_m1(0x2, ""),
+	iconst_0(0x3, ""),
+	iconst_1(0x4, ""),
+	iconst_2(0x5, ""),
+	iconst_3(0x6, ""),
+	iconst_4(0x7, ""),
+	iconst_5(0x8, ""),
+
 	/**
 	 * Divide int.
 	 * <p>
@@ -490,7 +510,13 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK ..., value -> ... }
 	 */
-	ifeq(0x99),
+	ifeq(0x99, "s2"),
+	ifne(0x9a, "s2"),
+	iflt(0x9b, "s2"),
+	ifge(0x9c, "s2"),
+	ifgt(0x9d, "s2"),
+	ifle(0x9e, "s2"),
+
 	/**
 	 * Branch if reference not null.
 	 * <p>
@@ -562,7 +588,7 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK ..., objectref, [arg1, [arg2 ...]] -> ... }
 	 */
-	invokespecial(0xb7),
+	invokespecial(0xb7, "u2"),
 
 	/**
 	 * Invoke a class (static) method.
@@ -576,7 +602,8 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK ..., objectref, [arg1, [arg2 ...]] -> ... }
 	 */
-	invokevirtual(0xb6),
+	invokevirtual(0xb6, "u2"),
+
 	/**
 	 * Boolean OR int.
 	 * <p>
@@ -589,12 +616,14 @@ public enum Opcode {
 	 * {@code STACK ..., value1, value2 -> ..., result }
 	 */
 	irem(0x70),
+
 	/**
 	 * Return int from method.
 	 * <p>
 	 * {@code STACK ..., value -> [empty] }
 	 */
-	ireturn(0xac),
+	ireturn(0xac, ""),
+
 	/**
 	 * Shift left int.
 	 * <p>
@@ -705,12 +734,14 @@ public enum Opcode {
 	 * {@code STACK ... -> ..., <l> }
 	 */
 	lconst_0(0x9),
+
 	/**
 	 * Push item from run-time constant pool.
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
-	ldc(0x12),
+	ldc(0x12, "u1"),
+
 	/**
 	 * Push item from run-time constant pool (wide index).
 	 * <p>
@@ -837,12 +868,14 @@ public enum Opcode {
 	 * {@code STACK ..., count1, [count2, ...] -> ..., arrayref }
 	 */
 	multianewarray(0xc5),
+
 	/**
 	 * Create new object.
 	 * <p>
 	 * {@code STACK ... -> ..., objectref }
 	 */
-	new_(0xbb),
+	new_(0xbb, "u2"),
+
 	/**
 	 * Create new array.
 	 * <p>

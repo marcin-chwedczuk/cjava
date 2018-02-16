@@ -35,6 +35,7 @@ public class InstructionReader {
 	}
 
 	private Instruction readInstruction() {
+		int pc = current;
 		int machineCode = Byte.toUnsignedInt(machineInstructions[current]);
 		current++;
 
@@ -42,20 +43,20 @@ public class InstructionReader {
 		switch (opcode.operands()) {
 			case "":
 				// no operands to read
-				return new BasicInstruction(opcode);
+				return new BasicInstruction(pc, opcode);
 
 			case "u1": {
 				// single operand of type unsigned byte
 				int operand = Byte.toUnsignedInt(machineInstructions[current++]);
-				return new SingleOperandInstruction(opcode, operand);
+				return new SingleOperandInstruction(pc, opcode, operand);
 			}
 
 			case "u2": {
-				// single operand of type *singed* short
+				// single operand of type unsinged short
 				int first = Byte.toUnsignedInt(machineInstructions[current++]);
 				int second = Byte.toUnsignedInt(machineInstructions[current++]);
 				int operand = (first << 8) | second;
-				return new SingleOperandInstruction(opcode, operand);
+				return new SingleOperandInstruction(pc, opcode, operand);
 			}
 
 			case "s2": {
@@ -64,7 +65,7 @@ public class InstructionReader {
 				int second = Byte.toUnsignedInt(machineInstructions[current++]);
 				int operand = (short)((first << 8) | second);
 
-				return new SingleOperandInstruction(opcode, operand);
+				return new SingleOperandInstruction(pc, opcode, operand);
 			}
 
 			case "u1s1": {
@@ -72,7 +73,7 @@ public class InstructionReader {
 				int first = Byte.toUnsignedInt(machineInstructions[current++]);
 				int second = machineInstructions[current++];
 
-				return new DoubleOperandInstruction(opcode, first, second);
+				return new DoubleOperandInstruction(pc, opcode, first, second);
 			}
 		}
 
