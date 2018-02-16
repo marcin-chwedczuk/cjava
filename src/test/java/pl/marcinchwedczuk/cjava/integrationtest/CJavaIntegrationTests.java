@@ -7,6 +7,7 @@ import pl.marcinchwedczuk.cjava.bytecode.JavaClassFileLoader;
 import pl.marcinchwedczuk.cjava.bytecode.TestUtils;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.*;
 import pl.marcinchwedczuk.cjava.decompiler.BytecodeDecompiler;
+import pl.marcinchwedczuk.cjava.decompiler.DecompilationOptions;
 import pl.marcinchwedczuk.cjava.sourcecode.formatter.ClassFormatter;
 import pl.marcinchwedczuk.cjava.sourcecode.formatter.JavaCodeWriter;
 
@@ -62,7 +63,9 @@ public class CJavaIntegrationTests {
 		byte[] klassBytes = TestUtils.readClassBytes(klass);
 
 		CompilationUnitAst compilationUnit =
-				new BytecodeDecompiler(new JavaClassFileLoader().load(klassBytes))
+				new BytecodeDecompiler(
+							new JavaClassFileLoader().load(klassBytes),
+							DecompilationOptions.withoutCode())
 						.decompile();
 
 		ClassDeclarationAst classDeclaration =

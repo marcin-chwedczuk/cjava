@@ -5,7 +5,6 @@ import pl.marcinchwedczuk.cjava.ast.Visibility;
 import pl.marcinchwedczuk.cjava.ast.statement.StatementBlockAst;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.CodeAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.SignatureAttribute;
-import pl.marcinchwedczuk.cjava.bytecode.fields.FieldAccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.method.MethodAccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.method.MethodInfo;
 import pl.marcinchwedczuk.cjava.bytecode.method.Methods;
@@ -16,17 +15,18 @@ import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
 public class MethodDecompiler {
 	private final Methods classMethods;
 	private final ConstantPoolHelper cp;
+	private final DecompilationOptions decompilationOptions;
 
-	public MethodDecompiler(Methods classMethods, ConstantPoolHelper cp) {
+	public MethodDecompiler(Methods classMethods, ConstantPoolHelper cp, DecompilationOptions decompilationOptions) {
 		this.classMethods = classMethods;
 		this.cp = cp;
+		this.decompilationOptions = decompilationOptions;
 	}
 
 	public List<MethodDeclarationAst> decompile() {
@@ -54,6 +54,10 @@ public class MethodDecompiler {
 	}
 
 	private void decompileMethodBody(MethodDeclarationAst methodDeclaration, MethodInfo methodInfo) {
+		if (!decompilationOptions.isCodeDecompilationEnabled()) {
+			return;
+		}
+
 		// TODO: Handle abstract and interface methods
 
 		CodeAttribute codeAttribute = methodInfo.getAttributes()

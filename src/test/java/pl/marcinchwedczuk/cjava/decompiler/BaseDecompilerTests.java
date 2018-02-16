@@ -13,12 +13,22 @@ import static org.assertj.core.api.Java6Assertions.fail;
 import static pl.marcinchwedczuk.cjava.bytecode.TestUtils.readClassBytes;
 
 public abstract class BaseDecompilerTests {
+	protected static ClassDeclarationAst decompileWithoutCode(Class<?> klassToDecompile) throws IOException {
+		return decompile(klassToDecompile, DecompilationOptions.withoutCode());
+	}
+
 	protected static ClassDeclarationAst decompile(Class<?> klassToDecompile) throws IOException {
+		return decompile(klassToDecompile, DecompilationOptions.defaultOptions());
+	}
+
+	private static ClassDeclarationAst decompile(
+			Class<?> klassToDecompile, DecompilationOptions options) throws IOException {
+
 		JavaClassFileLoader loader = new JavaClassFileLoader();
 		JavaClassFile classFile = loader.load(readClassBytes(klassToDecompile));
 
 		CompilationUnitAst compilationUnit =
-				new BytecodeDecompiler(classFile).decompile();
+				new BytecodeDecompiler(classFile, options).decompile();
 
 		ClassDeclarationAst classDeclaration =
 				(ClassDeclarationAst) compilationUnit.getDeclaredTypes().get(0);

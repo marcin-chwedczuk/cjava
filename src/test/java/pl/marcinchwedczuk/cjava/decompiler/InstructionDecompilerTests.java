@@ -3,10 +3,8 @@ package pl.marcinchwedczuk.cjava.decompiler;
 import org.junit.Before;
 import org.junit.Test;
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
-import pl.marcinchwedczuk.cjava.ast.expr.MethodCallAst;
 import pl.marcinchwedczuk.cjava.ast.statement.ExprStatementAst;
 import pl.marcinchwedczuk.cjava.ast.statement.StatementBlockAst;
-import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithThreeFields;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_HelloWorld;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;

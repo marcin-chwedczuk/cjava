@@ -4,6 +4,7 @@ import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.CompilationUnitAst;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFileLoader;
 import pl.marcinchwedczuk.cjava.decompiler.BytecodeDecompiler;
+import pl.marcinchwedczuk.cjava.decompiler.DecompilationOptions;
 import pl.marcinchwedczuk.cjava.sourcecode.formatter.ClassDeclarationFormatter;
 import pl.marcinchwedczuk.cjava.sourcecode.formatter.JavaCodeWriter;
 
@@ -41,7 +42,9 @@ public class Main {
 			byte[] klassBytes = Files.readAllBytes(classFilePath);
 
 			CompilationUnitAst compilationUnit =
-					new BytecodeDecompiler(new JavaClassFileLoader().load(klassBytes))
+					new BytecodeDecompiler(
+								new JavaClassFileLoader().load(klassBytes),
+								DecompilationOptions.defaultOptions())
 							.decompile();
 
 			ClassDeclarationAst classDeclaration =

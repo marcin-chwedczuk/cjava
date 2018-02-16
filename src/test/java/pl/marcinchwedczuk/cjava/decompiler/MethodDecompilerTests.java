@@ -8,8 +8,6 @@ import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithGenericM
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithTwoMethods;
 import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.assertj.core.api.Java6Assertions.fail;
 
@@ -17,7 +15,7 @@ public class MethodDecompilerTests extends BaseDecompilerTests {
 	@Test
 	public void canDecompileMethodSignatures() throws Exception {
 		ClassDeclarationAst classDeclaration =
-				decompile(Fixture_ClassWithTwoMethods.class);
+				decompileWithoutCode(Fixture_ClassWithTwoMethods.class);
 
 		assertThat(classDeclaration.getMethods())
 				// +1 for default constructor
@@ -47,7 +45,7 @@ public class MethodDecompilerTests extends BaseDecompilerTests {
 	@Test
 	public void canDecompileGenericMethodSignature() throws Exception {
 		ClassDeclarationAst classDeclaration =
-				decompile(Fixture_ClassWithGenericMethodSignatures.class);
+				decompileWithoutCode(Fixture_ClassWithGenericMethodSignatures.class);
 
 		MethodDeclarationAst listOf = findMethodByName(classDeclaration, "listOf");
 		MethodSignature listOfSignature = listOf.getMethodSignature();
@@ -67,7 +65,7 @@ public class MethodDecompilerTests extends BaseDecompilerTests {
 	@Test
 	public void canDecompileMethodWithGenericThrowsSignature() throws Exception {
 		ClassDeclarationAst classDeclaration =
-				decompile(Fixture_ClassWithGenericMethodSignatures.class);
+				decompileWithoutCode(Fixture_ClassWithGenericMethodSignatures.class);
 
 		MethodDeclarationAst throwsSometing = findMethodByName(classDeclaration, "throwsSometing");
 		MethodSignature throwsSometingSignature = throwsSometing.getMethodSignature();

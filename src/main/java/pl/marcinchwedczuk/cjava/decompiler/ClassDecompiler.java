@@ -14,10 +14,12 @@ import java.util.Optional;
 public class ClassDecompiler {
 	private final JavaClassFile classFile;
 	private final ConstantPoolHelper cp;
+	private final DecompilationOptions decompilationOptions;
 
-	public ClassDecompiler(JavaClassFile classFile) {
+	public ClassDecompiler(JavaClassFile classFile, DecompilationOptions decompilationOptions) {
 		this.classFile = Objects.requireNonNull(classFile);
 		this.cp = new ConstantPoolHelper(classFile.getConstantPool());
+		this.decompilationOptions = decompilationOptions;
 	}
 
 	public ClassDeclarationAst decompile() {
@@ -57,7 +59,7 @@ public class ClassDecompiler {
 
 	private void addMethods(ClassDeclarationAst declaration) {
 		List<MethodDeclarationAst> methodDeclarations =
-				new MethodDecompiler(classFile.getClassMethods(), cp)
+				new MethodDecompiler(classFile.getClassMethods(), cp, decompilationOptions)
 					.decompile();
 
 		String className = declaration.getClassName().computeSimpleClassName();

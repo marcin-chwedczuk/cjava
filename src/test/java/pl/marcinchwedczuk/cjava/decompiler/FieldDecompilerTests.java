@@ -18,7 +18,7 @@ public class FieldDecompilerTests extends BaseDecompilerTests {
 
 	@Before
 	public void setUp() throws Exception {
-		classDeclAst = decompile(Fixture_ClassWithThreeFields.class);
+		classDeclAst = decompileWithoutCode(Fixture_ClassWithThreeFields.class);
 	}
 
 	@Test
