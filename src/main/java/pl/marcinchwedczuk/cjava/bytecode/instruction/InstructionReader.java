@@ -42,41 +42,71 @@ public class InstructionReader {
 		Opcode opcode = opcodeMapper.toOpcode(machineCode);
 		switch (opcode.operands()) {
 			case "":
-				// no operands to read
 				return new BasicInstruction(pc, opcode);
 
 			case "u1": {
-				// single operand of type unsigned byte
-				int operand = Byte.toUnsignedInt(machineInstructions[current++]);
+				int operand = readU1();
+				return new SingleOperandInstruction(pc, opcode, operand);
+			}
+
+			case "s1": {
+				int operand = readS1();
 				return new SingleOperandInstruction(pc, opcode, operand);
 			}
 
 			case "u2": {
-				// single operand of type unsinged short
-				int first = Byte.toUnsignedInt(machineInstructions[current++]);
-				int second = Byte.toUnsignedInt(machineInstructions[current++]);
-				int operand = (first << 8) | second;
+				int operand = readU2();
 				return new SingleOperandInstruction(pc, opcode, operand);
 			}
 
 			case "s2": {
-				// single operand of type *singed* short
-				int first = Byte.toUnsignedInt(machineInstructions[current++]);
-				int second = Byte.toUnsignedInt(machineInstructions[current++]);
-				int operand = (short)((first << 8) | second);
-
+				int operand = readS2();
 				return new SingleOperandInstruction(pc, opcode, operand);
 			}
 
 			case "u1s1": {
-				// two operands with types u1 and s1
-				int first = Byte.toUnsignedInt(machineInstructions[current++]);
-				int second = machineInstructions[current++];
-
+				int first = readU1();
+				int second = readS1();
 				return new DoubleOperandInstruction(pc, opcode, first, second);
+			}
+
+			case "u2u1u1": {
+				int first = readU2();
+				int second = readU1();
+				int third = readU1();
+				return new TripleOperandInstruction(pc, opcode, first, second, third);
 			}
 		}
 
 		throw new IllegalStateException("Opcode still under development: " + opcode);
+	}
+
+	private int readU1() {
+		int operand = Byte.toUnsignedInt(machineInstructions[current++]);
+		return operand;
+	}
+
+	private int readS1() {
+		return machineInstructions[current++];
+	}
+
+	/**
+	 * Read unsigned short.
+	 */
+	private int readU2() {
+		int firstByte = Byte.toUnsignedInt(machineInstructions[current++]);
+		int secondByte = Byte.toUnsignedInt(machineInstructions[current++]);
+
+		int operand = (firstByte << 8) | secondByte;
+		return operand;
+	}
+
+	/**
+	 * Read singed short.
+	 */
+	private int readS2() {
+		// force conversion to singed number
+		int operand = (short)readU2();
+		return operand;
 	}
 }

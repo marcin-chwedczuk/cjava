@@ -52,7 +52,8 @@ public class ConstantPoolReader {
 				return readMethodRefConstant(classFileReader);
 
 			case INTERFACE_METHOD_REF:
-				break;
+				return readInterfaceMethodRefConstant(classFileReader);
+
 			case STRING:
 				return readStringConstant(classFileReader);
 
@@ -101,6 +102,13 @@ public class ConstantPoolReader {
 		ConstantPoolIndex nameAndTypeIndex = readFrom(classFileReader);
 
 		return new MethodRefConstant(classIndex, nameAndTypeIndex);
+	}
+
+	private Constant readInterfaceMethodRefConstant(ClassFileReader classFileReader) throws IOException {
+		ConstantPoolIndex classIndex = readFrom(classFileReader);
+		ConstantPoolIndex nameAndTypeIndex = readFrom(classFileReader);
+
+		return new InterfaceMethodRefConstant(classIndex, nameAndTypeIndex);
 	}
 
 	private Constant readStringConstant(ClassFileReader bytes) throws IOException {

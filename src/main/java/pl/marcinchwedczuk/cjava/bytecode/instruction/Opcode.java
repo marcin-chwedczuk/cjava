@@ -7,12 +7,14 @@ public enum Opcode {
 	 * {@code STACK ..., arrayref, index -> ..., value }
 	 */
 	aaload(0x32),
+
 	/**
 	 * Store into reference array.
 	 * <p>
 	 * {@code STACK ..., arrayref, index, value -> ... }
 	 */
-	aastore(0x53),
+	aastore(0x53, ""),
+
 	/**
 	 * Push null.
 	 * <p>
@@ -25,12 +27,16 @@ public enum Opcode {
 	 * {@code STACK ... -> ..., objectref }
 	 */
 	aload(0x19),
+
 	/**
 	 * Load reference from local variable.
 	 * <p>
 	 * {@code STACK ... -> ..., objectref }
 	 */
-	aload_0(0x2a),
+	aload_0(0x2a, ""),
+	aload_1(0x2b, ""),
+	aload_2(0x2c, ""),
+	aload_3(0x2d, ""),
 
 	/**
 	 * Create new array of reference.
@@ -44,7 +50,7 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK ..., objectref -> [empty] }
 	 */
-	areturn(0xb0),
+	areturn(0xb0, ""),
 
 	/**
 	 * Get length of array.
@@ -65,7 +71,10 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK ..., objectref -> ... }
 	 */
-	astore_0(0x4b),
+	astore_0(0x4b, ""),
+	astore_1(0x4c, ""),
+	astore_2(0x4d, ""),
+	astore_3(0x4e, ""),
 
 	/**
 	 * Throw exception or error.
@@ -86,12 +95,14 @@ public enum Opcode {
 	 * {@code STACK ..., arrayref, index, value -> ... }
 	 */
 	bastore(0x54),
+
 	/**
 	 * Push byte.
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
-	bipush(0x10),
+	bipush(0x10, "s1"),
+
 	/**
 	 * Load char from array.
 	 * <p>
@@ -104,12 +115,14 @@ public enum Opcode {
 	 * {@code STACK ..., arrayref, index, value -> ... }
 	 */
 	castore(0x55),
+
 	/**
 	 * Check whether object is of given type.
 	 * <p>
 	 * {@code STACK ..., objectref -> ..., objectref }
 	 */
-	checkcast(0xc0),
+	checkcast(0xc0, "u2"),
+
 	/**
 	 * Convert double to float.
 	 * <p>
@@ -577,12 +590,14 @@ public enum Opcode {
 	 * {@code STACK ..., [arg1, [arg2 ...]] -> ... }
 	 */
 	invokedynamic(0xba),
+
 	/**
 	 * Invoke interface method.
 	 * <p>
 	 * {@code STACK ..., objectref, [arg1, [arg2 ...]] -> ... }
 	 */
-	invokeinterface(0xb9),
+	invokeinterface(0xb9, "u2u1u1"),
+
 	/**
 	 * Invoke instance method; special handling for superclass, private, and instance initialization method invocations.
 	 * <p>
@@ -893,7 +908,7 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK ..., value -> ... }
 	 */
-	pop(0x57),
+	pop(0x57, ""),
 	/**
 	 * Pop the top one or two operand stack values.
 	 * <p>

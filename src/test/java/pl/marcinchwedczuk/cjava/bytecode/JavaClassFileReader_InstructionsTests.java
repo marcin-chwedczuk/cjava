@@ -10,19 +10,65 @@ import pl.marcinchwedczuk.cjava.bytecode.method.MethodInfo;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithCode;
 import pl.marcinchwedczuk.cjava.decompiler.ConstantPoolHelper;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.assertj.core.api.Java6Assertions.fail;
+import static pl.marcinchwedczuk.cjava.util.ListUtils.firstElement;
+import static pl.marcinchwedczuk.cjava.util.ListUtils.lastElement;
 
 public class JavaClassFileReader_InstructionsTests extends BaseJavaClassFileReaderTests {
 
 	@Test
 	public void canReadCodeAttribute() throws Exception {
-		JavaClassFile classWithCode = load(Fixture_ClassWithCode.class);
+		int methodContainingCodeIndex = 1;
+
+		List<Instruction> instructions =
+				readMethodInstructions(Fixture_ClassWithCode.class, methodContainingCodeIndex);
+
+		assertThat(instructions.size())
+				.isEqualTo(46);
+
+		Instruction goto_ = instructions.get(14);
+		Instruction gotoTarget = instructions.get(4);
+
+		assertInstruction(instructions.get(14),
+				23, Opcode.goto_, -18);
+
+		assertThat(gotoTarget.getPC() - goto_.getPC())
+				.as("goto offset")
+				.isEqualTo(-18);
+
+		// Check last instruction
+		assertInstruction(lastElement(instructions),
+			91, Opcode.ireturn);
+	}
+
+	@Test
+	public void canReadCodeAttribute2_moreOOPCode() throws Exception {
+		int methodContainingMoreOOPCodeIndex = 2;
+
+		List<Instruction> instructions =
+				readMethodInstructions(Fixture_ClassWithCode.class, methodContainingMoreOOPCodeIndex);
+
+		assertThat(instructions).hasSize(47);
+
+		// Check first instruction
+		assertInstruction(firstElement(instructions),
+				0, Opcode.new_, 9);
+
+		// Check last instruction
+		assertInstruction(lastElement(instructions),
+				95, Opcode.areturn);
+	}
+
+	private static List<Instruction> readMethodInstructions(Class<?> klass, int methodIndex) throws IOException {
+		JavaClassFile classWithCode = load(klass);
 
 		MethodInfo method = classWithCode
 				.getClassMethods()
-				.get(1);
+				.get(methodIndex);
 
 		byte[] machineInstructions = method
 				.getAttributes()
@@ -36,47 +82,39 @@ public class JavaClassFileReader_InstructionsTests extends BaseJavaClassFileRead
 				new ConstantPoolHelper(classWithCode.getConstantPool()),
 				new OpcodeMapper());
 
-		List<Instruction> instructions = reader.readInstructions();
-
-		assertThat(instructions.size())
-				.isEqualTo(46);
-
-		// Check that signed offsets are properly read
-		SingleOperandInstruction goto5 = (SingleOperandInstruction) instructions.get(14);
-		assertThat(goto5.getOperand())
-				.isEqualTo(-18);
-
+		return reader.readInstructions();
 	}
 
-	@Test
-	public void demoHowJavaBinaryOperatorsWork() throws Exception {
-		byte b = UnsignedBytes.parseUnsignedByte("11100010", 2);
-		byte b2 = UnsignedBytes.parseUnsignedByte("10000111", 2);
+	private static void assertInstruction(Instruction instruction,
+										  int pc, Opcode opcode, int... operands) {
+		assertThat(instruction.getPC()).isEqualTo(pc);
+		assertThat(instruction.getOpcode()).isEqualTo(opcode);
 
-		int i = Byte.toUnsignedInt(b);
-		int i2 = Byte.toUnsignedInt(b2);
-		int result = (i << 8) | i2;
+		switch (operands.length) {
+			case 0:
+				assertThat(instruction).isInstanceOf(BasicInstruction.class);
+				break;
 
-		assertThat(Integer.toString(result, 2))
-				.isEqualTo("1110001010000111");
-	}
+			case 1:
+				assertThat(instruction).isInstanceOf(SingleOperandInstruction.class);
+				assertThat(((SingleOperandInstruction)instruction).getOperand())
+						.as("operand1")
+						.isEqualTo(operands[0]);
+				break;
 
-	@Test
-	public void demoHowJavaBinaryOperatorsWork2() throws Exception {
-		byte b = UnsignedBytes.parseUnsignedByte("11100010", 2);
-		byte b2 = UnsignedBytes.parseUnsignedByte("10000111", 2);
+			case 2:
+				assertThat(instruction).isInstanceOf(DoubleOperandInstruction.class);
+				assertThat(((DoubleOperandInstruction)instruction).getOperand1())
+						.as("operand1")
+						.isEqualTo(operands[0]);
+				assertThat(((DoubleOperandInstruction)instruction).getOperand2())
+						.as("operand2")
+						.isEqualTo(operands[1]);
+				break;
 
-		int i = Byte.toUnsignedInt(b);
-		int i2 = Byte.toUnsignedInt(b2);
-		int result = (i << 8) | i2;
-
-		assertThat(Integer.toString(result, 2))
-				.isEqualTo("1110001010000111");
-
-		short s = (short)result;
-		assertThat(UnsignedInts.toString(Short.toUnsignedInt(s), 2))
-				.isEqualTo("1110001010000111");
-
-		assertThat(s).isLessThan((short)0);
+			default:
+				fail("Please add checks for 3 and 4 operand instructions.");
+				break;
+		}
 	}
 }

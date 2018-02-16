@@ -3,6 +3,8 @@ package pl.marcinchwedczuk.cjava.bytecode.test.fixtures;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.stream.IntStream;
 
 public class Fixture_ClassWithCode {
 	public int methodContainingCode(int a, int b) {
@@ -25,5 +27,17 @@ public class Fixture_ClassWithCode {
 		} catch(IOException | RuntimeException e) {
 			return -1;
 		}
+	}
+
+	public String methodContainingMoreOOPCode() {
+		StringBuilder sb = new StringBuilder();
+
+		for (String s : Arrays.asList("foo", "bar", "nyu")) {
+			sb.append(s).append('-');
+		}
+
+		CharSequence cs = sb.toString();
+
+		return new String(cs.chars().toArray(), 0, 10);
 	}
 }
