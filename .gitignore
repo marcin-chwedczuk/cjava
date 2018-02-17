@@ -72,6 +72,8 @@ cmake-build-debug/
 
 # IntelliJ
 out/
+src/main/generated
+src/test/generated_tests
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
