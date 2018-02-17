@@ -1,16 +1,18 @@
 package pl.marcinchwedczuk.cjava.ast.expr;
 
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ClassType;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import com.google.auto.value.AutoValue;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
-public class FieldAccessAst extends ExprAst {
-	private final ClassType classContainingField;
-	private final String fieldName;
-	private final JavaType fieldType;
+@AutoValue
+public abstract class FieldAccessAst extends ExprAst {
+	public static FieldAccessAst create(
+			ClassType classContainingField, String fieldName, JavaType fieldType) {
 
-	public FieldAccessAst(ClassType classContainingField, String fieldName, JavaType fieldType) {
-		this.classContainingField = classContainingField;
-		this.fieldName = fieldName;
-		this.fieldType = fieldType;
+		return new AutoValue_FieldAccessAst(classContainingField, fieldName, fieldType);
 	}
+
+	public abstract ClassType getClassContainingField();
+	public abstract String getFieldName();
+	public abstract JavaType getFieldType();
 }

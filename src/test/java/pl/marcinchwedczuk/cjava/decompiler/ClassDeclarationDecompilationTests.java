@@ -6,7 +6,7 @@ import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassExtendingNes
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ComplexClassWithoutCode;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericClass;
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,7 +27,7 @@ public class ClassDeclarationDecompilationTests extends BaseDecompilerTests {
 	public void canDecompileSuperClass() throws Exception {
 		ClassDeclarationAst classDeclaration = decompileWithoutCode(Fixture_ComplexClassWithoutCode.class);
 
-		assertThat(classDeclaration.getSuperClassName().asSourceCodeString())
+		assertThat(classDeclaration.getSuperClass().asSourceCodeString())
 				.isEqualTo("pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_EmptyClass");
 	}
 
@@ -52,7 +52,7 @@ public class ClassDeclarationDecompilationTests extends BaseDecompilerTests {
 	public void canDecompileNestedSuperClassAndNestedInterfaces() throws IOException {
 		ClassDeclarationAst classDeclaration = decompileWithoutCode(Fixture_ClassExtendingNestedClasses.class);
 
-		assertThat(classDeclaration.getSuperClassName().asSourceCodeString())
+		assertThat(classDeclaration.getSuperClass().asSourceCodeString())
 				.isEqualTo("pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithNestedClasses.NestedClass");
 
 		assertThat(classDeclaration.getImplementedInterfaces().get(0).asSourceCodeString())
@@ -75,7 +75,7 @@ public class ClassDeclarationDecompilationTests extends BaseDecompilerTests {
 				.isEqualTo("ParamA");
 
 		assertThat(paramA.getClassBound())
-				.isEmpty();
+				.isNull();
 
 		assertThat(paramA.getInterfaceBounds().get(0).asSourceCodeString())
 				.isEqualTo("java.io.Serializable");
@@ -85,7 +85,7 @@ public class ClassDeclarationDecompilationTests extends BaseDecompilerTests {
 		assertThat(paramB.getName())
 				.isEqualTo("ParamB");
 
-		assertThat(paramB.getClassBound().get().asSourceCodeString())
+		assertThat(paramB.getClassBound().asSourceCodeString())
 				.isEqualTo("java.util.ArrayList<ParamA>");
 
 		assertThat(paramB.getInterfaceBounds())
@@ -99,7 +99,7 @@ public class ClassDeclarationDecompilationTests extends BaseDecompilerTests {
 	public void canDecompileGenericSuperclass() throws Exception {
 		ClassDeclarationAst classDeclaration = decompileWithoutCode(Fixture_GenericClass.class);
 
-		assertThat(classDeclaration.getSuperClassName().asSourceCodeString())
+		assertThat(classDeclaration.getSuperClass().asSourceCodeString())
 				.isEqualTo("java.util.ArrayDeque<ParamA>");
 	}
 

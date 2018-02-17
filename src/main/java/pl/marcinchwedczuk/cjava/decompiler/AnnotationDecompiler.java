@@ -5,13 +5,12 @@ import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationPropertyAssignmentAst;
 import pl.marcinchwedczuk.cjava.ast.expr.ExprAst;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.ArrayLiteral;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.IntegerLiteral;
-import pl.marcinchwedczuk.cjava.ast.expr.literal.LiteralAst;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.StringLiteral;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.RuntimeVisibleAnnotationsAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.RuntimeVisibleAnnotationsAttribute.ElementValue;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.RuntimeVisibleAnnotationsAttribute.ElementValuePair;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPool;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 import java.util.List;
 
@@ -50,7 +49,7 @@ public class AnnotationDecompiler {
 				.map(this::decompileElementValuePair)
 				.collect(toList());
 
-		AnnotationAst ast = new AnnotationAst(annotationType, elementValuePairs);
+		AnnotationAst ast = AnnotationAst.create(annotationType, elementValuePairs);
 		return ast;
 	}
 
@@ -60,7 +59,7 @@ public class AnnotationDecompiler {
 		ExprAst propertyValue =
 				decompileElementValue(elementValuePair.getValue());
 
-		return new AnnotationPropertyAssignmentAst(propertyName, propertyValue);
+		return AnnotationPropertyAssignmentAst.create(propertyName, propertyValue);
 	}
 
 	private ExprAst decompileElementValue(ElementValue value) {
@@ -76,7 +75,7 @@ public class AnnotationDecompiler {
 
 			case INT: {
 				int integerConstant = cp.getInteger(value.getConstantValue());
-				return new IntegerLiteral(integerConstant);
+				return IntegerLiteral.of(integerConstant);
 			}
 
 			case LONG:
@@ -87,7 +86,7 @@ public class AnnotationDecompiler {
 				break;
 			case STRING: {
 				String stringConstant = cp.getString(value.getConstantValue());
-				return new StringLiteral(stringConstant);
+				return StringLiteral.of(stringConstant);
 			}
 
 			case ENUM:
@@ -104,7 +103,7 @@ public class AnnotationDecompiler {
 						.map(this::decompileElementValue)
 						.collect(toList());
 
-				return new ArrayLiteral(arrayElements);
+				return ArrayLiteral.ofElements(arrayElements);
 			}
 		}
 

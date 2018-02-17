@@ -1,4 +1,7 @@
-package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
+package pl.marcinchwedczuk.cjava.decompiler.signature.parser;
+
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.SimpleClassType;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +32,6 @@ public class BinaryNameParser {
 				.map(SimpleClassType::fromClassName)
 				.collect(toList());
 
-		return new ClassType(packageParts, typedClassParts);
+		return ClassType.create(packageParts, typedClassParts);
 	}
 }

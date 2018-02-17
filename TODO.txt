@@ -1,7 +1,10 @@
-- Formatting methods + integration tests
+- `<T super List<?>>` is not supported in method declarations - add
+ tests and make it work.
 - Method parameter names should be taken from AST structure.
     Compute them either at decompiling time or as a separate pass
     after decompilation.
 - Decompilation of static constructors
 - Class block initializers and static initializers
 - Constants for static/const fields e.g. `public static final int = 32`
+- Decompilation of nested static classses right now they are treaded as separate
+ classes with names containing `$`.

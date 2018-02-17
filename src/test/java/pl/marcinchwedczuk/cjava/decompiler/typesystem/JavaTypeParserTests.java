@@ -1,7 +1,8 @@
-package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
+package pl.marcinchwedczuk.cjava.decompiler.typesystem;
 
 import org.junit.Test;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.InvalidSignatureException;
+import pl.marcinchwedczuk.cjava.decompiler.signature.parser.JavaTypeSignatureParser;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
 import static org.assertj.core.api.Assertions.assertThat;

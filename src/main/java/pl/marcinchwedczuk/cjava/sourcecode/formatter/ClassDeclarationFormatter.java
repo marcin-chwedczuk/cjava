@@ -2,9 +2,8 @@ package pl.marcinchwedczuk.cjava.sourcecode.formatter;
 
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.Visibility;
-import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class ClassDeclarationFormatter implements SourceCodeFormatter {
 				.increaseIndent(2)
 				.printIndent()
 				.print("extends ")
-				.print(classDeclarationAst.getSuperClassName().asSourceCodeString())
+				.print(classDeclarationAst.getSuperClass().asSourceCodeString())
 				.decreaseIndent(2);
 	}
 

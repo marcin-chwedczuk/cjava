@@ -1,6 +1,6 @@
-package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
+package pl.marcinchwedczuk.cjava.decompiler.typesystem;
 
-public enum BaseType implements JavaType {
+public enum PrimitiveType implements JavaType {
 	BYTE('B'),
 	CHAR('C'),
 	DOUBLE('D'),
@@ -13,7 +13,7 @@ public enum BaseType implements JavaType {
 
 	private final char bytecodeConstant;
 
-	BaseType(char bytecodeConstant) {
+	PrimitiveType(char bytecodeConstant) {
 		this.bytecodeConstant = bytecodeConstant;
 	}
 
@@ -26,15 +26,15 @@ public enum BaseType implements JavaType {
 		return bytecodeConstant == constant;
 	}
 
-	public static BaseType parse(char bytecodeConstant) {
-		for (BaseType baseType : values()) {
-			if (baseType.representsConstant(bytecodeConstant)) {
-				return baseType;
+	public static PrimitiveType parse(char bytecodeConstant) {
+		for (PrimitiveType primitiveType : values()) {
+			if (primitiveType.representsConstant(bytecodeConstant)) {
+				return primitiveType;
 			}
 		}
 
 		throw new IllegalArgumentException(
-				"Unknown BaseType constant: " + bytecodeConstant + ".");
+				"Unknown PrimitiveType constant: " + bytecodeConstant + ".");
 	}
 
 }

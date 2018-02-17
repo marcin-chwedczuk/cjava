@@ -1,8 +1,8 @@
 package pl.marcinchwedczuk.cjava.decompiler.descriptor.field;
 
 import pl.marcinchwedczuk.cjava.bytecode.InvalidJavaClassFileException;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.*;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,14 +52,14 @@ public class FieldDescriptorParser {
 
 		JavaType elementType = parseFieldType();
 
-		return new ArrayType(dimension, elementType);
+		return ArrayType.create(dimension, elementType);
 	}
 
 	private JavaType parseBaseType() {
-		BaseType baseType = BaseType.parse(input.current());
+		PrimitiveType primitiveType = PrimitiveType.parse(input.current());
 		input.matchCurrent();
 
-		return baseType;
+		return primitiveType;
 	}
 
 	private JavaType parseObjectType() {
@@ -78,8 +78,8 @@ public class FieldDescriptorParser {
 				Arrays.asList(typeName.toString().split("/"));
 
 		List<String> packagePart = withoutLastElement(parts);
-		SimpleClassType className = new SimpleClassType(lastElement(parts));
+		SimpleClassType className = SimpleClassType.fromClassName(lastElement(parts));
 
-		return new ClassType(packagePart, className);
+		return ClassType.create(packagePart, className);
 	}
 }

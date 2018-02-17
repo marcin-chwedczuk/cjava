@@ -1,7 +1,7 @@
 package pl.marcinchwedczuk.cjava.decompiler.descriptor.method;
 
-import org.junit.Before;
 import org.junit.Test;
+import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,7 +14,7 @@ public class MethodDescriptorParserTests {
 
 		MethodSignature methodSignature = parseMethodDescriptor(input);
 
-		assertThat(methodSignature.getParameterTypes())
+		assertThat(methodSignature.getParametersTypes())
 				.hasSize(3);
 
 		assertThat(methodSignature.getParameterType(0).asSourceCodeString())
@@ -36,7 +36,7 @@ public class MethodDescriptorParserTests {
 
 		MethodSignature methodSignature = parseMethodDescriptor(input);
 
-		assertThat(methodSignature.getParameterTypes())
+		assertThat(methodSignature.getParametersTypes())
 				.isEmpty();
 
 		assertThat(methodSignature.getReturnType().asSourceCodeString())

@@ -6,7 +6,7 @@ import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.Visibility;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithGenericMethodSignatures;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithTwoMethods;
-import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
+import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.assertj.core.api.Java6Assertions.fail;
@@ -53,12 +53,12 @@ public class MethodDecompilerTests extends BaseDecompilerTests {
 		assertThat(listOfSignature.asJavaSoucrceCode())
 				.isEqualTo("<E extends java.lang.Object> java.util.List<E>(E, E)");
 
-		assertThat(listOfSignature.getGenericTypeParameters())
+		assertThat(listOfSignature.getTypeParameters())
 				.hasSize(1);
-		assertThat(listOfSignature.getGenericTypeParameters().get(0).getName())
+		assertThat(listOfSignature.getTypeParameters().get(0).getName())
 				.isEqualTo("E");
 
-		assertThat(listOfSignature.getThrowsExceptions())
+		assertThat(listOfSignature.getCheckedExceptions())
 				.isEmpty();
 	}
 
@@ -70,10 +70,10 @@ public class MethodDecompilerTests extends BaseDecompilerTests {
 		MethodDeclarationAst throwsSometing = findMethodByName(classDeclaration, "throwsSometing");
 		MethodSignature throwsSometingSignature = throwsSometing.getMethodSignature();
 
-		assertThat(throwsSometingSignature.getThrowsExceptions())
+		assertThat(throwsSometingSignature.getCheckedExceptions())
 				.hasSize(1);
 
-		assertThat(throwsSometingSignature.getThrowsExceptions().get(0).asSourceCodeString())
+		assertThat(throwsSometingSignature.getCheckedExceptions().get(0).asSourceCodeString())
 				.isEqualTo("T");
 	}
 }

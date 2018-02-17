@@ -24,8 +24,6 @@ public class JavaClassFileReader_CodeAttributeTests extends BaseJavaClassFileRea
 				.findCodeAttribute()
 				.get();
 
-		System.out.println(Arrays.toString(codeAttribute.getCode().getBytes()));
-
 		// stack=4, locals=6, args_size=3
 		assertThat(codeAttribute.getCode().getMaxStack())
 				.isEqualTo(4);

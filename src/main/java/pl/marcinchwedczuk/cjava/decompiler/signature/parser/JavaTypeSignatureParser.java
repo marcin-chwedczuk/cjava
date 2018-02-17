@@ -1,6 +1,8 @@
-package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
+package pl.marcinchwedczuk.cjava.decompiler.signature.parser;
 
-import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.*;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs.BoundType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs.TypeArgument;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,21 +56,26 @@ public class JavaTypeSignatureParser {
 
 		List<SimpleClassType> classes = new ArrayList<>();
 
+		// format: SomeClass .InnerClass1 .InnerClass2
+		SimpleClassType simpleClassType = parseSimpleClassTypeSignature();
+		classes.add(simpleClassType);
+
 		while (!tokenStream.currentIs(';')) {
-			SimpleClassType simpleClassType = parseSimpleClassTypeSignature();
+			tokenStream.match('.');
+			simpleClassType = parseSimpleClassTypeSignature();
 			classes.add(simpleClassType);
 		}
 
 		tokenStream.match(CLASS_TYPE_SIGNATURE_END);
 
-		return new ClassType(packageSpecifier, classes);
+		return ClassType.create(packageSpecifier, classes);
 	}
 
 	private SimpleClassType parseSimpleClassTypeSignature() {
 		String classIdentifier = tokenStream.matchIdentifier();
 		List<TypeArgument> typeArguments = parseTypeArguments();
 
-		return new SimpleClassType(classIdentifier, typeArguments);
+		return SimpleClassType.forGenericClass(classIdentifier, typeArguments);
 	}
 
 	private List<TypeArgument> parseTypeArguments() {
@@ -135,7 +142,7 @@ public class JavaTypeSignatureParser {
 	private JavaType parseTypeVariableSignature() {
 		tokenStream.match(TYPE_VARIABLE_MARKER);
 		JavaType typeVariable =
-				new TypeVariable(tokenStream.matchIdentifier());
+				TypeVariable.fromTypeParameterName(tokenStream.matchIdentifier());
 		tokenStream.match(TYPE_VARIABLE_END_MARKER);
 
 		return typeVariable;
@@ -151,11 +158,11 @@ public class JavaTypeSignatureParser {
 
 		JavaType arrayType = parseJavaTypeSignature();
 
-		return new ArrayType(arrayDimension, arrayType);
+		return ArrayType.create(arrayDimension, arrayType);
 	}
 
 	private JavaType parseBaseType() {
-		JavaType baseType = BaseType.parse(tokenStream.current());
+		JavaType baseType = PrimitiveType.parse(tokenStream.current());
 		tokenStream.matchCurrent();
 		return baseType;
 	}

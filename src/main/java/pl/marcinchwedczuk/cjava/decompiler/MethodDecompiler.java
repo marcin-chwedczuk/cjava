@@ -8,7 +8,7 @@ import pl.marcinchwedczuk.cjava.bytecode.attribute.SignatureAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.method.MethodAccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.method.MethodInfo;
 import pl.marcinchwedczuk.cjava.bytecode.method.Methods;
-import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
+import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
 import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignatureParser;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
@@ -39,21 +39,22 @@ public class MethodDecompiler {
 		String methodName = cp.getString(methodInfo.getName());
 		MethodSignature methodSignature = decompileMethodSignature(methodInfo);
 
-		MethodDeclarationAst methodDeclaration =
-				new MethodDeclarationAst(methodName, methodSignature);
+		MethodDeclarationAst.Builder methodDeclaration =
+				MethodDeclarationAst.builder(methodName, methodSignature);
+
 
 		Visibility visibility = computeVisibility(methodInfo.getAccessFlags());
 		methodDeclaration.setVisibility(visibility);
 
 		addModifiers(methodDeclaration, methodInfo.getAccessFlags());
-		markConstructors(methodDeclaration);
+		markConstructors(methodName, methodDeclaration);
 
 		decompileMethodBody(methodDeclaration, methodInfo);
 
-		return methodDeclaration;
+		return methodDeclaration.build();
 	}
 
-	private void decompileMethodBody(MethodDeclarationAst methodDeclaration, MethodInfo methodInfo) {
+	private void decompileMethodBody(MethodDeclarationAst.Builder methodDeclaration, MethodInfo methodInfo) {
 		if (!decompilationOptions.isCodeDecompilationEnabled()) {
 			return;
 		}
@@ -65,7 +66,7 @@ public class MethodDecompiler {
 				.get();
 
 		StatementBlockAst methodBody =
-				new InstructionDecompiler(codeAttribute, methodDeclaration, cp)
+				new InstructionDecompiler(codeAttribute, methodDeclaration.build(), cp)
 					.decompile();
 
 		methodDeclaration.setMethodBody(methodBody);
@@ -101,7 +102,7 @@ public class MethodDecompiler {
 		}
 	}
 
-	private void addModifiers(MethodDeclarationAst methodDeclarationAst,
+	private void addModifiers(MethodDeclarationAst.Builder methodDeclarationAst,
 							  Set<MethodAccessFlag> accessFlags) {
 		if (accessFlags.contains(MethodAccessFlag.ACC_STATIC)) {
 			methodDeclarationAst.setStatic(true);
@@ -132,8 +133,8 @@ public class MethodDecompiler {
 		}
 	}
 
-	private void markConstructors(MethodDeclarationAst methodDeclaration) {
-		if ("<init>".equals(methodDeclaration.getMethodName())) {
+	private void markConstructors(String methodName, MethodDeclarationAst.Builder methodDeclaration) {
+		if ("<init>".equals(methodName)) {
 			methodDeclaration.setConstructor(true);
 		}
 	}

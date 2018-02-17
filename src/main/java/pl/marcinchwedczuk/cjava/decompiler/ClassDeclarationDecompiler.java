@@ -2,16 +2,14 @@ package pl.marcinchwedczuk.cjava.decompiler;
 
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.Visibility;
-import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.bytecode.AccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFile;
-import pl.marcinchwedczuk.cjava.bytecode.attribute.RuntimeVisibleAnnotationsAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.SignatureAttribute;
 import pl.marcinchwedczuk.cjava.decompiler.signature.ClassSignature;
 import pl.marcinchwedczuk.cjava.decompiler.signature.ClassSignatureParser;
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ClassType;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
 import java.util.*;
@@ -20,7 +18,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 public class ClassDeclarationDecompiler {
-	private static final List<TypeParameter> EMPTY_GENERIC_PARAMETERS = emptyList();
+	private static final List<TypeParameter> EMPTY_TYPE_PARAMETERS = emptyList();
 
 	private final JavaClassFile classFile;
 	private final ConstantPoolHelper cp;
@@ -30,14 +28,14 @@ public class ClassDeclarationDecompiler {
 		this.cp = new ConstantPoolHelper(classFile.getConstantPool());
 	}
 
-	public ClassDeclarationAst decompile() {
+	public ClassDeclarationAst.Builder decompile() {
 		// If class has Signature attribute attached use that
 		// to obtain exact class declaration
 		Optional<SignatureAttribute> signatureAttribute = classFile
 				.getAttributes()
 				.findSignatureAttribute();
 
-		ClassDeclarationAst declaration = signatureAttribute
+		ClassDeclarationAst.Builder declaration = signatureAttribute
 				.map(this::createDeclarationFromSignatureAttribute)
 				.orElseGet(this::createDeclarationFromRawTypes);
 
@@ -46,25 +44,25 @@ public class ClassDeclarationDecompiler {
 		return declaration;
 	}
 
-	private ClassDeclarationAst createDeclarationFromSignatureAttribute(SignatureAttribute signatureAttribute) {
+	private ClassDeclarationAst.Builder createDeclarationFromSignatureAttribute(SignatureAttribute signatureAttribute) {
 		ClassType className = cp.getClassName(classFile.getThisClass());
 
 		String signatureText = cp.getString(signatureAttribute.getSignatureText());
 		ClassSignature classSignature =
 				new ClassSignatureParser(new TokenStream(signatureText)).parse();
 
-		return new ClassDeclarationAst(
-				className,
-				classSignature.getTypeParameters(),
-				classSignature.getSuperclass(),
-				classSignature.getImplementedInterfaces());
+		return ClassDeclarationAst.builder()
+				.setClassName(className)
+				.setTypeParameters(classSignature.getTypeParameters())
+				.setSuperClass(classSignature.getSuperClass())
+				.setImplementedInterfaces(classSignature.getImplementedInterfaces());
 	}
 
-	private ClassDeclarationAst createDeclarationFromRawTypes() {
+	private ClassDeclarationAst.Builder createDeclarationFromRawTypes() {
 		// Use bytecode raw class names to construct class declaration.
 		ClassType className = cp.getClassName(classFile.getThisClass());
 
-		JavaType superClassName = cp.getClassName(classFile.getSuperClass());
+		JavaType superClass = cp.getClassName(classFile.getSuperClass());
 
 		List<JavaType> implementedInterfaces = classFile.getInterfaces()
 				.getClasses()
@@ -72,14 +70,14 @@ public class ClassDeclarationDecompiler {
 				.map(cp::getClassName)
 				.collect(toList());
 
-		return new ClassDeclarationAst(
-				className,
-				EMPTY_GENERIC_PARAMETERS,
-				superClassName,
-				implementedInterfaces);
+		return ClassDeclarationAst.builder()
+				.setClassName(className)
+				.setTypeParameters(EMPTY_TYPE_PARAMETERS)
+				.setSuperClass(superClass)
+				.setImplementedInterfaces(implementedInterfaces);
 	}
 
-	private void addClassModifiers(ClassDeclarationAst declaration, EnumSet<AccessFlag> accessFlags) {
+	private void addClassModifiers(ClassDeclarationAst.Builder declaration, EnumSet<AccessFlag> accessFlags) {
 		if (accessFlags.contains(AccessFlag.ACC_PUBLIC)) {
 			declaration.setVisibility(Visibility.PUBLIC);
 		}

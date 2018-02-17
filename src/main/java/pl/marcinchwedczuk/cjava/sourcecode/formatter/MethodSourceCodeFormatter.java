@@ -1,10 +1,10 @@
 package pl.marcinchwedczuk.cjava.sourcecode.formatter;
 
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
-import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
+import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ArrayType;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.ArrayType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -28,7 +28,7 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 		printVisibility(methodDeclaration.getVisibility());
 		printModifiers();
 
-		printMethodTypeParameters(methodSignature.getGenericTypeParameters());
+		printMethodTypeParameters(methodSignature.getTypeParameters());
 		printMethodSignature(methodSignature);
 
 		printThrowsDeclaration(methodSignature);
@@ -88,7 +88,7 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 
 		AtomicLong paramCounter = new AtomicLong(1);
 
-		ListWriter.writeList(methodSignature.getParameterTypes())
+		ListWriter.writeList(methodSignature.getParametersTypes())
 				.before(codeWriter.printAction("("))
 				.element((paramType, pos) -> {
 					if (pos == LAST && isVarargParameter(paramType)) {
@@ -130,17 +130,18 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 			return arrayType.getElementType();
 		}
 		else {
-			return new ArrayType(
-					arrayType.getDimensions()-1, arrayType.getElementType());
+			return ArrayType.create(
+					arrayType.getDimensions()-1,
+					arrayType.getElementType());
 		}
 	}
 
 	private void printThrowsDeclaration(MethodSignature methodSignature) {
-		if (methodSignature.getThrowsExceptions().isEmpty()) {
+		if (methodSignature.getCheckedExceptions().isEmpty()) {
 			return;
 		}
 
-		ListWriter.writeList(methodSignature.getThrowsExceptions())
+		ListWriter.writeList(methodSignature.getCheckedExceptions())
 				.beforeNonEmpty(codeWriter.printAction(" throws "))
 				.element((exceptionType, pos) -> {
 					codeWriter.print(exceptionType.asSourceCodeString());

@@ -1,27 +1,32 @@
 package pl.marcinchwedczuk.cjava.ast.expr;
 
+import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
 import pl.marcinchwedczuk.cjava.ast.Ast;
-import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ClassType;
+import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
-public class MethodCallAst extends ExprAst {
-	private final ClassType classContainingMethod;
-	private final String methodName;
-	private final MethodSignature methodSignature;
-	private final Ast thisArgument;
-	private final List<Ast> methodArguments;
-
-	public MethodCallAst(ClassType classContainingMethod,
+@AutoValue
+public abstract class MethodCallAst extends ExprAst {
+	public static MethodCallAst create(ClassType classContainingMethod,
 						 String methodName,
 						 MethodSignature methodSignature,
-						 Ast thisArgument,
-						 List<Ast> methodArguments) {
-		this.classContainingMethod = classContainingMethod;
-		this.methodName = methodName;
-		this.methodSignature = methodSignature;
-		this.thisArgument = thisArgument;
-		this.methodArguments = methodArguments;
+						 ExprAst thisArgument,
+						 List<ExprAst> methodArguments) {
+
+		return new AutoValue_MethodCallAst(classContainingMethod,
+				methodName, methodSignature,
+				thisArgument, ImmutableList.copyOf(methodArguments));
 	}
+
+	public abstract ClassType getClassContainingMethod();
+	public abstract String getMethodName();
+	public abstract MethodSignature getMethodSignature();
+
+	@Nullable
+	public abstract ExprAst getThisArgument();
+	public abstract ImmutableList<ExprAst> getMethodArguments();
 }

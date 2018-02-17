@@ -2,8 +2,9 @@ package pl.marcinchwedczuk.cjava.decompiler.descriptor.method;
 
 import pl.marcinchwedczuk.cjava.bytecode.InvalidJavaClassFileException;
 import pl.marcinchwedczuk.cjava.decompiler.descriptor.field.FieldDescriptorParser;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.BaseType;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class MethodDescriptorParser {
 					"Invalid method descriptor: '" + input.toString() + "'.");
 		}
 
-		return new MethodSignature(parameterTypes, returnType);
+		return MethodSignature.basic(returnType, parameterTypes);
 	}
 
 	private List<JavaType> parseParameterDescriptors() {
@@ -50,7 +51,7 @@ public class MethodDescriptorParser {
 	private JavaType parseFieldType() {
 		if (input.currentIs('V')) {
 			input.matchCurrent();
-			return BaseType.VOID;
+			return PrimitiveType.VOID;
 		}
 
 		return new FieldDescriptorParser(input).parseFieldType();

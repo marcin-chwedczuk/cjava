@@ -4,24 +4,23 @@ import org.junit.Test;
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.Visibility;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
-import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
+import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.*;
-
-import java.util.function.Consumer;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.*;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs.TypeArgument;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.TypeVariable;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static pl.marcinchwedczuk.cjava.decompiler.signature.javatype.BaseType.INT;
-import static pl.marcinchwedczuk.cjava.decompiler.signature.javatype.BaseType.VOID;
+import static pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType.INT;
+import static pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType.VOID;
 
 public class MethodSourceCodeFormatterTests {
 	@Test
 	public void canPrintMethodNameReturnAndParameterTypes() throws Exception {
-		MethodDeclarationAst methodDeclaration = new MethodDeclarationAst(
-				"methodName",
-				MethodSignature.basic(VOID, INT, INT));
+		MethodDeclarationAst methodDeclaration = MethodDeclarationAst
+				.builder("methodName", MethodSignature.basic(VOID, INT, INT))
+				.build();
 
 		String sourceCode = format(methodDeclaration);
 
@@ -34,19 +33,20 @@ public class MethodSourceCodeFormatterTests {
 	public void canPrintMethodGenericParameters() throws Exception {
 		TypeParameter E = TypeParameter.basic("E");
 
-		ClassType listOfE = new ClassType(
+		ClassType listOfE = ClassType.create(
 				asList("java", "util"),
 				SimpleClassType.forGenericClass(
 					"List",
-					TypeArgument.forConcreateType(TypeVariable.forTypeParameter("E"))));
+					TypeArgument.forConcreateType(TypeVariable.fromTypeParameterName("E"))));
 
 		// signature: `<T> E methodName(List<E> arg)`
-		MethodDeclarationAst methodDeclaration = new MethodDeclarationAst(
-				"methodName",
-				MethodSignature.builder()
-						.genericParameters(E)
-						.signature(TypeVariable.forTypeParameter("E"), listOfE)
-						.build());
+		MethodDeclarationAst methodDeclaration = MethodDeclarationAst
+				.builder("methodName",
+					MethodSignature.builder()
+							.typeParameters(E)
+							.signature(TypeVariable.fromTypeParameterName("E"), listOfE)
+							.build())
+				.build();
 
 		String sourceCode = format(methodDeclaration);
 
@@ -57,13 +57,12 @@ public class MethodSourceCodeFormatterTests {
 
 	@Test
 	public void canPrintMethodAnnotations() throws Exception {
-		MethodDeclarationAst methodDeclaration = new MethodDeclarationAst(
-				"methodName", MethodSignature.basic(VOID));
-
-		methodDeclaration.setAnnotations(asList(
-				new AnnotationAst(
-						ClassType.fromPackageAndClassName("mc.test", "Annotation"))
-		));
+		MethodDeclarationAst methodDeclaration =MethodDeclarationAst
+				.builder("methodName", MethodSignature.basic(VOID))
+				.setAnnotations(
+					AnnotationAst.create(
+						ClassType.fromPackageAndClassName("mc.test", "Annotation")))
+				.build();
 
 		String sourceCode = format(methodDeclaration);
 
@@ -77,26 +76,26 @@ public class MethodSourceCodeFormatterTests {
 
 	@Test
 	public void canPrintMethodModifiers() throws Exception {
-		MethodDeclarationAst methodDeclaration = new MethodDeclarationAst(
-				"m", MethodSignature.basic(VOID));
+		MethodDeclarationAst.Builder methodDeclaration = MethodDeclarationAst
+				.builder("m", MethodSignature.basic(VOID));
 
 		methodDeclaration.setVisibility(Visibility.PRIVATE);
-		assertThat(format(methodDeclaration))
+		assertThat(format(methodDeclaration.build()))
 				.isEqualToIgnoringWhitespace("private void m() { }");
 		methodDeclaration.setVisibility(Visibility.PACKAGE);
 
 		methodDeclaration.setStatic(true);
-		assertThat(format(methodDeclaration))
+		assertThat(format(methodDeclaration.build()))
 				.isEqualToIgnoringWhitespace("static void m() { }");
 		methodDeclaration.setStatic(false);
 
 		methodDeclaration.setAbstract(true);
-		assertThat(format(methodDeclaration))
+		assertThat(format(methodDeclaration.build()))
 				.isEqualToIgnoringWhitespace("abstract void m();");
 		methodDeclaration.setAbstract(false);
 
 		methodDeclaration.setFinal(true);
-		assertThat(format(methodDeclaration))
+		assertThat(format(methodDeclaration.build()))
 				.isEqualToIgnoringWhitespace("final void m() { }");
 		methodDeclaration.setFinal(false);
 
@@ -104,18 +103,18 @@ public class MethodSourceCodeFormatterTests {
 		methodDeclaration.setNative(true);
 		methodDeclaration.setSynchronized(true);
 		methodDeclaration.setStrictFP(true);
-		assertThat(format(methodDeclaration))
+		assertThat(format(methodDeclaration.build()))
 				.isEqualToIgnoringWhitespace("synchronized native strictfp void m() { }");
 	}
 
 	@Test
 	public void canPrintVarargMethodSignature() {
-		JavaType arrayOfInt = new ArrayType(1, BaseType.INT);
+		JavaType arrayOfInt = ArrayType.create(1, PrimitiveType.INT);
 
-		MethodDeclarationAst methodDeclaration = new MethodDeclarationAst(
-				"methodName",
-				MethodSignature.basic(VOID, arrayOfInt));
-		methodDeclaration.setVarargs(true);
+		MethodDeclarationAst methodDeclaration = MethodDeclarationAst
+				.builder("methodName", MethodSignature.basic(VOID, arrayOfInt))
+				.setVarargs(true)
+				.build();
 
 		String sourceCode = format(methodDeclaration);
 
@@ -126,11 +125,10 @@ public class MethodSourceCodeFormatterTests {
 
 	@Test
 	public void canPrintConstructor() throws Exception {
-		MethodDeclarationAst methodDeclaration = new MethodDeclarationAst(
-				"MyClass",
-				MethodSignature.basic(VOID));
-
-		methodDeclaration.setConstructor(true);
+		MethodDeclarationAst methodDeclaration = MethodDeclarationAst
+				.builder("MyClass", MethodSignature.basic(VOID))
+				.setConstructor(true)
+				.build();
 
 		String sourceCode = format(methodDeclaration);
 
@@ -141,12 +139,13 @@ public class MethodSourceCodeFormatterTests {
 
 	@Test
 	public void canPrintThrowsDeclaration() throws Exception {
-		MethodDeclarationAst methodDeclaration = new MethodDeclarationAst(
-				"throwEx",
-				MethodSignature.builder()
-					.signature(BaseType.VOID)
-					.throwz(ClassType.fromPackageAndClassName("java.lang", "Exception"))
-					.build());
+		MethodDeclarationAst methodDeclaration = MethodDeclarationAst
+				.builder("throwEx",
+					MethodSignature.builder()
+						.signature(PrimitiveType.VOID)
+						.checkedExceptions(ClassType.fromPackageAndClassName("java.lang", "Exception"))
+						.build())
+				.build();
 
 		String sourceCode = format(methodDeclaration);
 

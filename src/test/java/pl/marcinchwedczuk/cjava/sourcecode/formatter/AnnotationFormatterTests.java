@@ -6,7 +6,7 @@ import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationPropertyAssignmentAst;
 import pl.marcinchwedczuk.cjava.ast.expr.ExprAst;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.IntegerLiteral;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.StringLiteral;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ClassType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -15,9 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AnnotationFormatterTests {
 	@Test
 	public void canFormatEmptyAnnotation() throws Exception {
-		AnnotationAst annotationAst = new AnnotationAst(
-				ClassType.fromPackageAndClassName("foo.bar", "Annotation"),
-				emptyList());
+		AnnotationAst annotationAst = AnnotationAst.create(
+				ClassType.fromPackageAndClassName("foo.bar", "Annotation"));
 
 		String javaCode = format(annotationAst);
 
@@ -27,11 +26,11 @@ public class AnnotationFormatterTests {
 
 	@Test
 	public void canFormatAnnotationWithAssignments() throws Exception {
-		AnnotationAst annotationAst = new AnnotationAst(
+		AnnotationAst annotationAst = AnnotationAst.create(
 				ClassType.fromPackageAndClassName("foo.bar", "Annotation"),
 				asList(
-						assign("someProperty", new IntegerLiteral(1)),
-						assign("otherProperty", new StringLiteral("Some string"))
+						assign("someProperty", IntegerLiteral.of(1)),
+						assign("otherProperty", StringLiteral.of("Some string"))
 				));
 
 		String javaCode = format(annotationAst);
@@ -41,7 +40,7 @@ public class AnnotationFormatterTests {
 	}
 
 	private static AnnotationPropertyAssignmentAst assign(String property, ExprAst value) {
-		return new AnnotationPropertyAssignmentAst(property, value);
+		return AnnotationPropertyAssignmentAst.create(property, value);
 	}
 
 	private static String format(AnnotationAst annotationAst) {

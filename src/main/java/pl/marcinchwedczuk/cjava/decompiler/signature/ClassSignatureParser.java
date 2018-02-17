@@ -1,7 +1,7 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature;
 
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaTypeSignatureParser;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.signature.parser.JavaTypeSignatureParser;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ public class ClassSignatureParser {
 			interfaceBounds.add(interfaceBound);
 		}
 
-		return new TypeParameter(identifier, classBound, interfaceBounds);
+		return TypeParameter.create(identifier, classBound, interfaceBounds);
 	}
 
 	private JavaType parseReferenceTypeSignature() {

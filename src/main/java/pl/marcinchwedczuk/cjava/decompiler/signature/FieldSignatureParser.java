@@ -1,10 +1,8 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature;
 
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaTypeSignatureParser;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.signature.parser.JavaTypeSignatureParser;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
-
-import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 

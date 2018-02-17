@@ -1,7 +1,6 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature;
 
 import org.junit.Test;
-import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,6 +36,16 @@ public class MethodSignatureParserTests {
 				.isEqualTo("<T extends java.lang.Exception> void(T) throws T");
 	}
 
+	@Test
+	public void canParseSignatureOfMethodReturningGenericInnerClass() throws Exception {
+		String signature ="()LParent<Ljava/lang/String;>.InnerClass<Ljava/lang/String;>;";
+
+
+		MethodSignature methodSignature = parse(signature);
+
+		assertThat(methodSignature.asJavaSoucrceCode())
+				.isEqualTo("Parent<java.lang.String>.InnerClass<java.lang.String>()");
+	}
 
 	private static MethodSignature parse(String signature) {
 		MethodSignatureParser parser =

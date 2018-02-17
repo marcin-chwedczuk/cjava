@@ -3,10 +3,10 @@ package pl.marcinchwedczuk.cjava.decompiler;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.*;
 import pl.marcinchwedczuk.cjava.decompiler.descriptor.field.FieldDescriptorParser;
 import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodDescriptorParser;
-import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.BinaryNameParser;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ClassType;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
+import pl.marcinchwedczuk.cjava.decompiler.signature.parser.BinaryNameParser;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
 import java.util.Objects;

@@ -1,46 +1,52 @@
 package pl.marcinchwedczuk.cjava.ast;
 
-import com.google.common.collect.Lists;
+import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ClassType;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static pl.marcinchwedczuk.cjava.util.ListUtils.readOnlyCopy;
 
-public class ClassDeclarationAst extends TypeDeclarationAst {
-	private final ClassType className;
-	private final List<TypeParameter> typeParameters;
+@AutoValue
+public abstract class ClassDeclarationAst extends TypeDeclarationAst {
 
-	private final JavaType superClassName;
-	private final List<JavaType> implementedInterfaces;
+	public static Builder builder() {
+		Builder builder = new AutoValue_ClassDeclarationAst.Builder();
 
-	private boolean isAbstract;
-	private boolean isFinal;
-	private Visibility visibility;
+		// Set default values
+		builder
+				.setAbstract(false)
+				.setFinal(false)
+				.setVisibility(Visibility.PACKAGE)
 
-	private List<AnnotationAst> annotations = emptyList();
-	private List<FieldDeclarationAst> fields = emptyList();
-	private List<MethodDeclarationAst> methods = emptyList();
+				.setFields(ImmutableList.of())
+				.setMethods(ImmutableList.of())
+				.setAnnotations(ImmutableList.of());
 
-	public ClassDeclarationAst(ClassType className,
-							   List<TypeParameter> typeParameters,
-							   JavaType superClassName,
-							   List<JavaType> implementedInterfaces) {
-
-		this.className = requireNonNull(className);
-		this.typeParameters = readOnlyCopy(typeParameters);
-		this.superClassName = requireNonNull(superClassName);
-		this.implementedInterfaces = readOnlyCopy(implementedInterfaces);
+		return builder;
 	}
+
+	public abstract List<AnnotationAst> getAnnotations();
+
+	public abstract Visibility getVisibility();
+	public abstract boolean isAbstract();
+	public abstract boolean isFinal();
+
+	public abstract ClassType getClassName();
+	public abstract List<TypeParameter> getTypeParameters();
+
+	public abstract JavaType getSuperClass();
+	public abstract List<JavaType> getImplementedInterfaces();
+
+	public abstract List<FieldDeclarationAst> getFields();
+	public abstract List<MethodDeclarationAst> getMethods();
 
 	public boolean isGenericClassDeclaration() {
 		return !getTypeParameters().isEmpty();
@@ -50,67 +56,24 @@ public class ClassDeclarationAst extends TypeDeclarationAst {
 		return !getImplementedInterfaces().isEmpty();
 	}
 
-	public ClassType getClassName() {
-		return className;
-	}
+	@AutoValue.Builder
+	public abstract static class Builder {
+		public abstract Builder setAnnotations(List<AnnotationAst> annotations);
 
-	public List<TypeParameter> getTypeParameters() {
-		return typeParameters;
-	}
+		public abstract Builder setVisibility(Visibility visibility);
 
-	public JavaType getSuperClassName() {
-		return superClassName;
-	}
+		public abstract Builder setAbstract(boolean anAbstract);
+		public abstract Builder setFinal(boolean aFinal);
 
-	public List<JavaType> getImplementedInterfaces() {
-		return implementedInterfaces;
-	}
+		public abstract Builder setClassName(ClassType className);
+		public abstract Builder setTypeParameters(List<TypeParameter> typeParameters);
 
-	public boolean isAbstract() {
-		return isAbstract;
-	}
+		public abstract Builder setSuperClass(JavaType superClass);
+		public abstract Builder setImplementedInterfaces(List<JavaType> implementedInterfaces);
 
-	public void setAbstract(boolean anAbstract) {
-		isAbstract = anAbstract;
-	}
+		public abstract Builder setFields(List<FieldDeclarationAst> fields);
+		public abstract Builder setMethods(List<MethodDeclarationAst> methods);
 
-	public boolean isFinal() {
-		return isFinal;
-	}
-
-	public void setFinal(boolean aFinal) {
-		isFinal = aFinal;
-	}
-
-	public Visibility getVisibility() {
-		return visibility;
-	}
-
-	public void setVisibility(Visibility visibility) {
-		this.visibility = visibility;
-	}
-
-	public List<AnnotationAst> getAnnotations() {
-		return annotations;
-	}
-
-	public void setAnnotations(List<AnnotationAst> annotations) {
-		this.annotations = annotations;
-	}
-
-	public List<FieldDeclarationAst> getFields() {
-		return fields;
-	}
-
-	public void setFields(List<FieldDeclarationAst> fields) {
-		this.fields = fields;
-	}
-
-	public List<MethodDeclarationAst> getMethods() {
-		return methods;
-	}
-
-	public void setMethods(List<MethodDeclarationAst> methods) {
-		this.methods = methods;
+		public abstract ClassDeclarationAst build();
 	}
 }

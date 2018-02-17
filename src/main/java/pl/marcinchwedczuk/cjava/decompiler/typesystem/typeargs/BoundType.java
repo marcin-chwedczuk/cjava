@@ -1,4 +1,4 @@
-package pl.marcinchwedczuk.cjava.decompiler.signature.javatype;
+package pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs;
 
 public enum BoundType {
 	EXTENDS('+'),
@@ -15,13 +15,13 @@ public enum BoundType {
 	}
 
 	public static BoundType parse(char signatureConstant) {
-		for (BoundType wildcardIndicator : values()) {
-			if (wildcardIndicator.representsConstant(signatureConstant)) {
-				return wildcardIndicator;
+		for (BoundType boundType : values()) {
+			if (boundType.representsConstant(signatureConstant)) {
+				return boundType;
 			}
 		}
 
 		throw new IllegalArgumentException(
-				"Cannot find wildcard indicator for constant: " + signatureConstant + ".");
+				"Cannot find BoundType for constant: " + signatureConstant + ".");
 	}
 }

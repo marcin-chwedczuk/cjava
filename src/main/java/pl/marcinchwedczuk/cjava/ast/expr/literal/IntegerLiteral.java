@@ -1,18 +1,17 @@
 package pl.marcinchwedczuk.cjava.ast.expr.literal;
 
-public class IntegerLiteral extends LiteralAst {
-	private final int value;
+import com.google.auto.value.AutoValue;
 
-	public IntegerLiteral(int value) {
-		this.value = value;
+@AutoValue
+public abstract class IntegerLiteral extends LiteralAst {
+	public static IntegerLiteral of(int value) {
+		return new AutoValue_IntegerLiteral(value);
 	}
 
-	public int getValue() {
-		return value;
-	}
+	public abstract int getValue();
 
 	@Override
 	public Object getRawValue() {
-		return value;
+		return getValue();
 	}
 }

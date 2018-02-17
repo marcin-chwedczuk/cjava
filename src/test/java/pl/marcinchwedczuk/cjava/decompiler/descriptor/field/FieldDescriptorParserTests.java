@@ -1,7 +1,7 @@
 package pl.marcinchwedczuk.cjava.decompiler.descriptor.field;
 
 import org.junit.Test;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
 import static org.assertj.core.api.Assertions.assertThat;

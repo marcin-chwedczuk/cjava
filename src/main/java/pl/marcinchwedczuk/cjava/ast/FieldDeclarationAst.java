@@ -1,84 +1,60 @@
 package pl.marcinchwedczuk.cjava.ast;
 
+import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
-import pl.marcinchwedczuk.cjava.bytecode.attribute.RuntimeVisibleAnnotationsAttribute;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 
-public class FieldDeclarationAst {
-	private final JavaType fieldType;
-	private final String fieldName;
-	private Visibility visibility;
-	private boolean isFinal;
-	private boolean isStatic;
-	private boolean isTransient;
-	private boolean isVolatile;
+@AutoValue
+public abstract class FieldDeclarationAst {
+	public static FieldDeclarationAst.Builder builder(JavaType fieldType, String fieldName) {
+		AutoValue_FieldDeclarationAst.Builder builder =
+				new AutoValue_FieldDeclarationAst.Builder();
 
-	private List<AnnotationAst> annotations = emptyList();
+		builder.setFieldType(fieldType)
+				.setFieldName(fieldName)
 
-	public FieldDeclarationAst(JavaType fieldType, String fieldName) {
-		this.fieldType = requireNonNull(fieldType);
-		this.fieldName = requireNonNull(fieldName);
+				// set default values
+				.setVisibility(Visibility.PACKAGE)
+				.setFinal(false)
+				.setStatic(false)
+				.setVolatile(false)
+				.setTransient(false)
+				.setAnnotations(ImmutableList.of());
+
+		return builder;
 	}
 
-	public JavaType getFieldType() {
-		return fieldType;
-	}
+	public abstract Visibility getVisibility();
+	public abstract JavaType getFieldType();
+	public abstract String getFieldName();
 
-	public String getFieldName() {
-		return fieldName;
-	}
+	public abstract boolean isFinal();
+	public abstract boolean isStatic();
+	public abstract boolean isTransient();
+	public abstract boolean isVolatile();
 
-	public void setVisibility(Visibility visibility) {
-		this.visibility = visibility;
-	}
+	public abstract ImmutableList<AnnotationAst> getAnnotations();
 
-	public Visibility getVisibility() {
-		return visibility;
-	}
+	@AutoValue.Builder
+	public abstract static class Builder {
+		public abstract Builder setVisibility(Visibility visibility);
+		public abstract Builder setFieldType(JavaType fieldType);
+		public abstract Builder setFieldName(String fieldName);
 
-	public boolean isFinal() {
-		return isFinal;
-	}
+		public abstract Builder setFinal(boolean aFinal);
+		public abstract Builder setStatic(boolean aStatic);
+		public abstract Builder setTransient(boolean aTransient);
+		public abstract Builder setVolatile(boolean aVolatile);
 
-	public void setFinal(boolean aFinal) {
-		isFinal = aFinal;
-	}
+		public abstract Builder setAnnotations(AnnotationAst... annotations);
+		public abstract Builder setAnnotations(List<AnnotationAst> annotations);
 
-	public boolean isStatic() {
-		return isStatic;
-	}
-
-	public void setStatic(boolean aStatic) {
-		isStatic = aStatic;
-	}
-
-	public boolean isTransient() {
-		return isTransient;
-	}
-
-	public void setTransient(boolean aTransient) {
-		isTransient = aTransient;
-	}
-
-	public boolean isVolatile() {
-		return isVolatile;
-	}
-
-	public void setVolatile(boolean aVolatile) {
-		isVolatile = aVolatile;
-	}
-
-	public List<AnnotationAst> getAnnotations() {
-		return annotations;
-	}
-
-	public void setAnnotations(List<AnnotationAst> annotations) {
-		this.annotations = annotations;
+		public abstract FieldDeclarationAst build();
 	}
 }

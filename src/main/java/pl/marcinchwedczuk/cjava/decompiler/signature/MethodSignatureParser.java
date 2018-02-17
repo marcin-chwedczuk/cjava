@@ -1,9 +1,8 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature;
 
-import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.BaseType;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaTypeSignatureParser;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.signature.parser.JavaTypeSignatureParser;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
 import java.util.ArrayList;
@@ -19,29 +18,32 @@ public class MethodSignatureParser {
 	}
 
 	public MethodSignature parseMethodSignature() {
-		List<TypeParameter> genericTypeParameters =
+		List<TypeParameter> typeParameters =
 				new ClassSignatureParser(tokenStream).parseTypeParameters();
 
-		List<JavaType> parameterTypes = parseParameterTypes();
+		List<JavaType> parametersTypes = parseParametersTypes();
 		JavaType returnType = parseReturnType();
 
-		List<JavaType> throwsExceptions = parseThrows();
+		List<JavaType> checkedExceptions = parseCheckedExceptions();
 
-		return new MethodSignature(
-				genericTypeParameters, returnType, parameterTypes, throwsExceptions);
+		return MethodSignature.builder()
+				.typeParameters(typeParameters)
+				.signature(returnType, parametersTypes)
+				.checkedExceptions(checkedExceptions)
+				.build();
 	}
 
 	private JavaType parseReturnType() {
 		if (tokenStream.currentIs('V')) {
 			tokenStream.matchCurrent();
-			return BaseType.VOID;
+			return PrimitiveType.VOID;
 		}
 
 		return parseTypeSignature();
 	}
 
 
-	private List<JavaType> parseParameterTypes() {
+	private List<JavaType> parseParametersTypes() {
 		tokenStream.match('(');
 
 		List<JavaType> parameterTypes = new ArrayList<>();
@@ -60,7 +62,7 @@ public class MethodSignatureParser {
 				.parseReferenceTypeSignature();
 	}
 
-	private List<JavaType> parseThrows() {
+	private List<JavaType> parseCheckedExceptions() {
 		List<JavaType> throwsExceptions = new ArrayList<>();
 
 		while (!tokenStream.ended()) {

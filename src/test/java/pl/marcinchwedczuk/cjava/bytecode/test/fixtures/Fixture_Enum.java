@@ -1,7 +1,5 @@
 package pl.marcinchwedczuk.cjava.bytecode.test.fixtures;
 
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.BaseType;
-
 public enum Fixture_Enum {
 	FOO(1),
 	BAR(2),

@@ -1,8 +1,8 @@
 package pl.marcinchwedczuk.cjava.decompiler;
 
 import com.google.common.base.Preconditions;
-import pl.marcinchwedczuk.cjava.ast.Ast;
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
+import pl.marcinchwedczuk.cjava.ast.expr.ExprAst;
 import pl.marcinchwedczuk.cjava.ast.expr.FieldAccessAst;
 import pl.marcinchwedczuk.cjava.ast.expr.MethodCallAst;
 import pl.marcinchwedczuk.cjava.ast.expr.ThisValueAst;
@@ -14,9 +14,9 @@ import pl.marcinchwedczuk.cjava.ast.statement.StatementBlockAst;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.CodeAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.*;
 import pl.marcinchwedczuk.cjava.bytecode.instruction.*;
-import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.ClassType;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +31,7 @@ public class InstructionDecompiler {
 	private final ConstantPoolHelper cp;
 
 	private List<StatementAst> alreadyDecompiled;
-	private Stack<Ast> stack;
+	private Stack<ExprAst> stack;
 	private List<Instruction> instructions;
 	private int current;
 
@@ -77,7 +77,7 @@ public class InstructionDecompiler {
 		}
 
 		Preconditions.checkState(stack.isEmpty(), "Stack must be empty at method end.");
-		return new StatementBlockAst(alreadyDecompiled);
+		return StatementBlockAst.fromStatements(alreadyDecompiled);
 	}
 
 	private void decompileLdc(SingleOperandInstruction ldc) {
@@ -86,7 +86,7 @@ public class InstructionDecompiler {
 		if (constant instanceof StringConstant) {
 			StringConstant stringConstant = (StringConstant)constant;
 			String literalValue = cp.getString(stringConstant.getUtf8());
-			stack.push(new StringLiteral(literalValue));
+			stack.push(StringLiteral.of(literalValue));
 		} else {
 			throw new RuntimeException("LDC for constant: " +
 					constant.getClass().getSimpleName() +
@@ -96,7 +96,7 @@ public class InstructionDecompiler {
 
 	private void decompileReturn() {
 		Preconditions.checkState(stack.isEmpty(), "Stack should be empty before return.");
-		alreadyDecompiled.add(new ReturnStatementAst());
+		alreadyDecompiled.add(ReturnStatementAst.create());
 	}
 
 	private void decompileInvokeX(SingleOperandInstruction invokeSpecial) {
@@ -108,18 +108,18 @@ public class InstructionDecompiler {
 		String methodName = cp.getString(nameAndType.getName());
 		MethodSignature methodSignature = cp.getMethodDescriptor(nameAndType.getDescriptor());
 
-		int numberOfArguments = methodSignature.getNumberOfParameters();
+		int numberOfArguments = methodSignature.getArity();
 
-		List<Ast> methodArguments = takeFromStack(numberOfArguments);
-		Ast thisArgument = stack.pop();
+		List<ExprAst> methodArguments = takeFromStack(numberOfArguments);
+		ExprAst thisArgument = stack.pop();
 
-		MethodCallAst methodCall = new MethodCallAst(
+		MethodCallAst methodCall = MethodCallAst.create(
 				classContainingMethod, methodName, methodSignature,
 				thisArgument, methodArguments);
 
 		if (methodSignature.hasVoidReturnType()) {
 			// wrap as statement
-			alreadyDecompiled.add(new ExprStatementAst(methodCall));
+			alreadyDecompiled.add(ExprStatementAst.fromExpr(methodCall));
 		} else {
 			stack.push(methodCall);
 		}
@@ -130,7 +130,7 @@ public class InstructionDecompiler {
 		// This | Parameters | Local variables
 
 		if ((localVarIndex == 0) && !methodDeclaration.isStatic()) {
-			stack.push(new ThisValueAst());
+			stack.push(ThisValueAst.create());
 			return;
 		}
 
@@ -149,7 +149,9 @@ public class InstructionDecompiler {
 		String fieldName = cp.getString(fieldNameAndType.getName());
 		JavaType fieldType = cp.getFieldDescriptor(fieldNameAndType.getDescriptor());
 
-		FieldAccessAst fieldAccess = new FieldAccessAst(classContainingField, fieldName, fieldType);
+		FieldAccessAst fieldAccess = FieldAccessAst.create(
+				classContainingField, fieldName, fieldType);
+
 		stack.push(fieldAccess);
 	}
 
@@ -163,8 +165,8 @@ public class InstructionDecompiler {
 		this.alreadyDecompiled = new ArrayList<>();
 	}
 
-	private List<Ast> takeFromStack(int number) {
-		List<Ast> values = new ArrayList<>();
+	private List<ExprAst> takeFromStack(int number) {
+		List<ExprAst> values = new ArrayList<>();
 
 		for (int i = 0; i < number; i++) {
 			values.add(stack.pop());

@@ -1,138 +1,88 @@
 package pl.marcinchwedczuk.cjava.ast;
 
+import com.google.auto.value.AutoValue;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.ast.statement.StatementBlockAst;
-import pl.marcinchwedczuk.cjava.decompiler.descriptor.method.MethodSignature;
+import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
 
+import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Objects;
 
-import static java.util.Collections.emptyList;
-import static java.util.Objects.requireNonNull;
+@AutoValue
+public abstract class MethodDeclarationAst {
+	public static Builder builder(String methodName, MethodSignature methodSignature) {
+		AutoValue_MethodDeclarationAst.Builder builder =
+				new AutoValue_MethodDeclarationAst.Builder();
 
-public class MethodDeclarationAst {
-	private String methodName;
-	private final MethodSignature methodSignature;
-	private StatementBlockAst methodBody;
+		// Specify default values
+		return builder.setMethodName(methodName)
+				.setMethodSignature(methodSignature)
+				.setVisibility(Visibility.PACKAGE)
+				.setMethodBody(null)
 
-	private Visibility visibility;
-	private boolean isStatic;
-	private boolean isAbstract;
-	private boolean isFinal;
-	private boolean isNative;
-	private boolean isSynchronized;
-	private boolean isVarargs;
-	private boolean isStrictFP;
+				.setStatic(false)
+				.setAbstract(false)
+				.setFinal(false)
+				.setNative(false)
+				.setSynchronized(false)
+				.setVarargs(false)
+				.setStrictFP(false)
 
-	private List<AnnotationAst> annotations = emptyList();
-	private boolean constructor;
-
-	public MethodDeclarationAst(String methodName, MethodSignature methodSignature) {
-		this.methodName = requireNonNull(methodName);
-		this.methodSignature = requireNonNull(methodSignature);
-		this.visibility = Visibility.PACKAGE;
+				.setConstructor(false)
+				.setAnnotations(ImmutableList.of());
 	}
 
-	public String getMethodName() {
-		return methodName;
+	public abstract Visibility getVisibility();
+	public abstract String getMethodName();
+	public abstract MethodSignature getMethodSignature();
+
+	@Nullable
+	public abstract StatementBlockAst getMethodBody();
+
+	public abstract boolean isStatic();
+	public abstract boolean isAbstract();
+	public abstract boolean isFinal();
+	public abstract boolean isNative();
+	public abstract boolean isSynchronized();
+	public abstract boolean isVarargs();
+	public abstract boolean isStrictFP();
+	public abstract ImmutableList<AnnotationAst> getAnnotations();
+
+	public abstract boolean isConstructor();
+
+	public MethodDeclarationAst withMethodName(String newMethodName) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(newMethodName));
+
+		return toBuilder()
+				.setMethodName(newMethodName)
+				.build();
 	}
 
-	public void fillConstructorName(String className) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(className));
-		methodName = className;
-	}
+	abstract Builder toBuilder();
 
-	public MethodSignature getMethodSignature() {
-		return methodSignature;
-	}
+	@AutoValue.Builder
+	public abstract static class Builder {
+		public abstract Builder setMethodName(String methodName);
+		public abstract Builder setMethodSignature(MethodSignature methodSignature);
+		public abstract Builder setMethodBody(StatementBlockAst methodBody);
 
-	public boolean isStatic() {
-		return isStatic;
-	}
+		public abstract Builder setVisibility(Visibility visibility);
+		public abstract Builder setConstructor(boolean constructor);
 
-	public void setStatic(boolean isStatic) {
-		this.isStatic = isStatic;
-	}
+		public abstract Builder setStatic(boolean isStatic);
+		public abstract Builder setFinal(boolean aFinal);
+		public abstract Builder setAbstract(boolean anAbstract);
+		public abstract Builder setSynchronized(boolean aSynchronized);
+		public abstract Builder setVarargs(boolean varargs);
+		public abstract Builder setNative(boolean aNative);
+		public abstract Builder setStrictFP(boolean strictFP);
 
-	public Visibility getVisibility() {
-		return visibility;
-	}
+		public abstract Builder setAnnotations(List<AnnotationAst> annotations);
+		public abstract Builder setAnnotations(AnnotationAst... annotations);
 
-	public void setVisibility(Visibility visibility) {
-		this.visibility = visibility;
-	}
-
-	public void setAbstract(boolean anAbstract) {
-		this.isAbstract = anAbstract;
-	}
-
-	public boolean isAbstract() {
-		return isAbstract;
-	}
-
-	public void setFinal(boolean aFinal) {
-		this.isFinal = aFinal;
-	}
-
-	public boolean isFinal() {
-		return isFinal;
-	}
-
-	public void setNative(boolean aNative) {
-		this.isNative = aNative;
-	}
-
-	public boolean isNative() {
-		return isNative;
-	}
-
-	public void setSynchronized(boolean aSynchronized) {
-		this.isSynchronized = aSynchronized;
-	}
-
-	public boolean isSynchronized() {
-		return isSynchronized;
-	}
-
-	public void setVarargs(boolean varargs) {
-		this.isVarargs = varargs;
-	}
-
-	public boolean isVarargs() {
-		return isVarargs;
-	}
-
-	public void setStrictFP(boolean strictFP) {
-		this.isStrictFP = strictFP;
-	}
-
-	public boolean isStrictFP() {
-		return isStrictFP;
-	}
-
-	public List<AnnotationAst> getAnnotations() {
-		return annotations;
-	}
-
-	public void setAnnotations(List<AnnotationAst> annotations) {
-		this.annotations = annotations;
-	}
-
-	public void setConstructor(boolean constructor) {
-		this.constructor = constructor;
-	}
-
-	public boolean isConstructor() {
-		return constructor;
-	}
-
-	public StatementBlockAst getMethodBody() {
-		return methodBody;
-	}
-
-	public void setMethodBody(StatementBlockAst methodBody) {
-		this.methodBody = methodBody;
+		public abstract MethodDeclarationAst build();
 	}
 }

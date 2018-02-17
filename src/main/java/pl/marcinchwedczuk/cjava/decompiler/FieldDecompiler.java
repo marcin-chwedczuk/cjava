@@ -9,7 +9,7 @@ import pl.marcinchwedczuk.cjava.bytecode.fields.FieldAccessFlag;
 import pl.marcinchwedczuk.cjava.bytecode.fields.FieldInfo;
 import pl.marcinchwedczuk.cjava.bytecode.fields.Fields;
 import pl.marcinchwedczuk.cjava.decompiler.signature.FieldSignatureParser;
-import pl.marcinchwedczuk.cjava.decompiler.signature.javatype.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 import pl.marcinchwedczuk.cjava.decompiler.signature.parser.TokenStream;
 
 import java.util.List;
@@ -37,7 +37,8 @@ public class FieldDecompiler {
 		JavaType fieldType = decompileFieldType(fieldInfo);
 		String fieldName = cp.getString(fieldInfo.getName());
 
-		FieldDeclarationAst declarationAst = new FieldDeclarationAst(fieldType, fieldName);
+		FieldDeclarationAst.Builder declarationAst =
+				FieldDeclarationAst.builder(fieldType, fieldName);
 
 		Visibility visibility = computeVisibility(fieldInfo.getAccessFlags());
 		declarationAst.setVisibility(visibility);
@@ -45,7 +46,7 @@ public class FieldDecompiler {
 		addModifiers(declarationAst, fieldInfo.getAccessFlags());
 		addAnnotations(declarationAst, fieldInfo);
 
-		return declarationAst;
+		return declarationAst.build();
 	}
 
 	private JavaType decompileFieldType(FieldInfo fieldInfo) {
@@ -77,7 +78,7 @@ public class FieldDecompiler {
 		}
 	}
 
-	private void addModifiers(FieldDeclarationAst declarationAst, Set<FieldAccessFlag> accessFlags) {
+	private void addModifiers(FieldDeclarationAst.Builder declarationAst, Set<FieldAccessFlag> accessFlags) {
 		if (accessFlags.contains(FieldAccessFlag.ACC_FINAL)) {
 			declarationAst.setFinal(true);
 		}
@@ -95,7 +96,7 @@ public class FieldDecompiler {
 		}
 	}
 
-	private void addAnnotations(FieldDeclarationAst declarationAst, FieldInfo fieldInfo) {
+	private void addAnnotations(FieldDeclarationAst.Builder declarationAst, FieldInfo fieldInfo) {
 		Optional<RuntimeVisibleAnnotationsAttribute> annotationsAttribute =
 				fieldInfo
 					.getAttributes()

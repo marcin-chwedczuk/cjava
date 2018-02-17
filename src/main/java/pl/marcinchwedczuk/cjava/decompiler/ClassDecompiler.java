@@ -10,6 +10,9 @@ import pl.marcinchwedczuk.cjava.bytecode.attribute.RuntimeVisibleAnnotationsAttr
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class ClassDecompiler {
 	private final JavaClassFile classFile;
@@ -23,17 +26,17 @@ public class ClassDecompiler {
 	}
 
 	public ClassDeclarationAst decompile() {
-		ClassDeclarationAst declaration =
+		ClassDeclarationAst.Builder declaration =
 				new ClassDeclarationDecompiler(classFile).decompile();
 
 		addAnnotations(declaration);
 		addFields(declaration);
 		addMethods(declaration);
 
-		return declaration;
+		return declaration.build();
 	}
 
-	private void addAnnotations(ClassDeclarationAst declaration) {
+	private void addAnnotations(ClassDeclarationAst.Builder declaration) {
 		Optional<RuntimeVisibleAnnotationsAttribute> annotationsAttribute = classFile
 				.getAttributes()
 				.findRuntimeVisibleAnnotationsAttribute();
@@ -49,7 +52,7 @@ public class ClassDecompiler {
 		declaration.setAnnotations(annotations);
 	}
 
-	private void addFields(ClassDeclarationAst declaration) {
+	private void addFields(ClassDeclarationAst.Builder declaration) {
 		List<FieldDeclarationAst> fieldDeclarations =
 				new FieldDecompiler(classFile.getClassFields(), cp)
 					.decompile();
@@ -57,15 +60,20 @@ public class ClassDecompiler {
 		declaration.setFields(fieldDeclarations);
 	}
 
-	private void addMethods(ClassDeclarationAst declaration) {
+	private void addMethods(ClassDeclarationAst.Builder declaration) {
 		List<MethodDeclarationAst> methodDeclarations =
 				new MethodDecompiler(classFile.getClassMethods(), cp, decompilationOptions)
 					.decompile();
 
-		String className = declaration.getClassName().computeSimpleClassName();
-		methodDeclarations.stream()
-				.filter(MethodDeclarationAst::isConstructor)
-				.forEach(m -> m.fillConstructorName(className));
+		// TODO: This should be executed as a separate AST pass
+		//HACK:
+		String className = declaration.build()
+				.getClassName()
+				.computeSimpleClassName();
+
+		methodDeclarations = methodDeclarations.stream()
+				.map(m -> m.isConstructor() ? m.withMethodName(className) : m)
+				.collect(toList());
 
 		declaration.setMethods(methodDeclarations);
 	}

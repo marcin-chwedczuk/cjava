@@ -5,11 +5,7 @@ import pl.marcinchwedczuk.cjava.ast.expr.literal.ArrayLiteral;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.IntegerLiteral;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.LiteralAst;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.StringLiteral;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 import static pl.marcinchwedczuk.cjava.sourcecode.formatter.JavaLiteralUtil.javaEscape;
 
 public class ExpressionFormatter implements SourceCodeFormatter {

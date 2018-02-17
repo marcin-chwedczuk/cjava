@@ -98,6 +98,9 @@ public class TokenStream {
 
 	@Override
 	public String toString() {
-		return input;
+		String beforeCurrent = input.substring(0, currentPosition);
+		String afterCurrent = input.substring(currentPosition);
+
+		return beforeCurrent + " *" + afterCurrent;
 	}
 }
