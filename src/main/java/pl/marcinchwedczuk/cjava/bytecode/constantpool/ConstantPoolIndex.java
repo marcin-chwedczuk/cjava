@@ -15,7 +15,7 @@ public class ConstantPoolIndex {
 	public static ConstantPoolIndex fromInteger(int index) {
 		Preconditions.checkArgument(
 				(0 <= index) && (index <= MAX_USHORT_VALUE),
-				"index out of range");
+				"ordinal out of range");
 
 		return new ConstantPoolIndex(index);
 	}

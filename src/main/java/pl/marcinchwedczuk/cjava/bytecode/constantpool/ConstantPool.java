@@ -26,7 +26,7 @@ public class ConstantPool {
 
 	public <T extends Constant> T get(int index, Class<T> klass) {
 		// Constant #0 is not present among constants
-		// but count when computing index
+		// but count when computing ordinal
 		Constant constant = constants.get(index - 1);
 		return klass.cast(constant);
 	}

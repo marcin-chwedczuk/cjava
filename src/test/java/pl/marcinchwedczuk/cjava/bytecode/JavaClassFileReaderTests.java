@@ -220,6 +220,6 @@ public class JavaClassFileReaderTests extends BaseJavaClassFileReaderTests {
 				.isEqualTo(idx(17));
 
 		assertThat(sourceFile.getData())
-				.containsExactly(0, 18); // index to constant pool
+				.containsExactly(0, 18); // ordinal to constant pool
 	}
 }

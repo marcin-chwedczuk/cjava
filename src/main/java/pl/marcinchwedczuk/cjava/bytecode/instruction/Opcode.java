@@ -4,14 +4,14 @@ public enum Opcode {
 	/**
 	 * Load reference from array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index -> ..., value }
+	 * {@code STACK ..., arrayref, ordinal -> ..., value }
 	 */
 	aaload(0x32),
 
 	/**
 	 * Store into reference array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index, value -> ... }
+	 * {@code STACK ..., arrayref, ordinal, value -> ... }
 	 */
 	aastore(0x53, ""),
 
@@ -86,13 +86,13 @@ public enum Opcode {
 	/**
 	 * Load byte or boolean from array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index -> ..., value }
+	 * {@code STACK ..., arrayref, ordinal -> ..., value }
 	 */
 	baload(0x33),
 	/**
 	 * Store into byte or boolean array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index, value -> ... }
+	 * {@code STACK ..., arrayref, ordinal, value -> ... }
 	 */
 	bastore(0x54),
 
@@ -106,18 +106,18 @@ public enum Opcode {
 	/**
 	 * Load char from array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index -> ..., value }
+	 * {@code STACK ..., arrayref, ordinal -> ..., value }
 	 */
 	caload(0x34),
 	/**
 	 * Store into char array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index, value -> ... }
+	 * {@code STACK ..., arrayref, ordinal, value -> ... }
 	 */
 	castore(0x55),
 
 	/**
-	 * Check whether object is of given type.
+	 * Check whether object is of given valueType.
 	 * <p>
 	 * {@code STACK ..., objectref -> ..., objectref }
 	 */
@@ -151,13 +151,13 @@ public enum Opcode {
 	/**
 	 * Load double from array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index -> ..., value }
+	 * {@code STACK ..., arrayref, ordinal -> ..., value }
 	 */
 	daload(0x31),
 	/**
 	 * Store into double array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index, value -> ... }
+	 * {@code STACK ..., arrayref, ordinal, value -> ... }
 	 */
 	dastore(0x52),
 	/**
@@ -179,7 +179,8 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK ..., value1, value2 -> ..., result }
 	 */
-	ddiv(0x6f),
+	ddiv(0x6f, ""),
+
 	/**
 	 * Load double from local variable.
 	 * <p>
@@ -202,7 +203,8 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK ..., value1, value2 -> ..., result }
 	 */
-	dmul(0x6b),
+	dmul(0x6b, ""),
+
 	/**
 	 * Negate double.
 	 * <p>
@@ -215,12 +217,14 @@ public enum Opcode {
 	 * {@code STACK ..., value1, value2 -> ..., result }
 	 */
 	drem(0x73),
+
 	/**
 	 * Return double from method.
 	 * <p>
 	 * {@code STACK ..., value -> [empty] }
 	 */
-	dreturn(0xaf),
+	dreturn(0xaf, ""),
+
 	/**
 	 * Store double into local variable.
 	 * <p>
@@ -229,7 +233,7 @@ public enum Opcode {
 	dstore(0x39),
 
 	/**
-	 * Store double into local variable with index 0.
+	 * Store double into local variable with ordinal 0.
 	 * <p>
 	 * {@code STACK ..., value -> ... }
 	 */
@@ -261,25 +265,25 @@ public enum Opcode {
 	/**
 	 * Duplicate the top operand stack value and insert two or three values down.
 	 * <p>
-	 * {@code STACK Form 1: ..., value3, value2, value1 -> ..., value1, value3, value2, value1 where value1, value2, and value3 are all values of a category 1 computational type (§2.11.1). Form 2: ..., value2, value1 -> ..., value1, value2, value1 where value1 is a value of a category 1 computational type and value2 is a value of a category 2 computational type (§2.11.1). }
+	 * {@code STACK Form 1: ..., value3, value2, value1 -> ..., value1, value3, value2, value1 where value1, value2, and value3 are all values of a category 1 computational valueType (§2.11.1). Form 2: ..., value2, value1 -> ..., value1, value2, value1 where value1 is a value of a category 1 computational valueType and value2 is a value of a category 2 computational valueType (§2.11.1). }
 	 */
 	dup_x2(0x5b),
 	/**
 	 * Duplicate the top one or two operand stack values.
 	 * <p>
-	 * {@code STACK Form 1: ..., value2, value1 -> ..., value2, value1, value2, value1 where both value1 and value2 are values of a category 1 computational type (§2.11.1). Form 2: ..., value -> ..., value, value where value is a value of a category 2 computational type (§2.11.1). }
+	 * {@code STACK Form 1: ..., value2, value1 -> ..., value2, value1, value2, value1 where both value1 and value2 are values of a category 1 computational valueType (§2.11.1). Form 2: ..., value -> ..., value, value where value is a value of a category 2 computational valueType (§2.11.1). }
 	 */
 	dup2(0x5c),
 	/**
 	 * Duplicate the top one or two operand stack values and insert two or three values down.
 	 * <p>
-	 * {@code STACK Form 1: ..., value3, value2, value1 -> ..., value2, value1, value3, value2, value1 where value1, value2, and value3 are all values of a category 1 computational type (§2.11.1). Form 2: ..., value2, value1 -> ..., value1, value2, value1 where value1 is a value of a category 2 computational type and value2 is a value of a category 1 computational type (§2.11.1). }
+	 * {@code STACK Form 1: ..., value3, value2, value1 -> ..., value2, value1, value3, value2, value1 where value1, value2, and value3 are all values of a category 1 computational valueType (§2.11.1). Form 2: ..., value2, value1 -> ..., value1, value2, value1 where value1 is a value of a category 2 computational valueType and value2 is a value of a category 1 computational valueType (§2.11.1). }
 	 */
 	dup2_x1(0x5d),
 	/**
 	 * Duplicate the top one or two operand stack values and insert two, three, or four values down.
 	 * <p>
-	 * {@code STACK Form 1: ..., value4, value3, value2, value1 -> ..., value2, value1, value4, value3, value2, value1 where value1, value2, value3, and value4 are all values of a category 1 computational type (§2.11.1). Form 2: ..., value3, value2, value1 -> ..., value1, value3, value2, value1 where value1 is a value of a category 2 computational type and value2 and value3 are both values of a category 1 computational type (§2.11.1). Form 3: ..., value3, value2, value1 -> ..., value2, value1, value3, value2, value1 where value1 and value2 are both values of a category 1 computational type and value3 is a value of a category 2 computational type (§2.11.1). Form 4: ..., value2, value1 -> ..., value1, value2, value1 where value1 and value2 are both values of a category 2 computational type (§2.11.1). }
+	 * {@code STACK Form 1: ..., value4, value3, value2, value1 -> ..., value2, value1, value4, value3, value2, value1 where value1, value2, value3, and value4 are all values of a category 1 computational valueType (§2.11.1). Form 2: ..., value3, value2, value1 -> ..., value1, value3, value2, value1 where value1 is a value of a category 2 computational valueType and value2 and value3 are both values of a category 1 computational valueType (§2.11.1). Form 3: ..., value3, value2, value1 -> ..., value2, value1, value3, value2, value1 where value1 and value2 are both values of a category 1 computational valueType and value3 is a value of a category 2 computational valueType (§2.11.1). Form 4: ..., value2, value1 -> ..., value1, value2, value1 where value1 and value2 are both values of a category 2 computational valueType (§2.11.1). }
 	 */
 	dup2_x2(0x5e),
 	/**
@@ -309,13 +313,13 @@ public enum Opcode {
 	/**
 	 * Load float from array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index -> ..., value }
+	 * {@code STACK ..., arrayref, ordinal -> ..., value }
 	 */
 	faload(0x30),
 	/**
 	 * Store into float array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index, value -> ... }
+	 * {@code STACK ..., arrayref, ordinal, value -> ... }
 	 */
 	fastore(0x51),
 	/**
@@ -412,7 +416,7 @@ public enum Opcode {
 	goto_(0xa7, "s2"),
 
 	/**
-	 * Branch always (wide index).
+	 * Branch always (wide ordinal).
 	 * <p>
 	 * {@code STACK No change }
 	 */
@@ -466,7 +470,7 @@ public enum Opcode {
 	/**
 	 * Load int from array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index -> ..., value }
+	 * {@code STACK ..., arrayref, ordinal -> ..., value }
 	 */
 	iaload(0x2e),
 	/**
@@ -478,7 +482,7 @@ public enum Opcode {
 	/**
 	 * Store into int array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index, value -> ... }
+	 * {@code STACK ..., arrayref, ordinal, value -> ... }
 	 */
 	iastore(0x4f),
 
@@ -560,7 +564,7 @@ public enum Opcode {
 	iload(0x15, "u1"),
 
 	/**
-	 * Load int from local variable with index 0.
+	 * Load int from local variable with ordinal 0.
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
@@ -583,7 +587,7 @@ public enum Opcode {
 	 */
 	ineg(0x74),
 	/**
-	 * Determine if object is of given type.
+	 * Determine if object is of given valueType.
 	 * <p>
 	 * {@code STACK ..., objectref -> ..., result }
 	 */
@@ -695,7 +699,7 @@ public enum Opcode {
 	 */
 	jsr(0xa8),
 	/**
-	 * Jump subroutine (wide index).
+	 * Jump subroutine (wide ordinal).
 	 * <p>
 	 * {@code STACK ... -> ..., address }
 	 */
@@ -727,7 +731,7 @@ public enum Opcode {
 	/**
 	 * Load long from array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index -> ..., value }
+	 * {@code STACK ..., arrayref, ordinal -> ..., value }
 	 */
 	laload(0x2f),
 	/**
@@ -739,7 +743,7 @@ public enum Opcode {
 	/**
 	 * Store into long array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index, value -> ... }
+	 * {@code STACK ..., arrayref, ordinal, value -> ... }
 	 */
 	lastore(0x50),
 	/**
@@ -763,13 +767,13 @@ public enum Opcode {
 	ldc(0x12, "u1"),
 
 	/**
-	 * Push item from run-time constant pool (wide index).
+	 * Push item from run-time constant pool (wide ordinal).
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
 	ldc_w(0x13),
 	/**
-	 * Push long or double from run-time constant pool (wide index).
+	 * Push long or double from run-time constant pool (wide ordinal).
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
@@ -917,7 +921,7 @@ public enum Opcode {
 	/**
 	 * Pop the top one or two operand stack values.
 	 * <p>
-	 * {@code STACK Form 1: ..., value2, value1 -> ... where each of value1 and value2 is a value of a category 1 computational type (§2.11.1). Form 2: ..., value -> ... where value is a value of a category 2 computational type (§2.11.1). }
+	 * {@code STACK Form 1: ..., value2, value1 -> ... where each of value1 and value2 is a value of a category 1 computational valueType (§2.11.1). Form 2: ..., value -> ... where value is a value of a category 2 computational valueType (§2.11.1). }
 	 */
 	pop2(0x58),
 	/**
@@ -949,13 +953,13 @@ public enum Opcode {
 	/**
 	 * Load short from array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index -> ..., value }
+	 * {@code STACK ..., arrayref, ordinal -> ..., value }
 	 */
 	saload(0x35),
 	/**
 	 * Store into short array.
 	 * <p>
-	 * {@code STACK ..., arrayref, index, value -> ... }
+	 * {@code STACK ..., arrayref, ordinal, value -> ... }
 	 */
 	sastore(0x56),
 	/**
@@ -971,13 +975,13 @@ public enum Opcode {
 	 */
 	swap(0x5f),
 	/**
-	 * Access jump table by index and jump.
+	 * Access jump table by ordinal and jump.
 	 * <p>
-	 * {@code STACK ..., index -> ... }
+	 * {@code STACK ..., ordinal -> ... }
 	 */
 	tableswitch(0xaa),
 	/**
-	 * Extend local variable index by additional bytes.
+	 * Extend local variable ordinal by additional bytes.
 	 * <p>
 	 * {@code STACK Same as modified instruction }
 	 */

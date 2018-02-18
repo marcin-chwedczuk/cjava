@@ -65,7 +65,7 @@ public class CodeAttribute extends Attribute {
 		private final int endPC;
 		private final int handlerPC;
 
-		// If this index == 0 then we catch all exceptions.
+		// If this ordinal == 0 then we catch all exceptions.
 		private final ConstantPoolIndex exceptionClassIndexOptional;
 
 		public ExceptionTableEntry(int startPC, int endPC, int handlerPC, ConstantPoolIndex exceptionClassIndexOptional) {

@@ -85,7 +85,7 @@ public class ExpressionSourceCodeFormatter {
 			IntegerLiteral integerLiteral = (IntegerLiteral)expression;
 			codeWriter.print(integerLiteral.getValue());
 		} else {
-			throw new RuntimeException("Literal type: " + expression.getClass().getSimpleName() +
+			throw new RuntimeException("Literal valueType: " + expression.getClass().getSimpleName() +
 				" is not yet supported.");
 		}
 	}

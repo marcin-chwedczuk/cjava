@@ -23,6 +23,10 @@ public class ConstantPoolHelper {
 	}
 
 	public ClassType getClassName(ConstantPoolIndex indexToClassConstant) {
+		return getClassName(indexToClassConstant.asInteger());
+	}
+
+	public ClassType getClassName(int indexToClassConstant) {
 		ClassConstant classConstant = constantPool.getClass(indexToClassConstant);
 		String classBinaryName = getString(classConstant.getName());
 		return new BinaryNameParser(classBinaryName).parse();

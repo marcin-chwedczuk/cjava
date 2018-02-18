@@ -22,7 +22,7 @@ public class ExpressionFormatter implements SourceCodeFormatter {
 		if (exprAst instanceof LiteralAst) {
 			writeLiteral();
 		} else {
-			throw new AssertionError("Cannot format expression of type: " +
+			throw new AssertionError("Cannot format expression of valueType: " +
 					exprAst.getClass().getSimpleName());
 		}
 	}

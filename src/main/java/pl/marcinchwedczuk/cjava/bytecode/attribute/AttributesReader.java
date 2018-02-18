@@ -62,7 +62,7 @@ public class AttributesReader {
 				return readUnknownAttribute(attributeNameIndex);
 		}
 
-		throw new AssertionError("Unsupported attribute type: " + type + ".");
+		throw new AssertionError("Unsupported attribute valueType: " + type + ".");
 	}
 
 	private Attribute readCodeAttribute() throws IOException {
@@ -77,7 +77,7 @@ public class AttributesReader {
 	private SignatureAttribute readSignatureAttribute() throws IOException {
 		int attributeLength = classFileReader.readInt();
 		Preconditions.checkState(attributeLength == 2,
-				"Signature attribute data must be a u2 constant pool index.");
+				"Signature attribute data must be a u2 constant pool ordinal.");
 
 		ConstantPoolIndex utf8SignatureIndex = readFrom(classFileReader);
 

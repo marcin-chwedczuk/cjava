@@ -28,11 +28,14 @@ public class InstructionDecompiler {
 	private Stack<ExprAst> stack;
 	private List<Instruction> instructions;
 	private int current;
+	private LocalVariablesTracker localVariablesTracker;
 
 	public InstructionDecompiler(CodeAttribute codeAttribute, MethodDeclarationAst methodDeclaration, ConstantPoolHelper cp) {
 		this.codeAttribute = requireNonNull(codeAttribute);
 		this.methodDeclaration = methodDeclaration;
 		this.cp = requireNonNull(cp);
+
+		this.localVariablesTracker = new LocalVariablesTracker(methodDeclaration);
 	}
 
 	public StatementBlockAst decompile() {
@@ -49,20 +52,29 @@ public class InstructionDecompiler {
 
 				case aload_0:
 				case iload_0:
+				case dload_0:
 					decompileXLoad(0);
 					break;
 
+				case aload_1:
 				case iload_1:
+				case dload_1:
 					decompileXLoad(1);
 					break;
 
+				case aload_2:
 				case iload_2:
+				case dload_2:
 					decompileXLoad(2);
 					break;
 
 				case invokespecial:
 				case invokevirtual:
-					decompileInvokeX((SingleOperandInstruction)instruction);
+					decompileInvokeX((SingleOperandInstruction)instruction, false);
+					break;
+
+				case invokestatic:
+					decompileInvokeX((SingleOperandInstruction)instruction, true);
 					break;
 
 				case return_:
@@ -70,6 +82,7 @@ public class InstructionDecompiler {
 					break;
 
 				case ireturn:
+				case dreturn:
 					decompileReturnValue();
 					break;
 
@@ -78,19 +91,27 @@ public class InstructionDecompiler {
 					break;
 
 				case iadd:
+				case dadd:
 					decompileBinaryOperator(BinaryOperator.ADD);
 					break;
 
 				case imul:
+				case dmul:
 					decompileBinaryOperator(BinaryOperator.MULTIPLY);
 					break;
 
 				case isub:
+				case dsub:
 					decompileBinaryOperator(BinaryOperator.SUBTRACT);
 					break;
 
 				case idiv:
+				case ddiv:
 					decompileBinaryOperator(BinaryOperator.DIVIDE);
+					break;
+
+				case new_:
+					decompileNew((SingleOperandInstruction)instruction);
 					break;
 
 				default:
@@ -101,6 +122,34 @@ public class InstructionDecompiler {
 
 		Preconditions.checkState(stack.isEmpty(), "Stack must be empty at method end.");
 		return StatementBlockAst.fromStatements(alreadyDecompiled);
+	}
+
+
+
+	private void decompileNew(SingleOperandInstruction newInstruction) {
+		// New instructions is used with following pattern:
+		// new           class some/valueType/of/Class
+		// dup
+		// invokespecial some/valueType/of/Class."<init>":()V
+
+		ClassType className = cp.getClassName(newInstruction.getOperand());
+
+		Preconditions.checkState(
+				instructions.get(current).getOpcode() == Opcode.dup,
+				"Expecting new/dup pattern.");
+
+		Instruction invokeSpecial = instructions.get(current+1);
+		Preconditions.checkState(
+				invokeSpecial.getOpcode() == Opcode.invokespecial,
+				"Expecting new/dup pattern");
+
+		current += 2;
+
+		// TODO: Add constructor parameters
+
+		// TODO: Check if invoke special acutally points to the constructor
+
+		stack.push(NewOpAst.create(className));
 	}
 
 	private void decompileReturnValue() {
@@ -140,7 +189,7 @@ public class InstructionDecompiler {
 		alreadyDecompiled.add(ReturnStatementAst.create());
 	}
 
-	private void decompileInvokeX(SingleOperandInstruction invokeSpecial) {
+	private void decompileInvokeX(SingleOperandInstruction invokeSpecial, boolean staticCall) {
 		MethodRefConstant calledMethod = cp.getMethodRef(invokeSpecial.getOperand());
 
 		ClassType classContainingMethod = cp.getClassName(calledMethod.getKlass());
@@ -152,7 +201,7 @@ public class InstructionDecompiler {
 		int numberOfArguments = methodSignature.getArity();
 
 		List<ExprAst> methodArguments = takeFromStack(numberOfArguments);
-		ExprAst thisArgument = stack.pop();
+		ExprAst thisArgument = staticCall ? null : stack.pop();
 
 		MethodCallAst methodCall = MethodCallAst.create(
 				classContainingMethod, methodName, methodSignature,
@@ -170,25 +219,21 @@ public class InstructionDecompiler {
 		// locals array:
 		// This | Parameters | Local variables
 
-		// Without this
-		int numberOfParameters =
-				methodDeclaration.getMethodSignature().getArity();
+		LocalVariablesTracker.Slot slot = localVariablesTracker.getSlot(varIndex);
 
-		if (methodDeclaration.isStatic()) {
-			if (varIndex < numberOfParameters) {
-				stack.push(ParameterValueAst.forParameter("arg" + varIndex));
-				return;
-			}
-
-			// TODO: access local variable
-		} else {
-			if (varIndex == 0) {
+		switch (slot.slotType) {
+			case THIS:
 				stack.push(ThisValueAst.create());
 				return;
-			}
-		}
 
-		// TODO: return parameter and local vars access
+			case PARAMETER:
+				stack.push(ParameterValueAst.forParameter("arg" + slot.ordinal));
+				return;
+
+			case VARIABLE:
+				stack.push(VariableValueAst.forVariable("var" + slot.ordinal));
+				return;
+		}
 
 		throw new RuntimeException("aload_xxx - not impllemented");
 	}
