@@ -104,7 +104,7 @@ public class MethodSourceCodeFormatterTests {
 		methodDeclaration.setSynchronized(true);
 		methodDeclaration.setStrictFP(true);
 		assertThat(format(methodDeclaration.build()))
-				.isEqualToIgnoringWhitespace("synchronized native strictfp void m() { }");
+				.isEqualToIgnoringWhitespace("synchronized native strictfp void m();");
 	}
 
 	@Test

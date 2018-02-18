@@ -10,6 +10,7 @@ import pl.marcinchwedczuk.cjava.ast.expr.literal.StringLiteral;
 import pl.marcinchwedczuk.cjava.ast.statement.ExprStatementAst;
 import pl.marcinchwedczuk.cjava.ast.statement.StatementBlockAst;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_HelloWorld;
+import pl.marcinchwedczuk.cjava.decompiler.fixture.AstFixtures;
 import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
 
@@ -37,18 +38,8 @@ public class InstructionDecompilerTests extends BaseDecompilerTests {
 		assertThat(methodBody)
 				.isNotNull();
 
-		ExprAst thisExpr = FieldAccessAst.create(
-				ClassType.of(System.class),
-				"out",
-				ClassType.of(PrintStream.class));
-
-		ExprAst helloWorld = StringLiteral.of("Hello, world!");
-
-		ExprStatementAst methodCall = ExprStatementAst.fromExpr(
-				MethodCallAst.create(
-						ClassType.of(PrintStream.class), "println",
-						MethodSignature.basic(VOID, ClassType.of(String.class)),
-						thisExpr, asList(helloWorld)));
+		ExprStatementAst methodCall =
+				AstFixtures.createPrintHelloWorldStatement();
 
 		assertThat(methodBody.getStatement(0))
 				.isEqualTo(methodCall);

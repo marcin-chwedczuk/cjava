@@ -21,7 +21,7 @@ public abstract class MethodDeclarationAst {
 		return builder.setMethodName(methodName)
 				.setMethodSignature(methodSignature)
 				.setVisibility(Visibility.PACKAGE)
-				.setMethodBody(null)
+				.setMethodBody(StatementBlockAst.empty())
 
 				.setStatic(false)
 				.setAbstract(false)
@@ -38,8 +38,6 @@ public abstract class MethodDeclarationAst {
 	public abstract Visibility getVisibility();
 	public abstract String getMethodName();
 	public abstract MethodSignature getMethodSignature();
-
-	@Nullable
 	public abstract StatementBlockAst getMethodBody();
 
 	public abstract boolean isStatic();

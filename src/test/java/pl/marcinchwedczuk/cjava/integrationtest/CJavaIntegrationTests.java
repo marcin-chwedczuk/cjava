@@ -21,7 +21,7 @@ public class CJavaIntegrationTests {
 
 	@Test
 	public void canDecompileGenericClassDeclaration() throws Exception {
-		String decompiled = decompile(Fixture_GenericClass.class);
+		String decompiled = decompileWithoutCode(Fixture_GenericClass.class);
 		String expected = readExpectedDecompiledSourceCode(Fixture_GenericClass.class);
 
 		assertThat(decompiled).isEqualToIgnoringWhitespace(expected);
@@ -29,7 +29,7 @@ public class CJavaIntegrationTests {
 
 	@Test
 	public void canDecompileClassAnnotations() throws Exception {
-		String decompiled = decompile(Fixture_ClassWithAnnotations.class);
+		String decompiled = decompileWithoutCode(Fixture_ClassWithAnnotations.class);
 		String expected = readExpectedDecompiledSourceCode(Fixture_ClassWithAnnotations.class);
 
 		assertThat(decompiled).isEqualToIgnoringWhitespace(expected);
@@ -37,7 +37,7 @@ public class CJavaIntegrationTests {
 
 	@Test
 	public void canDecompileClassFields() throws Exception {
-		String decompiled = decompile(Fixture_ClassWithThreeFields.class);
+		String decompiled = decompileWithoutCode(Fixture_ClassWithThreeFields.class);
 		String expected = readExpectedDecompiledSourceCode(Fixture_ClassWithThreeFields.class);
 
 		assertThat(decompiled).isEqualToIgnoringWhitespace(expected);
@@ -45,7 +45,7 @@ public class CJavaIntegrationTests {
 
 	@Test
 	public void canDecompileClassMethods() throws Exception {
-		String decompiled = decompile(Fixture_ClassWithTwoMethods.class);
+		String decompiled = decompileWithoutCode(Fixture_ClassWithTwoMethods.class);
 		String expected = readExpectedDecompiledSourceCode(Fixture_ClassWithTwoMethods.class);
 
 		assertThat(decompiled).isEqualToIgnoringWhitespace(expected);
@@ -53,19 +53,35 @@ public class CJavaIntegrationTests {
 
 	@Test
 	public void canDecompileGenericClassMethods() throws Exception {
-		String decompiled = decompile(Fixture_ClassWithGenericMethodSignatures.class);
+		String decompiled = decompileWithoutCode(Fixture_ClassWithGenericMethodSignatures.class);
 		String expected = readExpectedDecompiledSourceCode(Fixture_ClassWithGenericMethodSignatures.class);
 
 		assertThat(decompiled).isEqualToIgnoringWhitespace(expected);
 	}
 
+	@Test
+	public void canDecompileHelloWorld() throws Exception {
+		String decompiled = decompile(Fixture_HelloWorld.class);
+		String expected = readExpectedDecompiledSourceCode(Fixture_HelloWorld.class);
+
+		assertThat(decompiled).isEqualToIgnoringWhitespace(expected);
+	}
+
+	private static String decompileWithoutCode(Class<?> klass) throws IOException {
+		return decompile(klass, DecompilationOptions.withoutCode());
+	}
+
 	private static String decompile(Class<?> klass) throws IOException {
+		return decompile(klass, DecompilationOptions.defaultOptions());
+	}
+
+	private static String decompile(Class<?> klass, DecompilationOptions options) throws IOException {
 		byte[] klassBytes = TestUtils.readClassBytes(klass);
 
 		CompilationUnitAst compilationUnit =
 				new BytecodeDecompiler(
 							new JavaClassFileLoader().load(klassBytes),
-							DecompilationOptions.withoutCode())
+							options)
 						.decompile();
 
 		ClassDeclarationAst classDeclaration =

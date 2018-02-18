@@ -1,6 +1,7 @@
 package pl.marcinchwedczuk.cjava.sourcecode.formatter;
 
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
+import pl.marcinchwedczuk.cjava.ast.statement.StatementAst;
 import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.ArrayType;
@@ -11,6 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static java.util.Objects.requireNonNull;
 import static pl.marcinchwedczuk.cjava.sourcecode.formatter.ListWriter.ElementPosition.LAST;
+import static pl.marcinchwedczuk.cjava.sourcecode.formatter.ListWriter.writeList;
 
 public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 	private final MethodDeclarationAst methodDeclaration;
@@ -67,7 +69,7 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 			return;
 		}
 
-		ListWriter.writeList(genericTypeParameters)
+		writeList(genericTypeParameters)
 				.before(codeWriter.printAction("<"))
 				.element((typeParameter, pos) -> {
 					codeWriter.print(typeParameter.toJavaString());
@@ -88,7 +90,7 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 
 		AtomicLong paramCounter = new AtomicLong(1);
 
-		ListWriter.writeList(methodSignature.getParametersTypes())
+		writeList(methodSignature.getParametersTypes())
 				.before(codeWriter.printAction("("))
 				.element((paramType, pos) -> {
 					if (pos == LAST && isVarargParameter(paramType)) {
@@ -141,7 +143,7 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 			return;
 		}
 
-		ListWriter.writeList(methodSignature.getCheckedExceptions())
+		writeList(methodSignature.getCheckedExceptions())
 				.beforeNonEmpty(codeWriter.printAction(" throws "))
 				.element((exceptionType, pos) -> {
 					codeWriter.print(exceptionType.asSourceCodeString());
@@ -151,11 +153,29 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 	}
 
 	private void printMethodBody() {
-		if (methodDeclaration.isAbstract()) {
+		if (methodDeclaration.isAbstract() || methodDeclaration.isNative()) {
 			codeWriter.print(";");
-		} else {
-			codeWriter.print(" { }");
+			return;
 		}
+
+		codeWriter
+				.print("{")
+				.printNewLine()
+				.increaseIndent(1);
+
+		for (StatementAst statement : methodDeclaration.getMethodBody().getStatements()) {
+			new StatementSourceCodeFormatter(statement, codeWriter)
+					.convertAstToJavaCode();
+
+			codeWriter.printNewLine().printIndent();
+		}
+
+		codeWriter
+				.decreaseIndent(1)
+				.printNewLine()
+				.printIndent()
+				.print("}")
+				.printNewLine();
 	}
 
 }

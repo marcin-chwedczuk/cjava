@@ -1,0 +1,17 @@
+public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_HelloWorld
+		extends java.lang.Object {
+
+	public Fixture_HelloWorld(){
+		this.<init>();
+		return;
+
+	}
+
+
+	public static void main(java.lang.String[] arg1){
+		java.lang.System.out.println("Hello, world!");
+		return;
+
+	}
+
+}
