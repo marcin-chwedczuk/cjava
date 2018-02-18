@@ -2,60 +2,76 @@ package pl.marcinchwedczuk.cjava.decompiler;
 
 import com.google.common.collect.ImmutableList;
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
+import pl.marcinchwedczuk.cjava.decompiler.signature.LocalVariable;
+import pl.marcinchwedczuk.cjava.decompiler.signature.MethodParameter;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Tracks this, method parameters and local variables
  */
 public class LocalVariablesTracker {
-	private final AtomicInteger variableOrdinals = new AtomicInteger(0);
-	private final Map<Integer, Slot> variableMap = new HashMap<>();
+	private final Map<Integer, Slot> localVariables = new HashMap<>();
 
 	public LocalVariablesTracker(MethodDeclarationAst methodDeclarationAst) {
 		initializeVariableMap(methodDeclarationAst);
 	}
 
-	public void store(int varIndex, JavaType type) {
-		Slot slot = variableMap.get(varIndex);
-		if (slot != null) {
-			if (slot.slotType.equals(type)) {
-				// The same type nothing to fix
-				return;
-			}
+	public Slot tryStore(int varIndex, JavaType type) {
+		Slot slot = localVariables.get(varIndex);
 
-			if (slot.size == 2) {
-				// Remove second part of the wide slot
-				Slot below = variableMap.get(varIndex - 1);
-				if (below == slot) {
-					variableMap.remove(varIndex - 1);
-				}
-
-				Slot above = variableMap.get(varIndex + 1);
-				if (above == slot) {
-					variableMap.remove(varIndex + 1);
-				}
-			}
+		if ((slot != null) && slot.slotType.equals(type)) {
+			return slot;
 		}
 
-		// create or overwrite existing slot
-		int slotSize = isWideType(type) ? 2 : 1;
-
-		Slot parameterSlot = new Slot(
-				SlotType.VARIABLE, type,
-				variableOrdinals.getAndIncrement(), slotSize);
-
-		for (int i = 0; i < slotSize; i++) {
-			variableMap.put(varIndex + i, parameterSlot);
-		}
+		return null;
 	}
 
-	public Slot getSlot(int varIndex) {
-		Slot slot = variableMap.get(varIndex);
+	public Slot declareVariable(int varIndex, LocalVariable variable) {
+		Slot slot = localVariables.get(varIndex);
+
+		if ((slot != null) && slot.slotType.equals(variable.getType())) {
+			throw new IllegalArgumentException(
+					"Variable is already declared and can be reused!");
+		}
+
+		// Remove old slot
+		if (slot != null) {
+			if (isWideType(slot.valueType)) {
+				// Remove second part of the wide slot
+				Slot below = localVariables.get(varIndex - 1);
+				if (below == slot) {
+					localVariables.remove(varIndex - 1);
+				}
+
+				Slot above = localVariables.get(varIndex + 1);
+				if (above == slot) {
+					localVariables.remove(varIndex + 1);
+				}
+			}
+
+			// Remove slot
+			localVariables.remove(varIndex);
+		}
+
+		// create new slot
+		int slotSize = isWideType(variable.getType()) ? 2 : 1;
+
+		Slot parameterSlot = new Slot(
+				SlotType.VARIABLE, variable.getType(), null, variable);
+
+		for (int i = 0; i < slotSize; i++) {
+			localVariables.put(varIndex + i, parameterSlot);
+		}
+
+		return parameterSlot;
+	}
+
+	public Slot load(int varIndex) {
+		Slot slot = localVariables.get(varIndex);
 		if (slot == null) {
 			throw new RuntimeException("Cannot find slot for index: " + varIndex);
 		}
@@ -63,36 +79,33 @@ public class LocalVariablesTracker {
 		return slot;
 	}
 
-	private Map<Integer, Slot> initializeVariableMap(MethodDeclarationAst methodDeclarationAst) {
+	private Map<Integer, Slot> initializeVariableMap(MethodDeclarationAst declarationAst) {
 		int currentParameterVarIndex = 0;
 
 		// register this slow if necessary
-		if (!methodDeclarationAst.isStatic()) {
-			Slot thisSlot = new Slot(SlotType.THIS, null, -1, 1);
-
-			variableMap.put(0, thisSlot);
+		if (!declarationAst.isStatic()) {
+			Slot thisSlot = new Slot(SlotType.THIS, declarationAst.getThisParameterType(), null, null);
+			localVariables.put(0, thisSlot);
 			currentParameterVarIndex = 1;
 		}
 
 		// register method parameters
-		ImmutableList<JavaType> parametersTypes =
-				methodDeclarationAst.getMethodSignature().getParametersTypes();
+		ImmutableList<MethodParameter> parameters =
+				declarationAst.getMethodSignature().getParameters();
 
-		int parameterOrdinal = 0;
-		for (JavaType parametersType : parametersTypes) {
-			int slotSize = isWideType(parametersType) ? 2 : 1;
-
+		for (MethodParameter parameter : parameters) {
 			Slot parameterSlot = new Slot(
-					SlotType.PARAMETER, parametersType,
-					parameterOrdinal++, slotSize);
+					SlotType.PARAMETER, parameter.getType(), parameter, null);
 
+			int slotSize = isWideType(parameter.getType()) ? 2 : 1;
 			for (int i = 0; i < slotSize; i++) {
-				variableMap.put(currentParameterVarIndex + i, parameterSlot);
+				localVariables.put(currentParameterVarIndex + i, parameterSlot);
 			}
+
 			currentParameterVarIndex += slotSize;
 		}
 
-		return variableMap;
+		return localVariables;
 	}
 
 	private boolean isWideType(JavaType type) {
@@ -102,14 +115,14 @@ public class LocalVariablesTracker {
 	public static class Slot {
 		public final SlotType slotType;
 		public final JavaType valueType;
-		public final int ordinal;
-		public final int size;
+		public final MethodParameter methodParameter;
+		public final LocalVariable localVariable;
 
-		public Slot(SlotType slotType, JavaType valueType, int ordinal, int size) {
+		public Slot(SlotType slotType, JavaType valueType, MethodParameter parameter, LocalVariable localVariable) {
 			this.slotType = slotType;
 			this.valueType = valueType;
-			this.ordinal = ordinal;
-			this.size = size;
+			this.methodParameter = parameter;
+			this.localVariable = localVariable;
 		}
 	}
 

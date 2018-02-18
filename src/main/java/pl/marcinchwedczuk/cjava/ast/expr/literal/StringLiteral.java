@@ -2,6 +2,8 @@ package pl.marcinchwedczuk.cjava.ast.expr.literal;
 
 import com.google.auto.value.AutoValue;
 import pl.marcinchwedczuk.cjava.ast.expr.ExprAst;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 @AutoValue
 public abstract class StringLiteral extends LiteralAst {
@@ -15,5 +17,10 @@ public abstract class StringLiteral extends LiteralAst {
 	@Override
 	public Object getRawValue() {
 		return getValue();
+	}
+
+	@Override
+	public JavaType getResultType() {
+		return ClassType.of(String.class);
 	}
 }

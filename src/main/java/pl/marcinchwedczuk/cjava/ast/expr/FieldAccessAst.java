@@ -15,4 +15,9 @@ public abstract class FieldAccessAst extends ExprAst {
 	public abstract ClassType getClassContainingField();
 	public abstract String getFieldName();
 	public abstract JavaType getFieldType();
+
+	@Override
+	public JavaType getResultType() {
+		return getFieldType();
+	}
 }

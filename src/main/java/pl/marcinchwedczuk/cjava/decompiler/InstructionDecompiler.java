@@ -3,14 +3,17 @@ package pl.marcinchwedczuk.cjava.decompiler;
 import com.google.common.base.Preconditions;
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.expr.*;
+import pl.marcinchwedczuk.cjava.ast.expr.literal.IntegerLiteral;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.StringLiteral;
 import pl.marcinchwedczuk.cjava.ast.statement.*;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.CodeAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.*;
 import pl.marcinchwedczuk.cjava.bytecode.instruction.*;
+import pl.marcinchwedczuk.cjava.decompiler.signature.LocalVariable;
 import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +21,8 @@ import java.util.List;
 import java.util.Stack;
 
 import static java.util.Objects.requireNonNull;
+import static pl.marcinchwedczuk.cjava.decompiler.LocalVariablesTracker.SlotType.PARAMETER;
+import static pl.marcinchwedczuk.cjava.decompiler.LocalVariablesTracker.SlotType.VARIABLE;
 
 public class InstructionDecompiler {
 	private final CodeAttribute codeAttribute;
@@ -30,7 +35,11 @@ public class InstructionDecompiler {
 	private int current;
 	private LocalVariablesTracker localVariablesTracker;
 
-	public InstructionDecompiler(CodeAttribute codeAttribute, MethodDeclarationAst methodDeclaration, ConstantPoolHelper cp) {
+	private List<LocalVariable> localVariables;
+
+	public InstructionDecompiler(CodeAttribute codeAttribute,
+								 MethodDeclarationAst methodDeclaration,
+								 ConstantPoolHelper cp) {
 		this.codeAttribute = requireNonNull(codeAttribute);
 		this.methodDeclaration = methodDeclaration;
 		this.cp = requireNonNull(cp);
@@ -68,6 +77,26 @@ public class InstructionDecompiler {
 					decompileXLoad(2);
 					break;
 
+				case iload_3:
+					decompileXLoad(3);
+					break;
+
+				case iload:
+					decompileXLoad(((SingleOperandInstruction)instruction).getOperand());
+					break;
+
+				case istore_2:
+					decompileXStore(2);
+					break;
+
+				case istore_3:
+					decompileXStore(3);
+					break;
+
+				case istore:
+					decompileXStore(((SingleOperandInstruction)instruction).getOperand());
+					break;
+
 				case invokespecial:
 				case invokevirtual:
 					decompileInvokeX((SingleOperandInstruction)instruction, false);
@@ -81,6 +110,7 @@ public class InstructionDecompiler {
 					decompileReturn();
 					break;
 
+				case areturn:
 				case ireturn:
 				case dreturn:
 					decompileReturnValue();
@@ -88,6 +118,22 @@ public class InstructionDecompiler {
 
 				case ldc:
 					decompileLdc((SingleOperandInstruction)instruction);
+					break;
+
+				case iconst_0:
+					stack.push(IntegerLiteral.of(0));
+					break;
+
+				case iconst_1:
+					stack.push(IntegerLiteral.of(1));
+					break;
+
+				case iconst_2:
+					stack.push(IntegerLiteral.of(2));
+					break;
+
+				case iconst_3:
+					stack.push(IntegerLiteral.of(3));
 					break;
 
 				case iadd:
@@ -114,6 +160,26 @@ public class InstructionDecompiler {
 					decompileNew((SingleOperandInstruction)instruction);
 					break;
 
+				case anewarray:
+					decompileNewArray((SingleOperandInstruction)instruction);
+					break;
+
+				case i2d:
+					decompileCast(PrimitiveType.DOUBLE);
+					break;
+
+				case d2i:
+					decompileCast(PrimitiveType.INT);
+					break;
+
+				case dup:
+					decompileDup();
+					break;
+
+				case aastore:
+					decompileArrayStore();
+					break;
+
 				default:
 					throw new RuntimeException("decompilation of " +
 							instruction.getOpcode() + " is not implemented yet!");
@@ -124,7 +190,47 @@ public class InstructionDecompiler {
 		return StatementBlockAst.fromStatements(alreadyDecompiled);
 	}
 
+	private void decompileArrayStore() {
+		ExprAst value = stack.pop();
+		ExprAst indexExpr = stack.pop();
+		ExprAst arrayExpr = stack.pop();
 
+		ArrayAccess arrayAccess = ArrayAccess.create(arrayExpr, indexExpr);
+		AssignmentOpAst assignmentAst = AssignmentOpAst.create(arrayAccess, value);
+
+		alreadyDecompiled.add(ExprStatementAst.fromExpr(assignmentAst));
+	}
+
+	private void decompileDup() {
+		// This is naive implementation - we
+		// introduce a new local variable to hold
+		// dup'ed value.
+
+		ExprAst exprToDuplicate = stack.pop();
+		LocalVariable newLocalVariable =
+				createLocalVariable(exprToDuplicate.getResultType());
+
+		alreadyDecompiled.add(
+				VariableDeclarationStatementAst.create(newLocalVariable, exprToDuplicate));
+
+		// Push two copies of variable onto the stack
+		stack.push(LocalLValueAst.forVariable(newLocalVariable));
+		stack.push(LocalLValueAst.forVariable(newLocalVariable));
+	}
+
+	private void decompileNewArray(SingleOperandInstruction newArray) {
+		ClassType elementType = cp.getClassName(newArray.getOperand());
+		ExprAst numberOfElements = stack.pop();
+
+		NewArrayAst newArrayExpr = NewArrayAst.create(elementType, numberOfElements);
+		stack.push(newArrayExpr);
+	}
+
+	private void decompileCast(JavaType targetType) {
+		ExprAst expr = stack.pop();
+		CastAst cast = CastAst.create(targetType, expr);
+		stack.push(cast);
+	}
 
 	private void decompileNew(SingleOperandInstruction newInstruction) {
 		// New instructions is used with following pattern:
@@ -149,7 +255,7 @@ public class InstructionDecompiler {
 
 		// TODO: Check if invoke special acutally points to the constructor
 
-		stack.push(NewOpAst.create(className));
+		stack.push(NewInstanceAst.create(className));
 	}
 
 	private void decompileReturnValue() {
@@ -215,11 +321,47 @@ public class InstructionDecompiler {
 		}
 	}
 
+	private void decompileXStore(int varIndex) {
+		ExprAst valueToStore = stack.pop();
+
+		LocalVariablesTracker.Slot destination =
+				localVariablesTracker.tryStore(varIndex, valueToStore.getResultType());
+
+		if (destination == null) {
+			// declare new local variable
+			LocalVariable newVariable = createLocalVariable(valueToStore.getResultType());
+			localVariablesTracker.declareVariable(varIndex, newVariable);
+
+			alreadyDecompiled.add(VariableDeclarationStatementAst.create(newVariable, valueToStore));
+		} else {
+			// generate assignment expression
+			LValueAst destinationAst = null;
+
+			if (destination.slotType == VARIABLE) {
+				destinationAst = LocalLValueAst.forVariable(destination.localVariable);
+			} else if (destination.slotType == PARAMETER) {
+				destinationAst = ParameterValueAst.forParameter(destination.methodParameter);
+			} else {
+				Preconditions.checkState(false, "Cannot reassign this.");
+			}
+
+			stack.push(AssignmentOpAst.create(destinationAst, valueToStore));
+		}
+	}
+
+	private LocalVariable createLocalVariable(JavaType type) {
+		LocalVariable newVariable =
+				LocalVariable.create(type, "var" + localVariables.size());
+
+		localVariables.add(newVariable);
+		return newVariable;
+	}
+
 	private void decompileXLoad(int varIndex) {
 		// locals array:
 		// This | Parameters | Local variables
 
-		LocalVariablesTracker.Slot slot = localVariablesTracker.getSlot(varIndex);
+		LocalVariablesTracker.Slot slot = localVariablesTracker.load(varIndex);
 
 		switch (slot.slotType) {
 			case THIS:
@@ -227,11 +369,11 @@ public class InstructionDecompiler {
 				return;
 
 			case PARAMETER:
-				stack.push(ParameterValueAst.forParameter("arg" + slot.ordinal));
+				stack.push(ParameterValueAst.forParameter(slot.methodParameter));
 				return;
 
 			case VARIABLE:
-				stack.push(VariableValueAst.forVariable("var" + slot.ordinal));
+				stack.push(LocalLValueAst.forVariable(slot.localVariable));
 				return;
 		}
 
@@ -261,6 +403,8 @@ public class InstructionDecompiler {
 		this.current = 0;
 		this.stack = new Stack<>();
 		this.alreadyDecompiled = new ArrayList<>();
+
+		this.localVariables = new ArrayList<>();
 	}
 
 	private List<ExprAst> takeFromStack(int number) {

@@ -7,9 +7,13 @@ import com.google.common.collect.ImmutableList;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.ast.statement.StatementBlockAst;
 import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 @AutoValue
 public abstract class MethodDeclarationAst {
@@ -38,6 +42,14 @@ public abstract class MethodDeclarationAst {
 	public abstract Visibility getVisibility();
 	public abstract String getMethodName();
 	public abstract MethodSignature getMethodSignature();
+
+	/**
+	 * Applicable only to instance methods.
+	 * @return Type type of {@code this} expression.
+	 */
+	@Nullable
+	public abstract JavaType getThisParameterType();
+
 	public abstract StatementBlockAst getMethodBody();
 
 	public abstract boolean isStatic();
@@ -80,6 +92,8 @@ public abstract class MethodDeclarationAst {
 
 		public abstract Builder setAnnotations(List<AnnotationAst> annotations);
 		public abstract Builder setAnnotations(AnnotationAst... annotations);
+
+		public abstract Builder setThisParameterType(JavaType thisType);
 
 		public abstract MethodDeclarationAst build();
 	}

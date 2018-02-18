@@ -1,8 +1,11 @@
 package pl.marcinchwedczuk.cjava.decompiler.fixture;
 
 import pl.marcinchwedczuk.cjava.ast.expr.*;
+import pl.marcinchwedczuk.cjava.decompiler.signature.MethodParameter;
 import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType;
 
 import java.util.Random;
 
@@ -16,8 +19,17 @@ public class AstBuilder {
 		return BinaryOpAst.create(operator, left, right);
 	}
 
-	public static ParameterValueAst param(String name) {
-		return ParameterValueAst.forParameter(name);
+	public static ParameterValueAst intParam(String name) {
+		return ParameterValueAst.forParameter(MethodParameter.create(PrimitiveType.INT, name));
+	}
+
+	public static ParameterValueAst doubleParam(String name) {
+		return ParameterValueAst.forParameter(MethodParameter.create(PrimitiveType.DOUBLE, name));
+	}
+
+
+	public static ParameterValueAst param(JavaType type, String name) {
+		return ParameterValueAst.forParameter(MethodParameter.create(type, name));
 	}
 
 	public static MethodCallAst mathMethod(String methodName, ExprAst argument) {
@@ -43,7 +55,7 @@ public class AstBuilder {
 				ClassType.of(Random.class),
 				"nextDouble",
 				MethodSignature.basic(DOUBLE),
-					NewOpAst.create(ClassType.of(Random.class)),
+					NewInstanceAst.create(ClassType.of(Random.class)),
 					emptyList());
 	}
 }

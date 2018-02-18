@@ -25,6 +25,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.fail;
 import static pl.marcinchwedczuk.cjava.ast.expr.BinaryOperator.*;
 import static pl.marcinchwedczuk.cjava.decompiler.fixture.AstBuilder.*;
 import static pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType.DOUBLE;
+import static pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType.INT;
 import static pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType.VOID;
 
 
@@ -56,21 +57,21 @@ public class InstructionDecompilerTests extends BaseDecompilerTests {
 				binOp(MULTIPLY,
 						binOp(ADD,
 								binOp(ADD,
-										param("arg0"),
-										param("arg1")),
-								param("arg2")),
-						param("arg1")),
+										intParam("arg0"),
+										intParam("arg1")),
+								intParam("arg2")),
+						intParam("arg1")),
 
 				binOp(DIVIDE,
 						binOp(MULTIPLY,
-								param("arg2"),
+								intParam("arg2"),
 								binOp(SUBTRACT,
 										binOp(SUBTRACT,
-												param("arg0"), param("arg1")),
-										param("arg2"))),
+												intParam("arg0"), intParam("arg1")),
+										intParam("arg2"))),
 						binOp(ADD,
-								param("arg0"),
-								param("arg1"))));
+								intParam("arg0"),
+								intParam("arg1"))));
 
 		assertThat(expr).isEqualTo(expected);
 	}
@@ -89,15 +90,15 @@ public class InstructionDecompilerTests extends BaseDecompilerTests {
 		ExprAst expected = binOp(DIVIDE,
 				mathMethod("cos",
 						binOp(MULTIPLY,
-								param("arg1"),
+								doubleParam("arg1"),
 								mathMethod("sin",
 										binOp(ADD,
 												newRandomNextDouble(),
-												param("arg0"))))
+												doubleParam("arg0"))))
 						),
 				mathMethod("atan2",
-						param("arg0"),
-						param("arg1")));
+						doubleParam("arg0"),
+						doubleParam("arg1")));
 
 		assertThat(expr).isEqualTo(expected);
 	}

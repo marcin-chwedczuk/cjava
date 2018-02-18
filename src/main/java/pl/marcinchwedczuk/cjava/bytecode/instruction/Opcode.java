@@ -22,14 +22,14 @@ public enum Opcode {
 	 */
 	aconst_null(0x1),
 	/**
-	 * Load reference from local variable.
+	 * Load reference from local localVariable.
 	 * <p>
 	 * {@code STACK ... -> ..., objectref }
 	 */
 	aload(0x19),
 
 	/**
-	 * Load reference from local variable.
+	 * Load reference from local localVariable.
 	 * <p>
 	 * {@code STACK ... -> ..., objectref }
 	 */
@@ -60,14 +60,14 @@ public enum Opcode {
 	arraylength(0xbe, ""),
 
 	/**
-	 * Store reference into local variable.
+	 * Store reference into local localVariable.
 	 * <p>
 	 * {@code STACK ..., objectref -> ... }
 	 */
 	astore(0x3a, "u1"),
 
 	/**
-	 * Store reference into local variable.
+	 * Store reference into local localVariable.
 	 * <p>
 	 * {@code STACK ..., objectref -> ... }
 	 */
@@ -129,12 +129,14 @@ public enum Opcode {
 	 * {@code STACK ..., value -> ..., result }
 	 */
 	d2f(0x90),
+
 	/**
 	 * Convert double to int.
 	 * <p>
 	 * {@code STACK ..., value -> ..., result }
 	 */
-	d2i(0x8e),
+	d2i(0x8e, ""),
+
 	/**
 	 * Convert double to long.
 	 * <p>
@@ -182,14 +184,14 @@ public enum Opcode {
 	ddiv(0x6f, ""),
 
 	/**
-	 * Load double from local variable.
+	 * Load double from local localVariable.
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
 	dload(0x18),
 
 	/**
-	 * Load double from local variable.
+	 * Load double from local localVariable.
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
@@ -226,14 +228,14 @@ public enum Opcode {
 	dreturn(0xaf, ""),
 
 	/**
-	 * Store double into local variable.
+	 * Store double into local localVariable.
 	 * <p>
 	 * {@code STACK ..., value -> ... }
 	 */
 	dstore(0x39),
 
 	/**
-	 * Store double into local variable with ordinal 0.
+	 * Store double into local localVariable with ordinal 0.
 	 * <p>
 	 * {@code STACK ..., value -> ... }
 	 */
@@ -341,13 +343,13 @@ public enum Opcode {
 	 */
 	fdiv(0x6e),
 	/**
-	 * Load float from local variable.
+	 * Load float from local localVariable.
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
 	fload(0x17),
 	/**
-	 * Load float from local variable.
+	 * Load float from local localVariable.
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
@@ -377,13 +379,13 @@ public enum Opcode {
 	 */
 	freturn(0xae),
 	/**
-	 * Store float into local variable.
+	 * Store float into local localVariable.
 	 * <p>
 	 * {@code STACK ..., value -> ... }
 	 */
 	fstore(0x38),
 	/**
-	 * Store float into local variable.
+	 * Store float into local localVariable.
 	 * <p>
 	 * {@code STACK ..., value -> ... }
 	 */
@@ -550,21 +552,21 @@ public enum Opcode {
 	 */
 	ifnull(0xc6),
 	/**
-	 * Increment local variable by constant.
+	 * Increment local localVariable by constant.
 	 * <p>
 	 * {@code STACK No change }
 	 */
 	iinc(0x84, "u1s1"),
 
 	/**
-	 * Load int from local variable.
+	 * Load int from local localVariable.
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
 	iload(0x15, "u1"),
 
 	/**
-	 * Load int from local variable with ordinal 0.
+	 * Load int from local localVariable with ordinal 0.
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
@@ -661,18 +663,22 @@ public enum Opcode {
 	ishr(0x7a),
 
 	/**
-	 * Store int into local variable.
+	 * Store int into local localVariable.
 	 * <p>
 	 * {@code STACK ..., value -> ... }
 	 */
 	istore(0x36, "u1"),
 
 	/**
-	 * Store int into local variable.
+	 * Store int into local localVariable.
 	 * <p>
 	 * {@code STACK ..., value -> ... }
 	 */
-	istore_0(0x3b),
+	istore_0(0x3b, ""),
+	istore_1(0x3c, ""),
+	istore_2(0x3d, ""),
+	istore_3(0x3e, ""),
+
 	/**
 	 * Subtract int.
 	 * <p>
@@ -785,13 +791,13 @@ public enum Opcode {
 	 */
 	ldiv(0x6d),
 	/**
-	 * Load long from local variable.
+	 * Load long from local localVariable.
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
 	lload(0x16),
 	/**
-	 * Load long from local variable.
+	 * Load long from local localVariable.
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
@@ -845,13 +851,13 @@ public enum Opcode {
 	 */
 	lshr(0x7b),
 	/**
-	 * Store long into local variable.
+	 * Store long into local localVariable.
 	 * <p>
 	 * {@code STACK ..., value -> ... }
 	 */
 	lstore(0x37),
 	/**
-	 * Store long into local variable.
+	 * Store long into local localVariable.
 	 * <p>
 	 * {@code STACK ..., value -> ... }
 	 */
@@ -981,7 +987,7 @@ public enum Opcode {
 	 */
 	tableswitch(0xaa),
 	/**
-	 * Extend local variable ordinal by additional bytes.
+	 * Extend local localVariable ordinal by additional bytes.
 	 * <p>
 	 * {@code STACK Same as modified instruction }
 	 */

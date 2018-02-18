@@ -6,9 +6,14 @@ import pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.google.common.collect.ImmutableList.copyOf;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 @AutoValue
 public abstract class MethodSignature {
@@ -23,15 +28,16 @@ public abstract class MethodSignature {
 	static MethodSignature create(
 			List<TypeParameter> genericParameters,
 			JavaType returnType,
-			List<JavaType> parameterTypes,
+			List<MethodParameter> parameters,
 			List<JavaType> checkedExceptions)
 	{
 		return new AutoValue_MethodSignature(
 				copyOf(genericParameters),
 				returnType,
-				copyOf(parameterTypes),
+				copyOf(parameters),
 				copyOf(checkedExceptions));
 	}
+
 
 	public static MethodSignatureBuilder builder() {
 		return new MethodSignatureBuilder();
@@ -39,9 +45,14 @@ public abstract class MethodSignature {
 
 	public abstract ImmutableList<TypeParameter> getTypeParameters();
 	public abstract JavaType getReturnType();
-	public abstract ImmutableList<JavaType> getParametersTypes();
+	public abstract ImmutableList<MethodParameter> getParameters();
 	public abstract ImmutableList<JavaType> getCheckedExceptions();
 
+	public ImmutableList<JavaType> getParametersTypes() {
+		return getParameters().stream()
+				.map(MethodParameter::getType)
+				.collect(toImmutableList());
+	}
 
 	public JavaType getParameterType(int index) {
 		return getParametersTypes().get(index);

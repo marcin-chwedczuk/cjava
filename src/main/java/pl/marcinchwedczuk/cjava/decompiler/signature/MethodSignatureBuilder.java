@@ -3,9 +3,11 @@ package pl.marcinchwedczuk.cjava.decompiler.signature;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static pl.marcinchwedczuk.cjava.util.ListUtils.lastElement;
 import static pl.marcinchwedczuk.cjava.util.ListUtils.withoutLastElement;
 
@@ -49,8 +51,14 @@ public class MethodSignatureBuilder {
 		return MethodSignature.create(
 				typeParameters,
 				returnType,
-				parametersTypes,
+				toMethodParameters(parametersTypes),
 				checkedExceptions);
 	}
 
+	private static List<MethodParameter> toMethodParameters(List<JavaType> parameterTypes) {
+		return IntStream.range(0, parameterTypes.size())
+				.mapToObj(index ->
+						MethodParameter.create(parameterTypes.get(index), "arg" + index))
+				.collect(toList());
+	}
 }

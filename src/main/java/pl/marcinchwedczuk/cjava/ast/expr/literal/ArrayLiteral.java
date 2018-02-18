@@ -3,6 +3,7 @@ package pl.marcinchwedczuk.cjava.ast.expr.literal;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import pl.marcinchwedczuk.cjava.ast.expr.ExprAst;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 import java.util.List;
 
@@ -21,5 +22,12 @@ public abstract class ArrayLiteral extends LiteralAst {
 		return getElements().stream()
 				.map(ExprAst::getRawValue)
 				.toArray();
+	}
+
+	@Override
+	public JavaType getResultType() {
+		// TODO: Compute common type or better find out what
+		// type is expected
+		throw new RuntimeException("Not implemented!");
 	}
 }

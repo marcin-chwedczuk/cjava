@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import pl.marcinchwedczuk.cjava.ast.Ast;
 import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -29,4 +30,9 @@ public abstract class MethodCallAst extends ExprAst {
 	@Nullable
 	public abstract ExprAst getThisArgument();
 	public abstract ImmutableList<ExprAst> getMethodArguments();
+
+	@Override
+	public JavaType getResultType() {
+		return getMethodSignature().getReturnType();
+	}
 }

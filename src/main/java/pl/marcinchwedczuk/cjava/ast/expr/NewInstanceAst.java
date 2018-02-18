@@ -4,13 +4,18 @@ import com.google.auto.value.AutoValue;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 @AutoValue
-public abstract class NewOpAst extends ExprAst {
+public abstract class NewInstanceAst extends ExprAst {
 
-	public static NewOpAst create(JavaType type) {
-		return new AutoValue_NewOpAst(type);
+	public static NewInstanceAst create(JavaType type) {
+		return new AutoValue_NewInstanceAst(type);
 	}
 
 	public abstract JavaType getType();
 
 	// TODO: Constructor parameters
+
+	@Override
+	public JavaType getResultType() {
+		return getType();
+	}
 }
