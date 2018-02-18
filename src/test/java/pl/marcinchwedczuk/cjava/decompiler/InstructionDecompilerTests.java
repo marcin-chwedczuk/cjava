@@ -23,8 +23,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.fail;
 import static pl.marcinchwedczuk.cjava.ast.expr.BinaryOperator.*;
-import static pl.marcinchwedczuk.cjava.decompiler.fixture.AstBuilder.binOp;
-import static pl.marcinchwedczuk.cjava.decompiler.fixture.AstBuilder.param;
+import static pl.marcinchwedczuk.cjava.decompiler.fixture.AstBuilder.*;
 import static pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType.DOUBLE;
 import static pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType.VOID;
 
@@ -88,33 +87,17 @@ public class InstructionDecompilerTests extends BaseDecompilerTests {
 		// double doubleArithmeticWithMethodCalls(double a, double b)
 		// Math.cos(b * Math.sin(new Random().nextDouble() + a)) / Math.atan2(a, b)
 		ExprAst expected = binOp(DIVIDE,
-				MethodCallAst.create(
-						ClassType.of(Math.class), "cos",
-						MethodSignature.basic(DOUBLE, DOUBLE),
-						null,
-						asList(
-								binOp(MULTIPLY,
-										param("arg1"),
-										MethodCallAst.create(
-												ClassType.of(Math.class), "sin",
-												MethodSignature.basic(DOUBLE, DOUBLE),
-												null,
-												asList(
-														binOp(ADD,
-																MethodCallAst.create(
-																		ClassType.of(Random.class), "nextDouble",
-																		MethodSignature.basic(DOUBLE),
-																		NewOpAst.create(ClassType.of(Random.class)),
-																		emptyList()),
-																param("arg0")))))
-						)),
-				MethodCallAst.create(
-						ClassType.of(Math.class), "atan2",
-						MethodSignature.basic(DOUBLE, DOUBLE, DOUBLE),
-						null,
-						asList(
-								param("arg0"),
-								param("arg1"))));
+				mathMethod("cos",
+						binOp(MULTIPLY,
+								param("arg1"),
+								mathMethod("sin",
+										binOp(ADD,
+												newRandomNextDouble(),
+												param("arg0"))))
+						),
+				mathMethod("atan2",
+						param("arg0"),
+						param("arg1")));
 
 		assertThat(expr).isEqualTo(expected);
 	}
