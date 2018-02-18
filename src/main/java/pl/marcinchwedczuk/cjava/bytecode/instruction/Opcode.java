@@ -455,12 +455,14 @@ public enum Opcode {
 	 * {@code STACK ..., value -> ..., result }
 	 */
 	i2s(0x93),
+
 	/**
 	 * Add int.
 	 * <p>
 	 * {@code STACK ..., value1, value2 -> ..., result }
 	 */
-	iadd(0x60),
+	iadd(0x60, ""),
+
 	/**
 	 * Load int from array.
 	 * <p>
@@ -498,7 +500,8 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK ..., value1, value2 -> ..., result }
 	 */
-	idiv(0x6c),
+	idiv(0x6c, ""),
+
 	/**
 	 * Branch if reference comparison succeeds.
 	 * <p>
@@ -571,7 +574,8 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK ..., value1, value2 -> ..., result }
 	 */
-	imul(0x68),
+	imul(0x68, ""),
+
 	/**
 	 * Negate int.
 	 * <p>
@@ -670,7 +674,8 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK ..., value1, value2 -> ..., result }
 	 */
-	isub(0x64),
+	isub(0x64, ""),
+
 	/**
 	 * Logical shift right int.
 	 * <p>

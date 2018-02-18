@@ -2,15 +2,9 @@ package pl.marcinchwedczuk.cjava.decompiler;
 
 import com.google.common.base.Preconditions;
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
-import pl.marcinchwedczuk.cjava.ast.expr.ExprAst;
-import pl.marcinchwedczuk.cjava.ast.expr.FieldAccessAst;
-import pl.marcinchwedczuk.cjava.ast.expr.MethodCallAst;
-import pl.marcinchwedczuk.cjava.ast.expr.ThisValueAst;
+import pl.marcinchwedczuk.cjava.ast.expr.*;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.StringLiteral;
-import pl.marcinchwedczuk.cjava.ast.statement.ExprStatementAst;
-import pl.marcinchwedczuk.cjava.ast.statement.ReturnStatementAst;
-import pl.marcinchwedczuk.cjava.ast.statement.StatementAst;
-import pl.marcinchwedczuk.cjava.ast.statement.StatementBlockAst;
+import pl.marcinchwedczuk.cjava.ast.statement.*;
 import pl.marcinchwedczuk.cjava.bytecode.attribute.CodeAttribute;
 import pl.marcinchwedczuk.cjava.bytecode.constantpool.*;
 import pl.marcinchwedczuk.cjava.bytecode.instruction.*;
@@ -54,7 +48,16 @@ public class InstructionDecompiler {
 					break;
 
 				case aload_0:
-					decompileALoad(0);
+				case iload_0:
+					decompileXLoad(0);
+					break;
+
+				case iload_1:
+					decompileXLoad(1);
+					break;
+
+				case iload_2:
+					decompileXLoad(2);
 					break;
 
 				case invokespecial:
@@ -66,8 +69,28 @@ public class InstructionDecompiler {
 					decompileReturn();
 					break;
 
+				case ireturn:
+					decompileReturnValue();
+					break;
+
 				case ldc:
 					decompileLdc((SingleOperandInstruction)instruction);
+					break;
+
+				case iadd:
+					decompileBinaryOperator(BinaryOperator.ADD);
+					break;
+
+				case imul:
+					decompileBinaryOperator(BinaryOperator.MULTIPLY);
+					break;
+
+				case isub:
+					decompileBinaryOperator(BinaryOperator.SUBTRACT);
+					break;
+
+				case idiv:
+					decompileBinaryOperator(BinaryOperator.DIVIDE);
 					break;
 
 				default:
@@ -78,6 +101,24 @@ public class InstructionDecompiler {
 
 		Preconditions.checkState(stack.isEmpty(), "Stack must be empty at method end.");
 		return StatementBlockAst.fromStatements(alreadyDecompiled);
+	}
+
+	private void decompileReturnValue() {
+		ExprAst returnedValue = stack.pop();
+		alreadyDecompiled.add(
+			ReturnValueStatementAst.create(returnedValue));
+
+		Preconditions.checkState(stack.isEmpty(), "Stack should be empty after return.");
+	}
+
+	private void decompileBinaryOperator(BinaryOperator operator) {
+		Preconditions.checkState(stack.size() >= 2,
+				"Expecting at least two values on stack.");
+
+		ExprAst right = stack.pop();
+		ExprAst left = stack.pop();
+
+		stack.push(BinaryOpAst.create(operator, left, right));
 	}
 
 	private void decompileLdc(SingleOperandInstruction ldc) {
@@ -125,15 +166,27 @@ public class InstructionDecompiler {
 		}
 	}
 
-	private void decompileALoad(int localVarIndex) {
+	private void decompileXLoad(int varIndex) {
 		// locals array:
 		// This | Parameters | Local variables
 
-		if ((localVarIndex == 0) && !methodDeclaration.isStatic()) {
-			stack.push(ThisValueAst.create());
-			return;
-		}
+		// Without this
+		int numberOfParameters =
+				methodDeclaration.getMethodSignature().getArity();
 
+		if (methodDeclaration.isStatic()) {
+			if (varIndex < numberOfParameters) {
+				stack.push(ParameterValueAst.forParameter("arg" + varIndex));
+				return;
+			}
+
+			// TODO: access local variable
+		} else {
+			if (varIndex == 0) {
+				stack.push(ThisValueAst.create());
+				return;
+			}
+		}
 
 		// TODO: return parameter and local vars access
 

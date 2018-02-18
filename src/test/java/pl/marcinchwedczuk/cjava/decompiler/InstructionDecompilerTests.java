@@ -1,47 +1,85 @@
 package pl.marcinchwedczuk.cjava.decompiler;
 
-import org.junit.Before;
 import org.junit.Test;
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
+import pl.marcinchwedczuk.cjava.ast.expr.BinaryOpAst;
+import pl.marcinchwedczuk.cjava.ast.expr.BinaryOperator;
 import pl.marcinchwedczuk.cjava.ast.expr.ExprAst;
-import pl.marcinchwedczuk.cjava.ast.expr.FieldAccessAst;
-import pl.marcinchwedczuk.cjava.ast.expr.MethodCallAst;
-import pl.marcinchwedczuk.cjava.ast.expr.literal.StringLiteral;
+import pl.marcinchwedczuk.cjava.ast.expr.ParameterValueAst;
 import pl.marcinchwedczuk.cjava.ast.statement.ExprStatementAst;
+import pl.marcinchwedczuk.cjava.ast.statement.ReturnValueStatementAst;
+import pl.marcinchwedczuk.cjava.ast.statement.StatementAst;
 import pl.marcinchwedczuk.cjava.ast.statement.StatementBlockAst;
+import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_Expressions;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_HelloWorld;
 import pl.marcinchwedczuk.cjava.decompiler.fixture.AstFixtures;
-import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
-import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
 
-import java.io.PrintStream;
+import java.io.IOException;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType.VOID;
+import static org.assertj.core.api.AssertionsForClassTypes.fail;
+import static pl.marcinchwedczuk.cjava.ast.expr.BinaryOperator.*;
 
 
 public class InstructionDecompilerTests extends BaseDecompilerTests {
 
-	private ClassDeclarationAst classDeclAst;
-
-	@Before
-	public void setUp() throws Exception {
-		classDeclAst = decompile(Fixture_HelloWorld.class);
-	}
-
 	@Test
 	public void canDecompileHelloWorld() throws Exception {
 		StatementBlockAst methodBody =
-				findMethodByName(classDeclAst, "main").getMethodBody();
-
-		assertThat(methodBody)
-				.isNotNull();
+				getMethodBody(Fixture_HelloWorld.class, "main");
 
 		ExprStatementAst methodCall =
 				AstFixtures.createPrintHelloWorldStatement();
 
 		assertThat(methodBody.getStatement(0))
 				.isEqualTo(methodCall);
+	}
+
+	@Test
+	public void canDecompileIntegerArithmeticalExpr() throws Exception {
+
+		StatementBlockAst integerArithmeticBody =
+				getMethodBody(Fixture_Expressions.class, "integerArithmentic");
+
+		ExprAst expr =
+				((ReturnValueStatementAst) integerArithmeticBody.getStatement(0))
+					.getValue();
+
+		// expression: (a+b+c)*b + c*(a-b-c)/(a+b);
+		ExprAst expected = BinaryOpAst.create(ADD,
+				BinaryOpAst.create(MULTIPLY,
+						BinaryOpAst.create(ADD,
+								BinaryOpAst.create(ADD,
+										ParameterValueAst.forParameter("arg0"),
+										ParameterValueAst.forParameter("arg1")),
+								ParameterValueAst.forParameter("arg2")),
+						ParameterValueAst.forParameter("arg1")),
+
+						BinaryOpAst.create(DIVIDE,
+							BinaryOpAst.create(MULTIPLY,
+									ParameterValueAst.forParameter("arg2"),
+									BinaryOpAst.create(SUBTRACT,
+											BinaryOpAst.create(SUBTRACT,
+													ParameterValueAst.forParameter("arg0"),
+													ParameterValueAst.forParameter("arg1")),
+											ParameterValueAst.forParameter("arg2"))),
+							BinaryOpAst.create(ADD,
+									ParameterValueAst.forParameter("arg0"),
+									ParameterValueAst.forParameter("arg1"))));
+
+		assertThat(expr).isEqualTo(expected);
+	}
+
+	private StatementBlockAst getMethodBody(Class<?> klass, String methodName) throws IOException {
+		ClassDeclarationAst classDeclAst = decompile(klass);
+
+		StatementBlockAst methodBody =
+				findMethodByName(classDeclAst, methodName).getMethodBody();
+
+		assertThat(methodBody)
+				.as("Body of method '" + methodName + "'")
+				.isNotNull();
+
+		return methodBody;
 	}
 }
