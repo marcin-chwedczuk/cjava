@@ -40,13 +40,13 @@ public abstract class ClassDeclarationAst extends TypeDeclarationAst {
 	public abstract boolean isFinal();
 
 	public abstract ClassType getClassName();
-	public abstract List<TypeParameter> getTypeParameters();
+	public abstract ImmutableList<TypeParameter> getTypeParameters();
 
 	public abstract JavaType getSuperClass();
-	public abstract List<JavaType> getImplementedInterfaces();
+	public abstract ImmutableList<JavaType> getImplementedInterfaces();
 
-	public abstract List<FieldDeclarationAst> getFields();
-	public abstract List<MethodDeclarationAst> getMethods();
+	public abstract ImmutableList<FieldDeclarationAst> getFields();
+	public abstract ImmutableList<MethodDeclarationAst> getMethods();
 
 	public boolean isGenericClassDeclaration() {
 		return !getTypeParameters().isEmpty();
