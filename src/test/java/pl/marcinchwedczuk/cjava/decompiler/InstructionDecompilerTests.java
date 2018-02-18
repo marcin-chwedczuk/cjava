@@ -19,6 +19,8 @@ import java.io.IOException;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.fail;
 import static pl.marcinchwedczuk.cjava.ast.expr.BinaryOperator.*;
+import static pl.marcinchwedczuk.cjava.decompiler.fixture.AstBuilder.binOp;
+import static pl.marcinchwedczuk.cjava.decompiler.fixture.AstBuilder.param;
 
 
 public class InstructionDecompilerTests extends BaseDecompilerTests {
@@ -46,26 +48,25 @@ public class InstructionDecompilerTests extends BaseDecompilerTests {
 					.getValue();
 
 		// expression: (a+b+c)*b + c*(a-b-c)/(a+b);
-		ExprAst expected = BinaryOpAst.create(ADD,
-				BinaryOpAst.create(MULTIPLY,
-						BinaryOpAst.create(ADD,
-								BinaryOpAst.create(ADD,
-										ParameterValueAst.forParameter("arg0"),
-										ParameterValueAst.forParameter("arg1")),
-								ParameterValueAst.forParameter("arg2")),
-						ParameterValueAst.forParameter("arg1")),
+		ExprAst expected = binOp(ADD,
+				binOp(MULTIPLY,
+						binOp(ADD,
+								binOp(ADD,
+										param("arg0"),
+										param("arg1")),
+								param("arg2")),
+						param("arg1")),
 
-						BinaryOpAst.create(DIVIDE,
-							BinaryOpAst.create(MULTIPLY,
-									ParameterValueAst.forParameter("arg2"),
-									BinaryOpAst.create(SUBTRACT,
-											BinaryOpAst.create(SUBTRACT,
-													ParameterValueAst.forParameter("arg0"),
-													ParameterValueAst.forParameter("arg1")),
-											ParameterValueAst.forParameter("arg2"))),
-							BinaryOpAst.create(ADD,
-									ParameterValueAst.forParameter("arg0"),
-									ParameterValueAst.forParameter("arg1"))));
+				binOp(DIVIDE,
+						binOp(MULTIPLY,
+								param("arg2"),
+								binOp(SUBTRACT,
+										binOp(SUBTRACT,
+												param("arg0"), param("arg1")),
+										param("arg2"))),
+						binOp(ADD,
+								param("arg0"),
+								param("arg1"))));
 
 		assertThat(expr).isEqualTo(expected);
 	}
