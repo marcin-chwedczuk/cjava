@@ -5,9 +5,9 @@ import pl.marcinchwedczuk.cjava.decompiler.signature.LocalVariable;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 @AutoValue
-public abstract class LocalLValueAst extends LValueAst {
-	public static LocalLValueAst forVariable(LocalVariable variable) {
-		return new AutoValue_LocalLValueAst(variable);
+public abstract class LocalVariableValueAst extends LValueAst {
+	public static LocalVariableValueAst forVariable(LocalVariable variable) {
+		return new AutoValue_LocalVariableValueAst(variable);
 	}
 
 	public abstract LocalVariable getVariable();

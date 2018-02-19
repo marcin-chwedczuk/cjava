@@ -67,6 +67,14 @@ public class CJavaIntegrationTests {
 		assertThat(decompiled).isEqualToIgnoringWhitespace(expected);
 	}
 
+	@Test
+	public void canDecompileClassWithSimpleCode() throws Exception {
+		String decompiled = decompile(Fixture_ClassWithSimpleCode.class);
+		String expected = readExpectedDecompiledSourceCode(Fixture_ClassWithSimpleCode.class);
+
+		assertThat(decompiled).isEqualToIgnoringWhitespace(expected);
+	}
+
 	private static String decompileWithoutCode(Class<?> klass) throws IOException {
 		return decompile(klass, DecompilationOptions.withoutCode());
 	}

@@ -15,10 +15,7 @@ import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 import static pl.marcinchwedczuk.cjava.decompiler.LocalVariablesTracker.SlotType.PARAMETER;
@@ -35,6 +32,10 @@ public class InstructionDecompiler {
 	private int current;
 	private LocalVariablesTracker localVariablesTracker;
 
+	// Set of *READ-ONLY* local variables introducted (e.g. by dup instruction)
+	// to hold  some value.
+	// Values of these variables can be safetly reused.
+	private Set<LocalVariable> syntheticLocalVariables;
 	private List<LocalVariable> localVariables;
 
 	public InstructionDecompiler(CodeAttribute codeAttribute,
@@ -138,22 +139,22 @@ public class InstructionDecompiler {
 
 				case iadd:
 				case dadd:
-					decompileBinaryOperator(BinaryOperator.ADD);
+					decompileBinaryOperator(JavaOperator.ADDITION);
 					break;
 
 				case imul:
 				case dmul:
-					decompileBinaryOperator(BinaryOperator.MULTIPLY);
+					decompileBinaryOperator(JavaOperator.MULTIPLICATION);
 					break;
 
 				case isub:
 				case dsub:
-					decompileBinaryOperator(BinaryOperator.SUBTRACT);
+					decompileBinaryOperator(JavaOperator.SUBTRACTION);
 					break;
 
 				case idiv:
 				case ddiv:
-					decompileBinaryOperator(BinaryOperator.DIVIDE);
+					decompileBinaryOperator(JavaOperator.DIVISION);
 					break;
 
 				case new_:
@@ -207,15 +208,29 @@ public class InstructionDecompiler {
 		// dup'ed value.
 
 		ExprAst exprToDuplicate = stack.pop();
+
+		// We already have *synthetic* local variable on stack
+		if ((exprToDuplicate instanceof LocalVariableValueAst) &&
+				syntheticLocalVariables.contains(((LocalVariableValueAst)exprToDuplicate).getVariable())) {
+
+			// Since synthetic variables are read-only we can reuse them
+			stack.push(exprToDuplicate);
+			stack.push(exprToDuplicate);
+
+			return;
+		}
+
 		LocalVariable newLocalVariable =
 				createLocalVariable(exprToDuplicate.getResultType());
+
+		syntheticLocalVariables.add(newLocalVariable);
 
 		alreadyDecompiled.add(
 				VariableDeclarationStatementAst.create(newLocalVariable, exprToDuplicate));
 
 		// Push two copies of variable onto the stack
-		stack.push(LocalLValueAst.forVariable(newLocalVariable));
-		stack.push(LocalLValueAst.forVariable(newLocalVariable));
+		stack.push(LocalVariableValueAst.forVariable(newLocalVariable));
+		stack.push(LocalVariableValueAst.forVariable(newLocalVariable));
 	}
 
 	private void decompileNewArray(SingleOperandInstruction newArray) {
@@ -266,7 +281,7 @@ public class InstructionDecompiler {
 		Preconditions.checkState(stack.isEmpty(), "Stack should be empty after return.");
 	}
 
-	private void decompileBinaryOperator(BinaryOperator operator) {
+	private void decompileBinaryOperator(JavaOperator operator) {
 		Preconditions.checkState(stack.size() >= 2,
 				"Expecting at least two values on stack.");
 
@@ -338,7 +353,7 @@ public class InstructionDecompiler {
 			LValueAst destinationAst = null;
 
 			if (destination.slotType == VARIABLE) {
-				destinationAst = LocalLValueAst.forVariable(destination.localVariable);
+				destinationAst = LocalVariableValueAst.forVariable(destination.localVariable);
 			} else if (destination.slotType == PARAMETER) {
 				destinationAst = ParameterValueAst.forParameter(destination.methodParameter);
 			} else {
@@ -373,7 +388,7 @@ public class InstructionDecompiler {
 				return;
 
 			case VARIABLE:
-				stack.push(LocalLValueAst.forVariable(slot.localVariable));
+				stack.push(LocalVariableValueAst.forVariable(slot.localVariable));
 				return;
 		}
 
@@ -405,6 +420,7 @@ public class InstructionDecompiler {
 		this.alreadyDecompiled = new ArrayList<>();
 
 		this.localVariables = new ArrayList<>();
+		this.syntheticLocalVariables = new HashSet<>();
 	}
 
 	private List<ExprAst> takeFromStack(int number) {

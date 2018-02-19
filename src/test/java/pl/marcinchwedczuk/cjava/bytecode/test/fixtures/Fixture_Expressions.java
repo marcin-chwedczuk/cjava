@@ -11,6 +11,10 @@ public class Fixture_Expressions {
 		return Math.cos(b * Math.sin(new Random().nextDouble() + a)) / Math.atan2(a, b);
 	}
 
+	public static String[] createArray() {
+		return new String[] { "foo", "bar" };
+	}
+
 	public static String methodThatUsesLocalVariables(int a, int b) {
 		int sum = a+b;
 		int mul = a*b;

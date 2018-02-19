@@ -13,9 +13,9 @@ public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericClas
 
 	public ParamA getKey() { }
 
-	public void setKey(ParamA arg1) { }
+	public void setKey(ParamA arg0) { }
 
 	public ParamB getValues() { }
 
-	public void setValues(ParamB arg1) { }
+	public void setValues(ParamB arg0) { }
 }

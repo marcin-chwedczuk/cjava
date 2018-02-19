@@ -88,7 +88,7 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 				.printIf(!isConstructor, " ")
 				.print(methodDeclaration.getMethodName());
 
-		AtomicLong paramCounter = new AtomicLong(1);
+		AtomicLong paramCounter = new AtomicLong(0);
 
 		writeList(methodSignature.getParametersTypes())
 				.before(codeWriter.printAction("("))
@@ -166,13 +166,10 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 		for (StatementAst statement : methodDeclaration.getMethodBody().getStatements()) {
 			new StatementSourceCodeFormatter(statement, codeWriter)
 					.convertAstToJavaCode();
-
-			codeWriter.printNewLine().printIndent();
 		}
 
 		codeWriter
 				.decreaseIndent(1)
-				.printNewLine()
 				.printIndent()
 				.print("}")
 				.printNewLine();

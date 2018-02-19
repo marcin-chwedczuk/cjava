@@ -8,7 +8,7 @@ public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_HelloWorld
 	}
 
 
-	public static void main(java.lang.String[] arg1){
+	public static void main(java.lang.String[] arg0){
 		java.lang.System.out.println("Hello, world!");
 		return;
 

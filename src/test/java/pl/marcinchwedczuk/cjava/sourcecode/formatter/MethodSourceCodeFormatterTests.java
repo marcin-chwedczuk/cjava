@@ -24,7 +24,7 @@ public class MethodSourceCodeFormatterTests {
 
 		String sourceCode = format(methodDeclaration);
 
-		String expected = "void methodName(int arg1, int arg2) { }";
+		String expected = "void methodName(int arg0, int arg1) { }";
 		assertThat(sourceCode)
 				.isEqualToIgnoringWhitespace(expected);
 	}
@@ -50,7 +50,7 @@ public class MethodSourceCodeFormatterTests {
 
 		String sourceCode = format(methodDeclaration);
 
-		String expected = "<E extends java.lang.Object> E methodName(java.util.List<E> arg1) { }";
+		String expected = "<E extends java.lang.Object> E methodName(java.util.List<E> arg0) { }";
 		assertThat(sourceCode)
 				.isEqualToIgnoringWhitespace(expected);
 	}

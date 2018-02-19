@@ -5,9 +5,9 @@ public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithGe
 
     public Fixture_ClassWithGenericMethodSignatures() { }
 
-	public <T extends java.lang.Exception> void throwsSometing(T arg1) throws T { }
+	public <T extends java.lang.Exception> void throwsSometing(T arg0) throws T { }
 
-	public void process(T arg1) { }
+	public void process(T arg0) { }
 
-	public <E extends java.lang.Object> java.util.List<E> listOf(E arg1, E arg2) { }
+	public <E extends java.lang.Object> java.util.List<E> listOf(E arg0, E arg1) { }
 }

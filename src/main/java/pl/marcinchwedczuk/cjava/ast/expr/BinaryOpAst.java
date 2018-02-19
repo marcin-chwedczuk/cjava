@@ -5,12 +5,12 @@ import com.google.common.base.Preconditions;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 @AutoValue
-public abstract class BinaryOpAst extends ExprAst {
-	public static BinaryOpAst create(BinaryOperator operator, ExprAst left, ExprAst right) {
+public abstract class BinaryOpAst extends ExprAst implements BinaryOp {
+	public static BinaryOpAst create(JavaOperator operator, ExprAst left, ExprAst right) {
 		return new AutoValue_BinaryOpAst(operator, left, right);
 	}
 
-	public abstract BinaryOperator getOperator();
+	public abstract JavaOperator getOperator();
 	public abstract ExprAst getLeft();
 	public abstract ExprAst getRight();
 

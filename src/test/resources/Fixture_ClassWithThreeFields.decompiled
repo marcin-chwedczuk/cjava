@@ -8,5 +8,5 @@ public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithTh
 
 	protected final java.lang.Boolean field3;
 
-	public Fixture_ClassWithThreeFields(java.lang.Boolean arg1) { }
+	public Fixture_ClassWithThreeFields(java.lang.Boolean arg0) { }
 }
