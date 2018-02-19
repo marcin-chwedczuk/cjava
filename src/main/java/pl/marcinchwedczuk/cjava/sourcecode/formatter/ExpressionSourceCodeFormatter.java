@@ -5,6 +5,7 @@ import pl.marcinchwedczuk.cjava.ast.expr.ExprAst;
 import pl.marcinchwedczuk.cjava.ast.expr.FieldAccessAst;
 import pl.marcinchwedczuk.cjava.ast.expr.MethodCallAst;
 import pl.marcinchwedczuk.cjava.ast.expr.ThisValueAst;
+import pl.marcinchwedczuk.cjava.ast.expr.literal.ArrayLiteral;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.IntegerLiteral;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.LiteralAst;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.StringLiteral;
@@ -12,6 +13,7 @@ import pl.marcinchwedczuk.cjava.ast.expr.literal.StringLiteral;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
+import static pl.marcinchwedczuk.cjava.sourcecode.formatter.JavaLiteralUtil.javaEscape;
 import static pl.marcinchwedczuk.cjava.sourcecode.formatter.ListWriter.writeList;
 
 public class ExpressionSourceCodeFormatter {
@@ -74,19 +76,29 @@ public class ExpressionSourceCodeFormatter {
 	}
 
 	private void printLiteral(LiteralAst expression) {
-		if (expression instanceof StringLiteral) {
-			StringLiteral stringLiteral = (StringLiteral)expression;
-			String escapedString = JavaLiteralUtil.javaEscape(stringLiteral.getValue());
+		if (expression instanceof IntegerLiteral) {
+			IntegerLiteral integerLiteral = ((IntegerLiteral) expression);
+			codeWriter.print(Integer.toString(integerLiteral.getValue()));
+		} else if (expression instanceof StringLiteral) {
+			StringLiteral stringLiteral = ((StringLiteral) expression);
 			codeWriter
 					.print("\"")
-					.print(escapedString)
+					.print(javaEscape(stringLiteral.getValue()))
 					.print("\"");
-		} else if (expression instanceof IntegerLiteral) {
-			IntegerLiteral integerLiteral = (IntegerLiteral)expression;
-			codeWriter.print(integerLiteral.getValue());
+		} else if (expression instanceof ArrayLiteral) {
+			ArrayLiteral arrayLiteral = (ArrayLiteral) expression;
+
+			ListWriter.writeList(arrayLiteral.getElements())
+					.before(() -> codeWriter.print("{ "))
+					.element((elementAst, position) ->
+							new ExpressionSourceCodeFormatter(codeWriter)
+									.convertAstToJavaCode(elementAst))
+					.between(() -> codeWriter.print(", "))
+					.after(() -> codeWriter.print(" }"))
+					.write();
 		} else {
 			throw new RuntimeException("Literal valueType: " + expression.getClass().getSimpleName() +
-				" is not yet supported.");
+					" is not yet supported.");
 		}
 	}
 }

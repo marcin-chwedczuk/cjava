@@ -32,8 +32,8 @@ public class AnnotationSourceCodeFormatter implements SourceCodeFormatter {
 							.print(assignmentAst.getPropertyName())
 							.print(" = ");
 
-					new ExpressionFormatter(assignmentAst.getPropertyValue(), codeWriter)
-							.convertAstToJavaCode();
+					new ExpressionSourceCodeFormatter(codeWriter)
+							.convertAstToJavaCode(assignmentAst.getPropertyValue());
 
 				})
 				.between(() -> codeWriter.print(", "))
