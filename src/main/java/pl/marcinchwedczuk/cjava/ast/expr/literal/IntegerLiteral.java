@@ -1,6 +1,7 @@
 package pl.marcinchwedczuk.cjava.ast.expr.literal;
 
 import com.google.auto.value.AutoValue;
+import pl.marcinchwedczuk.cjava.ast.visitor.AstMapper;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType;
 
@@ -20,5 +21,10 @@ public abstract class IntegerLiteral extends LiteralAst {
 	@Override
 	public JavaType getResultType() {
 		return PrimitiveType.INT;
+	}
+
+	@Override
+	public IntegerLiteral astMap(AstMapper mapper) {
+		return mapper.map(this);
 	}
 }

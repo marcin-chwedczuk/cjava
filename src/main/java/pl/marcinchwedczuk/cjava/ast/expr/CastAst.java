@@ -22,4 +22,5 @@ public abstract class CastAst extends ExprAst implements UnaryOp {
 	public JavaType getResultType() {
 		return getTargetType();
 	}
+
 }

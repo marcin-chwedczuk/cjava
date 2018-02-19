@@ -2,6 +2,7 @@ package pl.marcinchwedczuk.cjava.ast.expr.literal;
 
 import com.google.auto.value.AutoValue;
 import pl.marcinchwedczuk.cjava.ast.expr.ExprAst;
+import pl.marcinchwedczuk.cjava.ast.visitor.AstMapper;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
@@ -22,5 +23,10 @@ public abstract class StringLiteral extends LiteralAst {
 	@Override
 	public JavaType getResultType() {
 		return ClassType.of(String.class);
+	}
+
+	@Override
+	public StringLiteral astMap(AstMapper mapper) {
+		return mapper.map(this);
 	}
 }

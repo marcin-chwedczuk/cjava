@@ -6,38 +6,20 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.ast.statement.StatementBlockAst;
+import pl.marcinchwedczuk.cjava.ast.visitor.AstMapper;
 import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 @AutoValue
-public abstract class MethodDeclarationAst {
-	public static Builder builder(String methodName, MethodSignature methodSignature) {
-		AutoValue_MethodDeclarationAst.Builder builder =
-				new AutoValue_MethodDeclarationAst.Builder();
-
-		// Specify default values
-		return builder.setMethodName(methodName)
-				.setMethodSignature(methodSignature)
-				.setVisibility(Visibility.PACKAGE)
-				.setMethodBody(StatementBlockAst.empty())
-
-				.setStatic(false)
-				.setAbstract(false)
-				.setFinal(false)
-				.setNative(false)
-				.setSynchronized(false)
-				.setVarargs(false)
-				.setStrictFP(false)
-
-				.setConstructor(false)
-				.setAnnotations(ImmutableList.of());
-	}
+public abstract class MethodDeclarationAst extends Ast {
 
 	public abstract Visibility getVisibility();
 	public abstract String getMethodName();
@@ -63,7 +45,28 @@ public abstract class MethodDeclarationAst {
 
 	public abstract boolean isConstructor();
 
+	public abstract Builder toBuilder();
+
+	@Override
+	public MethodDeclarationAst astMap(AstMapper mapper) {
+		List<AnnotationAst> mappedAnnotations = getAnnotations().stream()
+				.map(a -> a.astMap(mapper))
+				.collect(toList());
+
+		StatementBlockAst mappedBody =
+				getMethodBody().astMap(mapper);
+
+		Builder mapped = this
+				.toBuilder()
+				.setAnnotations(mappedAnnotations)
+				.setMethodBody(mappedBody);
+
+		return mapper.map(this, mapped);
+	}
+
+
 	public MethodDeclarationAst withMethodName(String newMethodName) {
+		// TODO: Remove this abomination
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(newMethodName));
 
 		return toBuilder()
@@ -71,7 +74,27 @@ public abstract class MethodDeclarationAst {
 				.build();
 	}
 
-	abstract Builder toBuilder();
+	public static Builder builder(String methodName, MethodSignature methodSignature) {
+		AutoValue_MethodDeclarationAst.Builder builder =
+				new AutoValue_MethodDeclarationAst.Builder();
+
+		// Specify default values
+		return builder.setMethodName(methodName)
+				.setMethodSignature(methodSignature)
+				.setVisibility(Visibility.PACKAGE)
+				.setMethodBody(StatementBlockAst.empty())
+
+				.setStatic(false)
+				.setAbstract(false)
+				.setFinal(false)
+				.setNative(false)
+				.setSynchronized(false)
+				.setVarargs(false)
+				.setStrictFP(false)
+
+				.setConstructor(false)
+				.setAnnotations(ImmutableList.of());
+	}
 
 	@AutoValue.Builder
 	public abstract static class Builder {
