@@ -16,6 +16,6 @@ public class BytecodeDecompiler {
 	public CompilationUnitAst decompile() {
 		ClassDeclarationAst declarationAst = classDecompiler.decompile();
 
-		return new CompilationUnitAst(singletonList(declarationAst));
+		return CompilationUnitAst.create(singletonList(declarationAst));
 	}
 }
