@@ -33,7 +33,7 @@ public abstract class BinaryOpAst extends ExprAst implements BinaryOp {
 	}
 
 	@Override
-	public BinaryOpAst astMap(AstMapper mapper) {
+	public ExprAst astMap(AstMapper mapper) {
 		ExprAst mappedLeft = getLeft().astMap(mapper);
 		ExprAst mappedRight = getRight().astMap(mapper);
 

@@ -40,7 +40,7 @@ public abstract class AssignmentOpAst extends ExprAst implements BinaryOp {
 	}
 
 	@Override
-	public AssignmentOpAst astMap(AstMapper mapper) {
+	public ExprAst astMap(AstMapper mapper) {
 		LValueAst mappedVariable = getVariable().astMap(mapper);
 		ExprAst mappedValue = getValue().astMap(mapper);
 

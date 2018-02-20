@@ -6,10 +6,7 @@ import pl.marcinchwedczuk.cjava.ast.FieldDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationPropertyAssignmentAst;
-import pl.marcinchwedczuk.cjava.ast.expr.ArrayAccess;
-import pl.marcinchwedczuk.cjava.ast.expr.AssignmentOpAst;
-import pl.marcinchwedczuk.cjava.ast.expr.BinaryOpAst;
-import pl.marcinchwedczuk.cjava.ast.expr.ExprAst;
+import pl.marcinchwedczuk.cjava.ast.expr.*;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.ArrayLiteral;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.IntegerLiteral;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.StringLiteral;
@@ -34,7 +31,16 @@ public interface AstMapper {
 	StringLiteral map(StringLiteral current);
 	ArrayLiteral map(ArrayLiteral current, ArrayLiteral.Builder mapped);
 
-	ArrayAccess map(ArrayAccess current, ArrayAccess.Builder mapped);
-	AssignmentOpAst map(AssignmentOpAst current, AssignmentOpAst.Builder mapped);
-	BinaryOpAst map(BinaryOpAst current, BinaryOpAst.Builder mapped);
+	LValueAst map(ArrayAccess current, ArrayAccess.Builder mapped);
+	ExprAst map(AssignmentOpAst current, AssignmentOpAst.Builder mapped);
+	ExprAst map(BinaryOpAst current, BinaryOpAst.Builder mapped);
+	ExprAst map(CastAst current, CastAst.Builder mapped);
+	ExprAst map(FieldAccessAst current, FieldAccessAst.Builder mapped);
+	LValueAst map(LocalVariableValueAst current, LocalVariableValueAst.Builder mapped);
+	ExprAst map(MethodCallAst current, MethodCallAst.Builder mapped);
+	ExprAst map(NewArrayAst current, NewArrayAst.Builder mapped);
+	ExprAst map(NewInstanceAst current, NewInstanceAst.Builder mapped);
+	LValueAst map(ParameterValueAst current);
+	ExprAst map(ThisValueAst current);
+	ExprAst map(UnaryOpAst current, UnaryOpAst.Builder mapped);
 }

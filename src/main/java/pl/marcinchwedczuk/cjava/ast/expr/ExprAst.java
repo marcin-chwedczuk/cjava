@@ -11,8 +11,5 @@ public abstract class ExprAst extends Ast {
 
 	public abstract JavaType getResultType();
 
-	@Override
-	public ExprAst astMap(AstMapper mapper) {
-		return super.astMap(mapper);
-	}
+	public abstract ExprAst astMap(AstMapper mapper);
 }

@@ -2,6 +2,7 @@ package pl.marcinchwedczuk.cjava.ast.expr;
 
 import com.google.auto.value.AutoValue;
 import pl.marcinchwedczuk.cjava.ast.Ast;
+import pl.marcinchwedczuk.cjava.ast.visitor.AstMapper;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 @AutoValue
@@ -13,5 +14,10 @@ public abstract class ThisValueAst extends ExprAst {
 	@Override
 	public JavaType getResultType() {
 		throw new RuntimeException("Not implemented! Nyaa!");
+	}
+
+	@Override
+	public ExprAst astMap(AstMapper mapper) {
+		return mapper.map(this);
 	}
 }

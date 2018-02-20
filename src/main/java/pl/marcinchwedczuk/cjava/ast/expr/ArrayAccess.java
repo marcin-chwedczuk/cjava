@@ -20,7 +20,7 @@ public abstract class ArrayAccess extends LValueAst {
 	public abstract Builder toBuilder();
 
 	@Override
-	public ArrayAccess astMap(AstMapper mapper) {
+	public LValueAst astMap(AstMapper mapper) {
 		ExprAst mappedArrayRef = getArrayRef().astMap(mapper);
 		ExprAst mappedIndexExpr = getIndexExpr().astMap(mapper);
 
