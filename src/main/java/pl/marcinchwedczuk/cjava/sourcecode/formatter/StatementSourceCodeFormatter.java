@@ -26,12 +26,20 @@ public class StatementSourceCodeFormatter implements SourceCodeFormatter {
 		} else if (statement instanceof ReturnValueStatementAst) {
 			printReturnValue((ReturnValueStatementAst)statement);
 		} else if (statement instanceof VariableDeclarationStatementAst) {
-			printVariableDeclaration((VariableDeclarationStatementAst)statement);
+			printVariableDeclaration((VariableDeclarationStatementAst) statement);
+		} else if (statement instanceof ThrowStatementAst) {
+			printThrowStatement((ThrowStatementAst)statement);
 		} else {
 			throw new RuntimeException("Statement: " +
 					statement.getClass().getSimpleName() +
 					" is not yet supported!");
 		}
+	}
+
+	private void printThrowStatement(ThrowStatementAst throwStatement) {
+		codeWriter.printIndent().print("throw ");
+		printExpression(throwStatement.getException());
+		codeWriter.print(";").printNewLine();
 	}
 
 	private void printExpression(ExprStatementAst exprStatement) {

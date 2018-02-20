@@ -783,7 +783,8 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK ... -> ..., value }
 	 */
-	ldc2_w(0x14),
+	ldc2_w(0x14, "u2"),
+
 	/**
 	 * Divide long.
 	 * <p>

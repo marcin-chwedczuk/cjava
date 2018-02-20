@@ -2,7 +2,9 @@ package pl.marcinchwedczuk.cjava.decompiler;
 
 import com.google.common.base.Preconditions;
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
+import pl.marcinchwedczuk.cjava.ast.auxiliary.NewMemoryAst;
 import pl.marcinchwedczuk.cjava.ast.expr.*;
+import pl.marcinchwedczuk.cjava.ast.expr.literal.DoubleLiteral;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.IntegerLiteral;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.StringLiteral;
 import pl.marcinchwedczuk.cjava.ast.statement.*;
@@ -86,6 +88,14 @@ public class InstructionDecompiler {
 					decompileXLoad(((SingleOperandInstruction)instruction).getOperand());
 					break;
 
+				case dstore_0:
+					decompileXStore(0);
+					break;
+
+				case astore_1:
+					decompileXStore(1);
+					break;
+
 				case istore_2:
 					decompileXStore(2);
 					break;
@@ -118,6 +128,7 @@ public class InstructionDecompiler {
 					break;
 
 				case ldc:
+				case ldc2_w:
 					decompileLdc((SingleOperandInstruction)instruction);
 					break;
 
@@ -177,8 +188,16 @@ public class InstructionDecompiler {
 					decompileDup();
 					break;
 
+				case pop:
+					decompilePop();
+					break;
+
 				case aastore:
 					decompileArrayStore();
+					break;
+
+				case athrow:
+					decompileThrow();
 					break;
 
 				default:
@@ -189,6 +208,16 @@ public class InstructionDecompiler {
 
 		Preconditions.checkState(stack.isEmpty(), "Stack must be empty at method end.");
 		return StatementBlockAst.fromStatements(alreadyDecompiled);
+	}
+
+	private void decompileThrow() {
+		ExprAst exception = stack.pop();
+		alreadyDecompiled.add(ThrowStatementAst.create(exception));
+	}
+
+	private void decompilePop() {
+		ExprAst value = stack.pop();
+		alreadyDecompiled.add(ExprStatementAst.fromExpr(value));
 	}
 
 	private void decompileArrayStore() {
@@ -251,6 +280,7 @@ public class InstructionDecompiler {
 		// New instructions is used with following pattern:
 		// new           class some/valueType/of/Class
 		// dup
+		// [constructor arguments here]
 		// invokespecial some/valueType/of/Class."<init>":()V
 
 		ClassType className = cp.getClassName(newInstruction.getOperand());
@@ -259,18 +289,11 @@ public class InstructionDecompiler {
 				instructions.get(current).getOpcode() == Opcode.dup,
 				"Expecting new/dup pattern.");
 
-		Instruction invokeSpecial = instructions.get(current+1);
-		Preconditions.checkState(
-				invokeSpecial.getOpcode() == Opcode.invokespecial,
-				"Expecting new/dup pattern");
+		current += 1;
 
-		current += 2;
-
-		// TODO: Add constructor parameters
-
-		// TODO: Check if invoke special acutally points to the constructor
-
-		stack.push(NewInstanceAst.create(className));
+		// Push auxiliary AST that will be replaced
+		// by NewInstanceAST when invokespecial is processed.
+		stack.push(NewMemoryAst.create(className));
 	}
 
 	private void decompileReturnValue() {
@@ -294,14 +317,29 @@ public class InstructionDecompiler {
 	private void decompileLdc(SingleOperandInstruction ldc) {
 		Constant constant = cp.getAny(ldc.getOperand());
 
+		switch (constant.getTag()) {
+			case STRING: {
+				StringConstant stringConstant = (StringConstant) constant;
+				String literalValue = cp.getString(stringConstant.getUtf8());
+				stack.push(StringLiteral.of(literalValue));
+				break;
+			}
+
+			case DOUBLE: {
+				DoubleConstant doubleConstant = (DoubleConstant) constant;
+				double value = doubleConstant.getValue();
+				stack.push(DoubleLiteral.of(value));
+				break;
+			}
+
+			default:
+				throw new RuntimeException("LDC for constant: " +
+						constant.getClass().getSimpleName() +
+						" is not implmeneted. Please add it!");
+		}
+
 		if (constant instanceof StringConstant) {
-			StringConstant stringConstant = (StringConstant)constant;
-			String literalValue = cp.getString(stringConstant.getUtf8());
-			stack.push(StringLiteral.of(literalValue));
 		} else {
-			throw new RuntimeException("LDC for constant: " +
-					constant.getClass().getSimpleName() +
-					" is not implmeneted. Please add it!");
 		}
 	}
 
@@ -310,8 +348,8 @@ public class InstructionDecompiler {
 		alreadyDecompiled.add(ReturnStatementAst.create());
 	}
 
-	private void decompileInvokeX(SingleOperandInstruction invokeSpecial, boolean staticCall) {
-		MethodRefConstant calledMethod = cp.getMethodRef(invokeSpecial.getOperand());
+	private void decompileInvokeX(SingleOperandInstruction invokeX, boolean staticCall) {
+		MethodRefConstant calledMethod = cp.getMethodRef(invokeX.getOperand());
 
 		ClassType classContainingMethod = cp.getClassName(calledMethod.getKlass());
 
@@ -324,16 +362,44 @@ public class InstructionDecompiler {
 		List<ExprAst> methodArguments = takeFromStack(numberOfArguments);
 		ExprAst thisArgument = staticCall ? null : stack.pop();
 
-		MethodCallAst methodCall = MethodCallAst.create(
-				classContainingMethod, methodName, methodSignature,
-				thisArgument, methodArguments);
+		// TODO: super()
+		if (isConstructorCall(methodName, invokeX, thisArgument)) {
+			NewMemoryAst notInitializedInstance = (NewMemoryAst) thisArgument;
 
-		if (methodSignature.hasVoidReturnType()) {
-			// wrap as statement
-			alreadyDecompiled.add(ExprStatementAst.fromExpr(methodCall));
+			NewInstanceAst newInstanceAst = NewInstanceAst.create(
+					notInitializedInstance.getType(),
+					classContainingMethod, methodName,
+					methodSignature, methodArguments);
+			stack.push(newInstanceAst);
+
 		} else {
-			stack.push(methodCall);
+			MethodCallAst methodCall = MethodCallAst.create(
+					classContainingMethod, methodName, methodSignature,
+					thisArgument, methodArguments);
+
+			if (methodSignature.hasVoidReturnType()) {
+				// wrap as statement
+				alreadyDecompiled.add(ExprStatementAst.fromExpr(methodCall));
+			} else {
+				stack.push(methodCall);
+			}
 		}
+	}
+
+	private boolean isConstructorCall(String methodName, SingleOperandInstruction invokeSpecial, ExprAst thisArgument) {
+		if (invokeSpecial.getOpcode() != Opcode.invokespecial) {
+			return false;
+		}
+
+		if (!JvmConstants.isConstructorName(methodName)) {
+			return false;
+		}
+
+		if (!(thisArgument instanceof NewMemoryAst)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	private void decompileXStore(int varIndex) {

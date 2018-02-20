@@ -7,9 +7,11 @@ import pl.marcinchwedczuk.cjava.ast.visitor.AstMapper;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.toList;
 
 @AutoValue
 public abstract class CompilationUnitAst extends Ast {
@@ -21,9 +23,19 @@ public abstract class CompilationUnitAst extends Ast {
 
 	public abstract ImmutableList<TypeDeclarationAst> getDeclaredTypes();
 
+	public abstract Builder toBuilder();
+
 	@Override
 	public Ast astMap(AstMapper mapper) {
-		return null;
+		List<TypeDeclarationAst> mappedTypes = getDeclaredTypes().stream()
+				.map(t -> t.astMap(mapper))
+				.collect(toList());
+
+		Builder mapped = this
+				.toBuilder()
+				.setDeclaredTypes(mappedTypes);
+
+		return mapper.map(this, mapped);
 	}
 
 	@AutoValue.Builder

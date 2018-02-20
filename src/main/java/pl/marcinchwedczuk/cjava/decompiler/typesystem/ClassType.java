@@ -5,10 +5,12 @@ import com.google.common.collect.ImmutableList;
 import pl.marcinchwedczuk.cjava.util.ListUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.ImmutableList.copyOf;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 @AutoValue
 public abstract class ClassType implements JavaType {
@@ -37,6 +39,14 @@ public abstract class ClassType implements JavaType {
 
 	public abstract ImmutableList<String> getPackageSpecifier();
 	public abstract ImmutableList<SimpleClassType> getClasses();
+
+	public ClassType toRawType() {
+		List<SimpleClassType> rawTypes = getClasses().stream()
+				.map(SimpleClassType::toRawType)
+				.collect(toList());
+
+		return create(getPackageSpecifier(), rawTypes);
+	}
 
 	@Override
 	public String asSourceCodeString() {

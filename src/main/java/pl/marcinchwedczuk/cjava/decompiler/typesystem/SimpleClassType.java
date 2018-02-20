@@ -25,6 +25,10 @@ public abstract class SimpleClassType {
 	public abstract String getClassName();
 	public abstract ImmutableList<TypeArgument> getTypeArguments();
 
+	public SimpleClassType toRawType() {
+		return fromClassName(getClassName());
+	}
+
 	public String asSourceCodeString() {
 		StringBuilder javaType = new StringBuilder();
 

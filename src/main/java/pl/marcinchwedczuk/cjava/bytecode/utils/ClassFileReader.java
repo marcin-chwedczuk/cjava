@@ -47,6 +47,10 @@ public class ClassFileReader implements AutoCloseable {
 		return inner.readFloat();
 	}
 
+	public double readDouble() throws IOException {
+		return inner.readDouble();
+	}
+
 	public byte[] readBytes(int count) throws IOException {
 		byte[] buffer = new byte[count];
 

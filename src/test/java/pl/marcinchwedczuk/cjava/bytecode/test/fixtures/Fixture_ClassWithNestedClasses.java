@@ -9,5 +9,9 @@ public class Fixture_ClassWithNestedClasses {
 
 	public static class NestedClass { }
 
+	public static class NestedGenericClass<T> {
+		public T holder;
+	}
+
 	public interface NestedInterface { }
 }

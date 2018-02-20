@@ -18,6 +18,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType.DOUBLE;
+import static pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType.VOID;
 
 public class AstBuilder {
 	public static BinaryOpAst binOp(JavaOperator operator, ExprAst left, ExprAst right) {
@@ -59,7 +60,12 @@ public class AstBuilder {
 				ClassType.of(Random.class),
 				"nextDouble",
 				MethodSignature.basic(DOUBLE),
-					NewInstanceAst.create(ClassType.of(Random.class)),
+					NewInstanceAst.create(
+							ClassType.of(Random.class),
+							ClassType.of(Random.class),
+							"<init>",
+							MethodSignature.basic(VOID),
+							emptyList()),
 					emptyList());
 	}
 

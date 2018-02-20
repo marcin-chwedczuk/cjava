@@ -1,10 +1,7 @@
 package pl.marcinchwedczuk.cjava.sourcecode.formatter;
 
 import pl.marcinchwedczuk.cjava.ast.expr.*;
-import pl.marcinchwedczuk.cjava.ast.expr.literal.ArrayLiteral;
-import pl.marcinchwedczuk.cjava.ast.expr.literal.IntegerLiteral;
-import pl.marcinchwedczuk.cjava.ast.expr.literal.LiteralAst;
-import pl.marcinchwedczuk.cjava.ast.expr.literal.StringLiteral;
+import pl.marcinchwedczuk.cjava.ast.expr.literal.*;
 
 import static java.util.Objects.requireNonNull;
 import static pl.marcinchwedczuk.cjava.sourcecode.formatter.JavaLiteralUtil.javaEscape;
@@ -220,6 +217,9 @@ public class ExpressionSourceCodeFormatter {
 		if (expression instanceof IntegerLiteral) {
 			IntegerLiteral integerLiteral = ((IntegerLiteral) expression);
 			codeWriter.print(Integer.toString(integerLiteral.getValue()));
+		} else if (expression instanceof DoubleLiteral) {
+			DoubleLiteral doubleLiteral = (DoubleLiteral)expression;
+			codeWriter.print(Double.toString(doubleLiteral.getValue()));
 		} else if (expression instanceof StringLiteral) {
 			StringLiteral stringLiteral = ((StringLiteral) expression);
 			codeWriter

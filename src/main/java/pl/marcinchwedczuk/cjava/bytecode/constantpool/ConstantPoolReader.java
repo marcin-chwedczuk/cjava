@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantPoolIndex.readFrom;
+import static pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantTag.DOUBLE;
+import static pl.marcinchwedczuk.cjava.bytecode.constantpool.ConstantTag.LONG;
 
 public class ConstantPoolReader {
 
@@ -29,7 +31,14 @@ public class ConstantPoolReader {
 
 		// Constant #0 is reserved and is not present in class file
 		for (int i = 1; i < constantPoolCount; i++) {
-			constants.add(readConstant(classFileBytes));
+			Constant constant = readConstant(classFileBytes);
+			constants.add(constant);
+
+			if (constant.getTag() == DOUBLE || constant.getTag() == LONG) {
+				// double and long constants occupy 2 slots
+				constants.add(constant);
+				i++;
+			}
 		}
 
 		return constants;
@@ -65,8 +74,9 @@ public class ConstantPoolReader {
 
 			case LONG:
 				break;
+
 			case DOUBLE:
-				break;
+				return readDoubleConstant(classFileReader);
 
 			case NAME_AND_TYPE:
 				return readNameAndTypeConstant(classFileReader);
@@ -125,6 +135,11 @@ public class ConstantPoolReader {
 	private Constant readFloatConstant(ClassFileReader classFileReader) throws IOException {
 		float value = classFileReader.readFloat();
 		return new FloatConstant(value);
+	}
+
+	private Constant readDoubleConstant(ClassFileReader classFileReader) throws IOException {
+		double value = classFileReader.readDouble();
+		return DoubleConstant.create(value);
 	}
 
 	private Constant readNameAndTypeConstant(ClassFileReader classFileReader) throws IOException {
