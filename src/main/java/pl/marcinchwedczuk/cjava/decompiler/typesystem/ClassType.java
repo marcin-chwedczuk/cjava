@@ -20,24 +20,24 @@ public abstract class ClassType implements JavaType {
 				klass.getSimpleName());
 	}
 
-	public static ClassType fromPackageAndClassName(String package_, String className) {
-		ImmutableList<String> packageSpecifier = copyOf(package_.split("\\."));
+	public static ClassType fromPackageAndClassName(String packageNameString, String className) {
+		PackageName packageName = PackageName.fromString(packageNameString);
 
 		ImmutableList<SimpleClassType> classes =
 				ImmutableList.of(SimpleClassType.fromClassName(className));
 
-		return new AutoValue_ClassType(packageSpecifier, classes);
+		return new AutoValue_ClassType(packageName, classes);
 	}
 
-	public static ClassType create(List<String> packageSpecifier, List<SimpleClassType> classes) {
-		return new AutoValue_ClassType(copyOf(packageSpecifier), copyOf(classes));
+	public static ClassType create(PackageName packageName, List<SimpleClassType> classes) {
+		return new AutoValue_ClassType(packageName, copyOf(classes));
 	}
 
-	public static ClassType create(List<String> packageSpecifier, SimpleClassType class_) {
+	public static ClassType create(PackageName packageSpecifier, SimpleClassType class_) {
 		return create(packageSpecifier, singletonList(class_));
 	}
 
-	public abstract ImmutableList<String> getPackageSpecifier();
+	public abstract PackageName getPackageName();
 	public abstract ImmutableList<SimpleClassType> getClasses();
 
 	public ClassType toRawType() {
@@ -45,14 +45,12 @@ public abstract class ClassType implements JavaType {
 				.map(SimpleClassType::toRawType)
 				.collect(toList());
 
-		return create(getPackageSpecifier(), rawTypes);
+		return create(getPackageName(), rawTypes);
 	}
 
 	@Override
 	public String asSourceCodeString() {
-		String javaPackage = getPackageSpecifier().stream()
-			.collect(joining("."));
-
+		String javaPackage = getPackageName().asJavaSouceCode();
 		if (!javaPackage.isEmpty()) {
 			javaPackage += ".";
 		}
@@ -67,5 +65,9 @@ public abstract class ClassType implements JavaType {
 	public String computeSimpleClassName() {
 		SimpleClassType currentClass = ListUtils.lastElement(getClasses());
 		return currentClass.getClassName();
+	}
+
+	public boolean isPartOfPackage(PackageName package_) {
+		return getPackageName().equals(package_);
 	}
 }

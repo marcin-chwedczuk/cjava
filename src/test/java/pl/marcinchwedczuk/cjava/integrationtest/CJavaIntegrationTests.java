@@ -1,5 +1,6 @@
 package pl.marcinchwedczuk.cjava.integrationtest;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.CompilationUnitAst;
@@ -76,6 +77,7 @@ public class CJavaIntegrationTests {
 	}
 
 	@Test
+	@Ignore
 	public void justToSee() throws Exception {
 		String decompiled = decompile(Fixture_ClassWithReferencesToOtherTypes.class);
 

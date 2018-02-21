@@ -6,33 +6,35 @@ import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs.BoundedWildcardTypeArgument;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs.ConcreteTypeTypeArgument;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs.TypeArgument;
+import pl.marcinchwedczuk.cjava.util.Histogram;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import static java.util.Comparator.comparing;
 
 public class JavaTypeHistogram {
-	private final Map<ClassType, Integer> counts = new HashMap<>();
+	private final Histogram<ClassType> histogram = new Histogram<>();
 
 	public int getNumberOfUsages(ClassType type) {
-		return counts.getOrDefault(type.toRawType(), 0);
+		return histogram.getCount(type.toRawType());
 	}
 
-	public void addUsage(JavaType type) {
+	public JavaTypeHistogram addUsage(JavaType type) {
 		if (type instanceof ClassType) {
 			ClassType classType = (ClassType)type;
 
-			incrementUsage(classType.toRawType());
-			scanTypeArguments(classType);
-
+			histogram.observe(classType.toRawType());
+			addGenericTypeArguments(classType);
 		} else if (type instanceof ArrayType) {
 			addUsage(((ArrayType)type).getElementType());
 		} else {
 			// Skip TypeVariable and PrimitiveTypes
 		}
+
+		return this;
 	}
 
-	private void scanTypeArguments(ClassType classType) {
+	private void addGenericTypeArguments(ClassType classType) {
 		classType.getClasses()
 				.stream()
 				.flatMap(c -> c.getTypeArguments().stream())
@@ -49,7 +51,7 @@ public class JavaTypeHistogram {
 		}
 	}
 
-	private void incrementUsage(ClassType classType) {
-		counts.compute(classType, (k,v) -> v == null ? 1 : v+1);
+	public List<ClassType> getTypesSortedByFrequency() {
+		return histogram.getValuesSortedByFrequency();
 	}
 }

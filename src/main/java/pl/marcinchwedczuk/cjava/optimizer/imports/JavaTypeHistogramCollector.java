@@ -19,10 +19,10 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
-public class JavaTypeCollector extends BaseAstMapper {
+public class JavaTypeHistogramCollector extends BaseAstMapper {
 	private final JavaTypeHistogram histogram;
 
-	public JavaTypeCollector(JavaTypeHistogram histogram) {
+	public JavaTypeHistogramCollector(JavaTypeHistogram histogram) {
 		this.histogram = requireNonNull(histogram);
 	}
 

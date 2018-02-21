@@ -52,7 +52,7 @@ public class JavaTypeSignatureParser {
 	public JavaType parseClassTypeSignature() {
 		tokenStream.match(CLASS_TYPE_SIGNATURE_MARKER);
 
-		List<String> packageSpecifier = parsePackageSpecifier();
+		PackageName packageSpecifier = parsePackageSpecifier();
 
 		List<SimpleClassType> classes = new ArrayList<>();
 
@@ -115,7 +115,7 @@ public class JavaTypeSignatureParser {
 		return TypeArgument.forConcreateType(type);
 	}
 
-	private List<String> parsePackageSpecifier() {
+	private PackageName parsePackageSpecifier() {
 		List<String> packageSpecifier = new ArrayList<>();
 
 		while(true) {
@@ -136,7 +136,7 @@ public class JavaTypeSignatureParser {
 			}
 		}
 
-		return packageSpecifier;
+		return PackageName.from(packageSpecifier);
 	}
 
 	private JavaType parseTypeVariableSignature() {

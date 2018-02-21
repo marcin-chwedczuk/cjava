@@ -78,8 +78,10 @@ public class FieldDescriptorParser {
 				Arrays.asList(typeName.toString().split("/"));
 
 		List<String> packagePart = withoutLastElement(parts);
+		PackageName packageName = PackageName.from(packagePart);
+
 		SimpleClassType className = SimpleClassType.fromClassName(lastElement(parts));
 
-		return ClassType.create(packagePart, className);
+		return ClassType.create(packageName, className);
 	}
 }

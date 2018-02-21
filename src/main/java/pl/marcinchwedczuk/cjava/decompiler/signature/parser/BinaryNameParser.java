@@ -1,6 +1,7 @@
 package pl.marcinchwedczuk.cjava.decompiler.signature.parser;
 
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.PackageName;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.SimpleClassType;
 
 import java.util.List;
@@ -26,12 +27,14 @@ public class BinaryNameParser {
 	 	List<String> parts = asList(binaryName.split("/"));
 
 		List<String> packageParts = withoutLastElement(parts);
+		PackageName packageName = PackageName.from(packageParts);
+
 		List<String> classParts = asList(lastElement(parts).split("\\$"));
 
 		List<SimpleClassType> typedClassParts = classParts.stream()
 				.map(SimpleClassType::fromClassName)
 				.collect(toList());
 
-		return ClassType.create(packageParts, typedClassParts);
+		return ClassType.create(packageName, typedClassParts);
 	}
 }

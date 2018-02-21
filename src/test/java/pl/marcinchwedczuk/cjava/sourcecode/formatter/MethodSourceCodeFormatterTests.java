@@ -34,7 +34,7 @@ public class MethodSourceCodeFormatterTests {
 		TypeParameter E = TypeParameter.basic("E");
 
 		ClassType listOfE = ClassType.create(
-				asList("java", "util"),
+				PackageName.fromString("java.util"),
 				SimpleClassType.forGenericClass(
 					"List",
 					TypeArgument.forConcreateType(TypeVariable.fromTypeParameterName("E"))));
