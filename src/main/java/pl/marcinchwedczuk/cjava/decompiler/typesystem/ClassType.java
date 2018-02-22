@@ -2,15 +2,16 @@ package pl.marcinchwedczuk.cjava.decompiler.typesystem;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import pl.marcinchwedczuk.cjava.util.ListUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.google.common.collect.ImmutableList.copyOf;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType.MetaType.REFERENCE_TYPE;
 
 @AutoValue
 public abstract class ClassType implements JavaType {
@@ -49,6 +50,26 @@ public abstract class ClassType implements JavaType {
 	}
 
 	@Override
+	public ImmutableList<JavaType> decomposeToRawTypes() {
+		ImmutableList.Builder<JavaType> builder =
+				ImmutableList.builder();
+
+		builder.add(this.toRawType());
+
+		getClasses().stream()
+				.flatMap(c -> c.getTypeArguments().stream())
+				.flatMap(t -> t.decomposeToRawTypes().stream())
+				.forEach(builder::add);
+
+		return builder.build();
+	}
+
+	@Override
+	public MetaType getMetaType() {
+		return REFERENCE_TYPE;
+	}
+
+	@Override
 	public String asSourceCodeString() {
 		String javaPackage = getPackageName().asJavaSouceCode();
 		if (!javaPackage.isEmpty()) {
@@ -62,9 +83,18 @@ public abstract class ClassType implements JavaType {
 		return javaPackage.concat(javaClasses);
 	}
 
+	@Override
+	public String toString() {
+		return "ClassType(" + asSourceCodeString() + ")";
+	}
+
 	public String computeSimpleClassName() {
 		SimpleClassType currentClass = ListUtils.lastElement(getClasses());
 		return currentClass.getClassName();
+	}
+
+	public boolean hasSimpleClassName(String simpleClassName) {
+		return computeSimpleClassName().equals(simpleClassName);
 	}
 
 	public boolean isPartOfPackage(PackageName package_) {

@@ -1,5 +1,10 @@
 package pl.marcinchwedczuk.cjava.decompiler.typesystem;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
+import static pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType.MetaType.PRIMITIVE_TYPE;
+
 public enum PrimitiveType implements JavaType {
 	BYTE('B'),
 	CHAR('C'),
@@ -20,6 +25,16 @@ public enum PrimitiveType implements JavaType {
 	@Override
 	public String asSourceCodeString() {
 		return name().toLowerCase();
+	}
+
+	@Override
+	public ImmutableList<JavaType> decomposeToRawTypes() {
+		return ImmutableList.of(this);
+	}
+
+	@Override
+	public MetaType getMetaType() {
+		return PRIMITIVE_TYPE;
 	}
 
 	private boolean representsConstant(char constant) {

@@ -1,11 +1,20 @@
 package pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
+
 public class WildcardTypeArgument extends TypeArgument {
 	public static WildcardTypeArgument create() {
 		return new WildcardTypeArgument();
 	}
 
 	private WildcardTypeArgument() { }
+
+	@Override
+	public ImmutableList<JavaType> decomposeToRawTypes() {
+		return ImmutableList.of();
+	}
 
 	@Override
 	public String toJavaString() {

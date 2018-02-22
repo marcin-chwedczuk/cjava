@@ -1,54 +1,36 @@
 package pl.marcinchwedczuk.cjava.optimizer.imports;
 
-import pl.marcinchwedczuk.cjava.decompiler.typesystem.ArrayType;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
-import pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs.BoundedWildcardTypeArgument;
-import pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs.ConcreteTypeTypeArgument;
-import pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs.TypeArgument;
 import pl.marcinchwedczuk.cjava.util.Histogram;
 
-import java.util.*;
-
-import static java.util.Comparator.comparing;
+import java.util.List;
 
 public class JavaTypeHistogram {
+	public static JavaTypeHistogram fromUsages(JavaType... types) {
+		JavaTypeHistogram histogram =
+				new JavaTypeHistogram();
+
+		for (JavaType type : types) {
+			histogram.addUsage(type);
+		}
+
+		return histogram;
+	}
+
 	private final Histogram<ClassType> histogram = new Histogram<>();
 
 	public int getNumberOfUsages(ClassType type) {
-		return histogram.getCount(type.toRawType());
+		return histogram.getNumberOfOccurrences(type.toRawType());
 	}
 
 	public JavaTypeHistogram addUsage(JavaType type) {
-		if (type instanceof ClassType) {
-			ClassType classType = (ClassType)type;
-
-			histogram.observe(classType.toRawType());
-			addGenericTypeArguments(classType);
-		} else if (type instanceof ArrayType) {
-			addUsage(((ArrayType)type).getElementType());
-		} else {
-			// Skip TypeVariable and PrimitiveTypes
-		}
+		type.decomposeToRawTypes().stream()
+				.filter(ClassType.class::isInstance)
+				.map(ClassType.class::cast)
+				.forEach(histogram::addOccurrence);
 
 		return this;
-	}
-
-	private void addGenericTypeArguments(ClassType classType) {
-		classType.getClasses()
-				.stream()
-				.flatMap(c -> c.getTypeArguments().stream())
-				.forEach(this::addUsagesWithinTypeArgument);
-	}
-
-	private void addUsagesWithinTypeArgument(TypeArgument typeArgument) {
-		if (typeArgument instanceof ConcreteTypeTypeArgument) {
-			addUsage(((ConcreteTypeTypeArgument) typeArgument).getType());
-		} else if(typeArgument instanceof BoundedWildcardTypeArgument) {
-			addUsage(((BoundedWildcardTypeArgument) typeArgument).getType());
-		} else {
-			// Wildcart type argument (?) has no types e.g. Class<?>
-		}
 	}
 
 	public List<ClassType> getTypesSortedByFrequency() {

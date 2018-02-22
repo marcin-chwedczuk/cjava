@@ -18,11 +18,11 @@ import static java.util.stream.Collectors.toList;
 public class Histogram<T> {
 	private final Map<T,Integer> counts = new HashMap<>();
 
-	public int getCount(T value) {
+	public int getNumberOfOccurrences(T value) {
 		return counts.getOrDefault(value, 0);
 	}
 
-	public void observe(T value) {
+	public void addOccurrence(T value) {
 		counts.compute(value, (value_,count_) -> count_ == null ? 1 : count_+1);
 	}
 

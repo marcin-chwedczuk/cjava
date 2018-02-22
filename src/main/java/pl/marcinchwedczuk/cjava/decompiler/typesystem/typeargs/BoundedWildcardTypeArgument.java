@@ -1,6 +1,9 @@
 package pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
 
 @AutoValue
@@ -11,6 +14,11 @@ public abstract class BoundedWildcardTypeArgument extends TypeArgument {
 
 	public abstract BoundType getBoundType();
 	public abstract JavaType getType();
+
+	@Override
+	public ImmutableList<JavaType> decomposeToRawTypes() {
+		return getType().decomposeToRawTypes();
+	}
 
 	public String toJavaString() {
 		StringBuilder javaString = new StringBuilder();

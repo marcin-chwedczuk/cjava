@@ -6,12 +6,11 @@ import pl.marcinchwedczuk.cjava.ast.expr.literal.StringLiteral;
 import pl.marcinchwedczuk.cjava.decompiler.signature.LocalVariable;
 import pl.marcinchwedczuk.cjava.decompiler.signature.MethodParameter;
 import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
-import pl.marcinchwedczuk.cjava.decompiler.typesystem.ArrayType;
-import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
-import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
-import pl.marcinchwedczuk.cjava.decompiler.typesystem.PrimitiveType;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.*;
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs.TypeArgument;
 
 import javax.print.DocFlavor;
+import java.util.ArrayList;
 import java.util.Random;
 
 import static java.util.Arrays.asList;
@@ -73,16 +72,32 @@ public class AstBuilder {
 		return CastAst.create(integer(), expr);
 	}
 
-	public static JavaType string() {
+	public static ClassType string() {
 		return ClassType.of(String.class);
 	}
 
-	public static JavaType integer() {
+	public static PrimitiveType integer() {
 		return PrimitiveType.INT;
 	}
 
-	public static JavaType stringArray() {
+	public static ClassType integerWrapper() {
+		return ClassType.of(Integer.class);
+	}
+
+	public static ArrayType stringArray() {
 		return ArrayType.create(1, string());
+	}
+
+	public static ClassType rawArrayList() {
+		return ClassType.of(java.util.ArrayList.class);
+	}
+
+	public static ClassType listInterface() {
+		return ClassType.of(java.util.List.class);
+	}
+
+	public static ClassType mapInterface() {
+		return ClassType.of(java.util.Map.class);
 	}
 
 	public static LocalVariable var(JavaType type, String name) {
@@ -99,5 +114,27 @@ public class AstBuilder {
 
 	public static StringLiteral string(String s) {
 		return StringLiteral.of(s);
+	}
+
+	public static ClassType object() {
+		return ClassType.of(Object.class);
+	}
+
+	public static JavaType arrayListOfString() {
+		return arrayListOf(string());
+	}
+
+	public static JavaType arrayListOfObjectArrays() {
+		return arrayListOf(ArrayType.create(1, object()));
+	}
+
+	public static JavaType arrayListOf(JavaType type) {
+		SimpleClassType arrayList = SimpleClassType.forGenericClass(
+				ArrayList.class.getSimpleName(),
+				TypeArgument.forConcreateType(type));
+
+		PackageName packageName = PackageName.ofClass(ArrayList.class);
+
+		return ClassType.create(packageName, arrayList);
 	}
 }

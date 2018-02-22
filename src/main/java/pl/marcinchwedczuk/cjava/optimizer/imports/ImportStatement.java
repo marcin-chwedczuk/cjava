@@ -16,4 +16,11 @@ public class ImportStatement {
 	public JavaType getTypeToImport() {
 		return typeToImport;
 	}
+
+	@Override
+	public String toString() {
+		return "ImportStatement{" +
+				"typeToImport=" + typeToImport +
+				'}';
+	}
 }

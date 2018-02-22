@@ -8,3 +8,4 @@
 - Constants for static/const fields e.g. `public static final int = 32`
 - Decompilation of nested static classses right now they are treaded as separate
  classes with names containing `$`.
+- Scan types from class package (in filesystem) and add to import optimizer

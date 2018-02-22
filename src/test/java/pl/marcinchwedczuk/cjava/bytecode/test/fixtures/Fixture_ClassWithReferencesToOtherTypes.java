@@ -4,12 +4,13 @@ import pl.marcinchwedczuk.cjava.ast.expr.ArrayAccess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Fixture_ClassWithReferencesToOtherTypes extends ArrayList<String> {
 
-	private List<Integer> genericList;
+	private List<List<List<Integer>>> genericList;
 	private ArrayList<Integer> ints;
-	private ArrayList<Boolean> bools;
+	private ArrayList<Map<Boolean, String>> bools;
 
 	public static void main(String[] args) {
 		StringBuilder sb = new StringBuilder();
