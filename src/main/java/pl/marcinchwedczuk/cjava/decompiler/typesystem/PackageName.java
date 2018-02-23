@@ -43,6 +43,10 @@ public abstract class PackageName {
 		return new AutoValue_PackageName.Builder();
 	}
 
+	public boolean isUnnamed() {
+		return getPackageSpecifier().isEmpty();
+	}
+
 	@AutoValue.Builder
 	public abstract static class Builder {
 		public abstract Builder setPackageSpecifier(List<String> newPackageSpecifier);

@@ -1,5 +1,6 @@
 package pl.marcinchwedczuk.cjava.decompiler;
 
+import pl.marcinchwedczuk.cjava.DecompilationOptions;
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.CompilationUnitAst;
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;

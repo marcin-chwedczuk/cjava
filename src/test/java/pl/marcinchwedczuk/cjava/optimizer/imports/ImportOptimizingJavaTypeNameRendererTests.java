@@ -15,14 +15,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static pl.marcinchwedczuk.cjava.decompiler.fixture.AstBuilder.*;
 import static pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs.BoundType.EXTENDS;
 
-public class JavaTypeNameRendererTests {
+public class ImportOptimizingJavaTypeNameRendererTests {
 
 	private final PackageName MC_TEST_PACKAGE = PackageName.fromString("mc.test");
 	private final ClassType JAVA_UTIL_REGEX_PATTERN = ClassType.of(Pattern.class);
 
 	@Test
 	public void notImportedTypeMustUseFullyQualifiedName() throws Exception {
-		JavaTypeNameRenderer renderer = createRenderer(
+		ImportOptimizingJavaTypeNameRenderer renderer = createRenderer(
 				explicitImports(),
 				implicitImports());
 
@@ -35,7 +35,7 @@ public class JavaTypeNameRendererTests {
 
 	@Test
 	public void explicitlyImportedTypesUseOnlySimpleName() throws Exception {
-		JavaTypeNameRenderer renderer = createRenderer(
+		ImportOptimizingJavaTypeNameRenderer renderer = createRenderer(
 				explicitImports(JAVA_UTIL_REGEX_PATTERN),
 				implicitImports());
 
@@ -48,7 +48,7 @@ public class JavaTypeNameRendererTests {
 
 	@Test
 	public void implicitlyImportedTypesUseOnlySimpleName() throws Exception {
-		JavaTypeNameRenderer renderer = createRenderer(
+		ImportOptimizingJavaTypeNameRenderer renderer = createRenderer(
 				explicitImports(),
 				implicitImports(JAVA_UTIL_REGEX_PATTERN));
 
@@ -61,7 +61,7 @@ public class JavaTypeNameRendererTests {
 
 	@Test
 	public void properlyRendersPrimitiveTypes() throws Exception {
-		JavaTypeNameRenderer renderer = createRenderer(
+		ImportOptimizingJavaTypeNameRenderer renderer = createRenderer(
 				explicitImports(), implicitImports());
 
 		String intTypeName = renderer.renderTypeName(integer());
@@ -72,7 +72,7 @@ public class JavaTypeNameRendererTests {
 
 	@Test
 	public void properlyRendersArrayName() throws Exception {
-		JavaTypeNameRenderer renderer = createRenderer(
+		ImportOptimizingJavaTypeNameRenderer renderer = createRenderer(
 				explicitImports(), implicitImports(string()));
 
 		ArrayType arrayOfPatterns = ArrayType.create(2, JAVA_UTIL_REGEX_PATTERN);
@@ -88,7 +88,7 @@ public class JavaTypeNameRendererTests {
 
 	@Test
 	public void properlyRendersTypeArguments() throws Exception {
-		JavaTypeNameRenderer renderer = createRenderer(
+		ImportOptimizingJavaTypeNameRenderer renderer = createRenderer(
 				explicitImports(), implicitImports());
 
 		// mc.test.List<java.util.regex.Pattern>
@@ -118,7 +118,7 @@ public class JavaTypeNameRendererTests {
 
 	@Test
 	public void importStatementsAreCreatedFromExplicitImports() throws Exception {
-		JavaTypeNameRenderer renderer = createRenderer(
+		ImportOptimizingJavaTypeNameRenderer renderer = createRenderer(
 				explicitImports(rawArrayList()),
 				implicitImports(object(), string()));
 
@@ -129,10 +129,21 @@ public class JavaTypeNameRendererTests {
 				.isEqualTo(rawArrayList());
 	}
 
-	private static JavaTypeNameRenderer createRenderer(
+	@Test
+	public void bugCorrectlyRendersImportedGenericType() throws Exception {
+		ImportOptimizingJavaTypeNameRenderer renderer = createRenderer(
+				explicitImports(rawArrayList()),
+				implicitImports(string()));
+
+		String typeName = renderer.renderTypeName(arrayListOfString());
+
+		assertThat(typeName).isEqualTo("ArrayList<String>");
+	}
+
+	private static ImportOptimizingJavaTypeNameRenderer createRenderer(
 			ImmutableSet<ClassType> explicitImports,
 			ImmutableSet<ClassType> implicitImports) {
-		return new JavaTypeNameRenderer(explicitImports, implicitImports);
+		return new ImportOptimizingJavaTypeNameRenderer(explicitImports, implicitImports);
 	}
 
 	private static ImmutableSet<ClassType> explicitImports(ClassType... types) {

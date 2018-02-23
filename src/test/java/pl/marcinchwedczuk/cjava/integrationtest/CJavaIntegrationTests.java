@@ -2,13 +2,15 @@ package pl.marcinchwedczuk.cjava.integrationtest;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import pl.marcinchwedczuk.cjava.CJava;
+import pl.marcinchwedczuk.cjava.DecompilationOptions;
 import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.CompilationUnitAst;
 import pl.marcinchwedczuk.cjava.bytecode.JavaClassFileLoader;
 import pl.marcinchwedczuk.cjava.bytecode.TestUtils;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.*;
 import pl.marcinchwedczuk.cjava.decompiler.BytecodeDecompiler;
-import pl.marcinchwedczuk.cjava.decompiler.DecompilationOptions;
+import pl.marcinchwedczuk.cjava.optimizer.imports.FullQualifiedNameJavaTypeNameRenderer;
 import pl.marcinchwedczuk.cjava.sourcecode.formatter.ClassFormatter;
 import pl.marcinchwedczuk.cjava.sourcecode.formatter.JavaCodeWriter;
 
@@ -16,6 +18,7 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static pl.marcinchwedczuk.cjava.DecompilationOptions.defaultOptions;
 import static pl.marcinchwedczuk.cjava.bytecode.TestUtils.readExpectedDecompiledSourceCode;
 
 public class CJavaIntegrationTests {
@@ -89,26 +92,12 @@ public class CJavaIntegrationTests {
 	}
 
 	private static String decompile(Class<?> klass) throws IOException {
-		return decompile(klass, DecompilationOptions.defaultOptions());
+		return decompile(klass, defaultOptions());
 	}
 
 	private static String decompile(Class<?> klass, DecompilationOptions options) throws IOException {
 		byte[] klassBytes = TestUtils.readClassBytes(klass);
-
-		CompilationUnitAst compilationUnit =
-				new BytecodeDecompiler(
-							new JavaClassFileLoader().load(klassBytes),
-							options)
-						.decompile();
-
-		ClassDeclarationAst classDeclaration =
-				(ClassDeclarationAst) compilationUnit.getDeclaredTypes().get(0);
-
-		JavaCodeWriter codeWriter = new JavaCodeWriter();
-
-		new ClassFormatter(codeWriter, classDeclaration)
-			.convertAstToJavaCode();
-
-		return codeWriter.dumpSourceCode();
+		String sourceCode = CJava.decompile(klassBytes, options);
+		return sourceCode;
 	}
 }

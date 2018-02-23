@@ -4,22 +4,20 @@ import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.Visibility;
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
+import pl.marcinchwedczuk.cjava.optimizer.imports.JavaTypeNameRenderer;
 
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-public class ClassDeclarationFormatter implements SourceCodeFormatter {
-	private final JavaCodeWriter codeWriter;
+public class ClassDeclarationFormatter extends BaseSourceCodeFormatter {
 	private final ClassDeclarationAst classDeclarationAst;
 
-	public ClassDeclarationFormatter(
-			JavaCodeWriter codeWriter, ClassDeclarationAst classDeclarationAst) {
-		this.codeWriter = requireNonNull(codeWriter);
+	public ClassDeclarationFormatter(JavaTypeNameRenderer typeNameRenderer, JavaCodeWriter codeWriter, ClassDeclarationAst classDeclarationAst) {
+		super(typeNameRenderer, codeWriter);
 		this.classDeclarationAst = requireNonNull(classDeclarationAst);
 	}
 
-	@Override
 	public void convertAstToJavaCode() {
 		printClassNameWithModifiers();
 		printGenericTypeParameters();
@@ -33,7 +31,7 @@ public class ClassDeclarationFormatter implements SourceCodeFormatter {
 			.printIf(classDeclarationAst.isFinal(), "final ")
 			.printIf(classDeclarationAst.isAbstract(), "abstract ")
 			.print("class ")
-			.print(classDeclarationAst.getClassName().asSourceCodeString());
+			.print(classDeclarationAst.getClassName().computeSimpleClassName());
 	}
 
 	private void printSuperclass() {
@@ -42,7 +40,7 @@ public class ClassDeclarationFormatter implements SourceCodeFormatter {
 				.increaseIndent(2)
 				.printIndent()
 				.print("extends ")
-				.print(classDeclarationAst.getSuperClass().asSourceCodeString())
+				.print(typeName(classDeclarationAst.getSuperClass()))
 				.decreaseIndent(2);
 	}
 
@@ -58,7 +56,7 @@ public class ClassDeclarationFormatter implements SourceCodeFormatter {
 			boolean moreThanOne = interfaceTypes.size() > 1;
 
 			codeWriter
-					.print(interfaceTypes.get(0).asSourceCodeString())
+					.print(typeName(interfaceTypes.get(0)))
 					.printIf(moreThanOne, ",")
 					.decreaseIndent(2);
 
@@ -71,7 +69,7 @@ public class ClassDeclarationFormatter implements SourceCodeFormatter {
 					codeWriter
 							.printNewLine()
 							.printIndent()
-							.print(interfaceTypes.get(i).asSourceCodeString())
+							.print(typeName(interfaceTypes.get(i)))
 							.printIf(!isLast, ", ");
 				}
 
@@ -94,6 +92,7 @@ public class ClassDeclarationFormatter implements SourceCodeFormatter {
 				codeWriter
 						.printNewLine()
 						.printIndent()
+						// TODO: Use typeNameRenderer
 						.print(typeParameters.get(i).toJavaString())
 						.printIf(!isLast, ",");
 			}

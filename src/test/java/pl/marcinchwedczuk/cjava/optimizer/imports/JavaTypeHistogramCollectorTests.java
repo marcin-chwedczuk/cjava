@@ -6,14 +6,11 @@ import pl.marcinchwedczuk.cjava.bytecode.JavaClassFileLoader;
 import pl.marcinchwedczuk.cjava.bytecode.TestUtils;
 import pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithReferencesToOtherTypes;
 import pl.marcinchwedczuk.cjava.decompiler.BytecodeDecompiler;
-import pl.marcinchwedczuk.cjava.decompiler.fixture.AstBuilder;
-import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static pl.marcinchwedczuk.cjava.decompiler.DecompilationOptions.defaultOptions;
+import static pl.marcinchwedczuk.cjava.DecompilationOptions.defaultOptions;
 import static pl.marcinchwedczuk.cjava.decompiler.fixture.AstBuilder.*;
 
 public class JavaTypeHistogramCollectorTests {

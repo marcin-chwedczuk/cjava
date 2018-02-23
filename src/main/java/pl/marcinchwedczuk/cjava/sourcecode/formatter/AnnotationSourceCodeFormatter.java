@@ -1,23 +1,23 @@
 package pl.marcinchwedczuk.cjava.sourcecode.formatter;
 
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
+import pl.marcinchwedczuk.cjava.optimizer.imports.JavaTypeNameRenderer;
 
 import static java.util.Objects.requireNonNull;
 import static pl.marcinchwedczuk.cjava.sourcecode.formatter.ListWriter.writeList;
 
-public class AnnotationSourceCodeFormatter implements SourceCodeFormatter {
+public class AnnotationSourceCodeFormatter extends BaseSourceCodeFormatter {
 	private final AnnotationAst annotationAst;
-	private final JavaCodeWriter codeWriter;
 
-	public AnnotationSourceCodeFormatter(AnnotationAst annotationAst, JavaCodeWriter codeWriter) {
+	public AnnotationSourceCodeFormatter(JavaTypeNameRenderer typeNameRenderer, JavaCodeWriter codeWriter, AnnotationAst annotationAst) {
+		super(typeNameRenderer, codeWriter);
 		this.annotationAst = requireNonNull(annotationAst);
-		this.codeWriter = requireNonNull(codeWriter);
 	}
 
 	public void convertAstToJavaCode() {
 		codeWriter
 				.print("@")
-				.print(annotationAst.getAnnotationType().asSourceCodeString());
+				.print(typeName(annotationAst.getAnnotationType()));
 
 		if (annotationAst.hasPropertiesAssignments()) {
 			writeAssignments();
@@ -32,7 +32,7 @@ public class AnnotationSourceCodeFormatter implements SourceCodeFormatter {
 							.print(assignmentAst.getPropertyName())
 							.print(" = ");
 
-					new ExpressionSourceCodeFormatter(codeWriter)
+					new ExpressionSourceCodeFormatter(typeNameRenderer, codeWriter)
 							.convertAstToJavaCode(assignmentAst.getPropertyValue());
 
 				})

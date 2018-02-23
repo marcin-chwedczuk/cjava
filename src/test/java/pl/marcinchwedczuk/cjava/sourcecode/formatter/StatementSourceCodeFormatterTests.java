@@ -6,6 +6,7 @@ import pl.marcinchwedczuk.cjava.ast.statement.StatementAst;
 import pl.marcinchwedczuk.cjava.ast.statement.VariableDeclarationStatementAst;
 import pl.marcinchwedczuk.cjava.decompiler.fixture.AstBuilder;
 import pl.marcinchwedczuk.cjava.decompiler.fixture.AstFixtures;
+import pl.marcinchwedczuk.cjava.optimizer.imports.FullQualifiedNameJavaTypeNameRenderer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -42,7 +43,9 @@ public class StatementSourceCodeFormatterTests {
 	private static String format(StatementAst printHelloWorld) {
 		JavaCodeWriter codeWriter = new JavaCodeWriter();
 
-		new StatementSourceCodeFormatter(printHelloWorld, codeWriter)
+		new StatementSourceCodeFormatter(
+					new FullQualifiedNameJavaTypeNameRenderer(),
+					codeWriter, printHelloWorld)
 				.convertAstToJavaCode();
 
 		return codeWriter.dumpSourceCode();

@@ -6,8 +6,10 @@ import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
 import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.ArrayType;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
+import pl.marcinchwedczuk.cjava.optimizer.imports.JavaTypeNameRenderer;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static java.util.Objects.requireNonNull;
@@ -17,12 +19,11 @@ import static pl.marcinchwedczuk.cjava.sourcecode.formatter.ListWriter.writeList
 public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 	private final MethodDeclarationAst methodDeclaration;
 
-	public MethodSourceCodeFormatter(MethodDeclarationAst methodDeclaration, JavaCodeWriter codeWriter) {
-		super(codeWriter);
+	public MethodSourceCodeFormatter(JavaTypeNameRenderer typeNameRenderer, JavaCodeWriter codeWriter, MethodDeclarationAst methodDeclaration) {
+		super(typeNameRenderer, codeWriter);
 		this.methodDeclaration = requireNonNull(methodDeclaration);
 	}
 
-	@Override
 	public void convertAstToJavaCode() {
 		MethodSignature methodSignature = methodDeclaration.getMethodSignature();
 
@@ -84,7 +85,7 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 		boolean isConstructor = methodDeclaration.isConstructor();
 
 		codeWriter
-				.printIf(!isConstructor, returnType.asSourceCodeString())
+				.printIf(!isConstructor, typeName(returnType))
 				.printIf(!isConstructor, " ")
 				.print(methodDeclaration.getMethodName());
 
@@ -95,12 +96,12 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 				.element((paramType, pos) -> {
 					if (pos == LAST && isVarargParameter(paramType)) {
 						codeWriter
-								.print(computeVarargElementType(paramType).asSourceCodeString())
+								.print(typeName(computeVarargElementType(paramType)))
 								.print("... args");
 					}
 					else {
 						codeWriter
-								.print(paramType.asSourceCodeString())
+								.print(typeName(paramType))
 								.print(" arg")
 								.print(paramCounter.getAndIncrement());
 					}
@@ -146,7 +147,7 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 		writeList(methodSignature.getCheckedExceptions())
 				.beforeNonEmpty(codeWriter.printAction(" throws "))
 				.element((exceptionType, pos) -> {
-					codeWriter.print(exceptionType.asSourceCodeString());
+					codeWriter.print(typeName(exceptionType));
 				})
 				.between(codeWriter.printAction(", "))
 				.write();
@@ -159,12 +160,12 @@ public class MethodSourceCodeFormatter extends MemberSourceCodeFormatter {
 		}
 
 		codeWriter
-				.print("{")
+				.print(" {")
 				.printNewLine()
 				.increaseIndent(1);
 
 		for (StatementAst statement : methodDeclaration.getMethodBody().getStatements()) {
-			new StatementSourceCodeFormatter(statement, codeWriter)
+			new StatementSourceCodeFormatter(typeNameRenderer, codeWriter, statement)
 					.convertAstToJavaCode();
 		}
 

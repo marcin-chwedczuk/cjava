@@ -2,18 +2,16 @@ package pl.marcinchwedczuk.cjava.sourcecode.formatter;
 
 import pl.marcinchwedczuk.cjava.ast.Visibility;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
+import pl.marcinchwedczuk.cjava.optimizer.imports.JavaTypeNameRenderer;
 
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
-public abstract class MemberSourceCodeFormatter implements SourceCodeFormatter {
+public abstract class MemberSourceCodeFormatter extends BaseSourceCodeFormatter {
 
-	protected final JavaCodeWriter codeWriter;
-
-	protected MemberSourceCodeFormatter(JavaCodeWriter codeWriter) {
-		this.codeWriter = requireNonNull(codeWriter);
+	public MemberSourceCodeFormatter(JavaTypeNameRenderer typeNameRenderer, JavaCodeWriter codeWriter) {
+		super(typeNameRenderer, codeWriter);
 	}
 
 	protected void printVisibility(Visibility visibility) {
@@ -38,7 +36,7 @@ public abstract class MemberSourceCodeFormatter implements SourceCodeFormatter {
 
 	protected void printAnnotations(List<AnnotationAst> annotations) {
 		for (AnnotationAst annotationAst : annotations) {
-			new AnnotationSourceCodeFormatter(annotationAst, codeWriter)
+			new AnnotationSourceCodeFormatter(typeNameRenderer, codeWriter, annotationAst)
 					.convertAstToJavaCode();
 
 			codeWriter

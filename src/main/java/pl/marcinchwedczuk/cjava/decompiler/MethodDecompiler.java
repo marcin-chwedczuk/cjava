@@ -1,5 +1,6 @@
 package pl.marcinchwedczuk.cjava.decompiler;
 
+import pl.marcinchwedczuk.cjava.DecompilationOptions;
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.Visibility;
 import pl.marcinchwedczuk.cjava.ast.statement.StatementBlockAst;
@@ -55,7 +56,7 @@ public class MethodDecompiler {
 	}
 
 	private void decompileMethodBody(MethodDeclarationAst.Builder methodDeclaration, MethodInfo methodInfo) {
-		if (!decompilationOptions.isCodeDecompilationEnabled()) {
+		if (!decompilationOptions.decompileCode()) {
 			return;
 		}
 

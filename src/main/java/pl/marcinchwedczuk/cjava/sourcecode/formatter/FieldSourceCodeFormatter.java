@@ -2,6 +2,7 @@ package pl.marcinchwedczuk.cjava.sourcecode.formatter;
 
 import pl.marcinchwedczuk.cjava.ast.FieldDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
+import pl.marcinchwedczuk.cjava.optimizer.imports.JavaTypeNameRenderer;
 
 import java.util.List;
 
@@ -10,12 +11,11 @@ import static java.util.Objects.requireNonNull;
 public class FieldSourceCodeFormatter extends MemberSourceCodeFormatter {
 	private final FieldDeclarationAst fieldDeclarationAst;
 
-	public FieldSourceCodeFormatter(FieldDeclarationAst fieldDeclarationAst, JavaCodeWriter codeWriter) {
-		super(codeWriter);
+	public FieldSourceCodeFormatter(JavaTypeNameRenderer typeNameRenderer, JavaCodeWriter codeWriter, FieldDeclarationAst fieldDeclarationAst) {
+		super(typeNameRenderer, codeWriter);
 		this.fieldDeclarationAst = requireNonNull(fieldDeclarationAst);
 	}
 
-	@Override
 	public void convertAstToJavaCode() {
 		printAnnotations(fieldDeclarationAst.getAnnotations());
 		printVisibility(fieldDeclarationAst.getVisibility());
@@ -43,7 +43,7 @@ public class FieldSourceCodeFormatter extends MemberSourceCodeFormatter {
 
 	private void printFieldDeclaration() {
 		codeWriter
-				.print(fieldDeclarationAst.getFieldType().asSourceCodeString())
+				.print(typeName(fieldDeclarationAst.getFieldType()))
 				.print(" ")
 				.print(fieldDeclarationAst.getFieldName())
 				.print(";");

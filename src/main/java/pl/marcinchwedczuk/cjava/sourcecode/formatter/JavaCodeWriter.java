@@ -1,5 +1,8 @@
 package pl.marcinchwedczuk.cjava.sourcecode.formatter;
 
+import pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType;
+import pl.marcinchwedczuk.cjava.optimizer.imports.JavaTypeNameRenderer;
+
 import java.util.function.Consumer;
 
 public class JavaCodeWriter {

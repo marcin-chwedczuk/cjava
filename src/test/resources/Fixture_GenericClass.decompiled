@@ -1,9 +1,13 @@
-public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericClass<
+package pl.marcinchwedczuk.cjava.bytecode.test.fixtures;
+
+import java.util.ArrayDeque;
+
+public class Fixture_GenericClass<
 			ParamA extends java.io.Serializable,
 			ParamB extends java.util.ArrayList<ParamA>
 		>
-		extends java.util.ArrayDeque<ParamA>
-		implements pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_GenericInterface<ParamA> {
+		extends ArrayDeque<ParamA>
+		implements Fixture_GenericInterface<ParamA> {
 
 	private ParamA key;
 

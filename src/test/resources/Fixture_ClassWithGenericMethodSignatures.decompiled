@@ -1,7 +1,11 @@
-public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithGenericMethodSignatures<
+package pl.marcinchwedczuk.cjava.bytecode.test.fixtures;
+
+import java.util.List;
+
+public class Fixture_ClassWithGenericMethodSignatures<
         T extends java.lang.Object
     >
-    extends java.lang.Object {
+    extends Object {
 
     public Fixture_ClassWithGenericMethodSignatures() { }
 
@@ -9,5 +13,5 @@ public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithGe
 
 	public void process(T arg0) { }
 
-	public <E extends java.lang.Object> java.util.List<E> listOf(E arg0, E arg1) { }
+	public <E extends java.lang.Object> List<E> listOf(E arg0, E arg1) { }
 }

@@ -7,6 +7,7 @@ import pl.marcinchwedczuk.cjava.ast.expr.ExprAst;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.IntegerLiteral;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.StringLiteral;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
+import pl.marcinchwedczuk.cjava.optimizer.imports.FullQualifiedNameJavaTypeNameRenderer;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -47,7 +48,10 @@ public class AnnotationFormatterTests {
 		JavaCodeWriter codeWriter = new JavaCodeWriter();
 
 		AnnotationSourceCodeFormatter formatter =
-				new AnnotationSourceCodeFormatter(annotationAst, codeWriter);
+				new AnnotationSourceCodeFormatter(
+						new FullQualifiedNameJavaTypeNameRenderer(),
+						codeWriter,
+						annotationAst);
 		formatter.convertAstToJavaCode();
 
 		return codeWriter.dumpSourceCode();

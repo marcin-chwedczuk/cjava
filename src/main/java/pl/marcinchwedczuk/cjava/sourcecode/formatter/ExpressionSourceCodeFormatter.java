@@ -2,16 +2,15 @@ package pl.marcinchwedczuk.cjava.sourcecode.formatter;
 
 import pl.marcinchwedczuk.cjava.ast.expr.*;
 import pl.marcinchwedczuk.cjava.ast.expr.literal.*;
+import pl.marcinchwedczuk.cjava.optimizer.imports.JavaTypeNameRenderer;
 
 import static java.util.Objects.requireNonNull;
 import static pl.marcinchwedczuk.cjava.sourcecode.formatter.JavaLiteralUtil.javaEscape;
 import static pl.marcinchwedczuk.cjava.sourcecode.formatter.ListWriter.writeList;
 
-public class ExpressionSourceCodeFormatter {
-	private final JavaCodeWriter codeWriter;
-
-	public ExpressionSourceCodeFormatter(JavaCodeWriter codeWriter) {
-		this.codeWriter = requireNonNull(codeWriter);
+public class ExpressionSourceCodeFormatter extends BaseSourceCodeFormatter {
+	public ExpressionSourceCodeFormatter(JavaTypeNameRenderer typeNameRenderer, JavaCodeWriter codeWriter) {
+		super(typeNameRenderer, codeWriter);
 	}
 
 	public void convertAstToJavaCode(ExprAst expression) {
@@ -85,7 +84,7 @@ public class ExpressionSourceCodeFormatter {
 
 	private void printNewArray(NewArrayAst newArrayAst) {
 		codeWriter.print("new ")
-				.print(newArrayAst.getElementType().asSourceCodeString())
+				.print(typeName(newArrayAst.getElementType()))
 				.print("[");
 
 		printExpression(newArrayAst.getSizeExpr());
@@ -95,7 +94,7 @@ public class ExpressionSourceCodeFormatter {
 
 	private void printCast(CastAst castAst) {
 		codeWriter.print("(")
-				.print(castAst.getTargetType().asSourceCodeString())
+				.print(typeName(castAst.getTargetType()))
 				.print(")");
 
 		ExprAst expr = castAst.getExpr();
@@ -119,7 +118,7 @@ public class ExpressionSourceCodeFormatter {
 
 	private void printNewInstance(NewInstanceAst newInstance) {
 		codeWriter.print("new ")
-				.print(newInstance.getType().asSourceCodeString())
+				.print(typeName(newInstance.getType()))
 				.print("()");
 	}
 
@@ -188,7 +187,7 @@ public class ExpressionSourceCodeFormatter {
 		if (methodCall.getThisArgument() != null) {
 			printExpression(methodCall.getThisArgument());
 		} else {
-			codeWriter.print(methodCall.getClassContainingMethod().asSourceCodeString());
+			codeWriter.print(typeName(methodCall.getClassContainingMethod()));
 		}
 
 		codeWriter
@@ -207,8 +206,7 @@ public class ExpressionSourceCodeFormatter {
 	}
 
 	private void printFieldAccess(FieldAccessAst fieldAccess) {
-		codeWriter.print(
-			fieldAccess.getClassContainingField().asSourceCodeString());
+		codeWriter.print(typeName(fieldAccess.getClassContainingField()));
 
 		codeWriter.print(".").print(fieldAccess.getFieldName());
 	}
@@ -232,7 +230,7 @@ public class ExpressionSourceCodeFormatter {
 			ListWriter.writeList(arrayLiteral.getElements())
 					.before(() -> codeWriter.print("{ "))
 					.element((elementAst, position) ->
-							new ExpressionSourceCodeFormatter(codeWriter)
+							new ExpressionSourceCodeFormatter(typeNameRenderer, codeWriter)
 									.convertAstToJavaCode(elementAst))
 					.between(() -> codeWriter.print(", "))
 					.after(() -> codeWriter.print(" }"))

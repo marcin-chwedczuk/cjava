@@ -12,6 +12,7 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType.MetaType.REFERENCE_TYPE;
+import static pl.marcinchwedczuk.cjava.util.ListUtils.lastElement;
 
 @AutoValue
 public abstract class ClassType implements JavaType {
@@ -89,8 +90,12 @@ public abstract class ClassType implements JavaType {
 	}
 
 	public String computeSimpleClassName() {
-		SimpleClassType currentClass = ListUtils.lastElement(getClasses());
+		SimpleClassType currentClass = lastElement(getClasses());
 		return currentClass.getClassName();
+	}
+
+	public SimpleClassType computeSimpleClassType() {
+		return lastElement(getClasses());
 	}
 
 	public boolean hasSimpleClassName(String simpleClassName) {

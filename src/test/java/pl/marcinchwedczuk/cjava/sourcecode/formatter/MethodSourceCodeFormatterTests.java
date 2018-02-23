@@ -9,6 +9,7 @@ import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.*;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.typeargs.TypeArgument;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.TypeVariable;
+import pl.marcinchwedczuk.cjava.optimizer.imports.FullQualifiedNameJavaTypeNameRenderer;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -157,8 +158,13 @@ public class MethodSourceCodeFormatterTests {
 
 	private String format(MethodDeclarationAst methodDeclaration) {
 		JavaCodeWriter codeWriter = new JavaCodeWriter();
-		new MethodSourceCodeFormatter(methodDeclaration, codeWriter)
+
+		new MethodSourceCodeFormatter(
+					new FullQualifiedNameJavaTypeNameRenderer(),
+					codeWriter,
+					methodDeclaration)
 				.convertAstToJavaCode();
+
 		return codeWriter.dumpSourceCode();
 	}
 }

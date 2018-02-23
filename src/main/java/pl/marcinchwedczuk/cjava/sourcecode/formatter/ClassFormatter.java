@@ -4,19 +4,18 @@ import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.FieldDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.MethodDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
+import pl.marcinchwedczuk.cjava.optimizer.imports.JavaTypeNameRenderer;
 
 import static java.util.Objects.requireNonNull;
 
-public class ClassFormatter implements SourceCodeFormatter {
-	private final JavaCodeWriter codeWriter;
+public class ClassFormatter extends BaseSourceCodeFormatter {
 	private final ClassDeclarationAst classDeclarationAst;
 
-	public ClassFormatter(JavaCodeWriter codeWriter, ClassDeclarationAst classDeclarationAst) {
-		this.codeWriter = requireNonNull(codeWriter);
+	public ClassFormatter(JavaTypeNameRenderer typeNameRenderer, JavaCodeWriter codeWriter, ClassDeclarationAst classDeclarationAst) {
+		super(typeNameRenderer, codeWriter);
 		this.classDeclarationAst = requireNonNull(classDeclarationAst);
 	}
 
-	@Override
 	public void convertAstToJavaCode() {
 		printClassAnnotations();
 		printClassDeclaration();
@@ -35,7 +34,7 @@ public class ClassFormatter implements SourceCodeFormatter {
 
 	private void printClassAnnotations() {
 		for (AnnotationAst annotationAst : classDeclarationAst.getAnnotations()) {
-			new AnnotationSourceCodeFormatter(annotationAst, codeWriter)
+			new AnnotationSourceCodeFormatter(typeNameRenderer, codeWriter, annotationAst)
 					.convertAstToJavaCode();
 
 			codeWriter
@@ -45,7 +44,7 @@ public class ClassFormatter implements SourceCodeFormatter {
 	}
 
 	private void printClassDeclaration() {
-		new ClassDeclarationFormatter(codeWriter, classDeclarationAst)
+		new ClassDeclarationFormatter(typeNameRenderer, codeWriter, classDeclarationAst)
 				.convertAstToJavaCode();
 	}
 
@@ -58,7 +57,7 @@ public class ClassFormatter implements SourceCodeFormatter {
 					.printNewLine()
 					.printIndent();
 
-			new FieldSourceCodeFormatter(fieldDeclarationAst, codeWriter)
+			new FieldSourceCodeFormatter(typeNameRenderer, codeWriter, fieldDeclarationAst)
 					.convertAstToJavaCode();
 		}
 
@@ -74,7 +73,7 @@ public class ClassFormatter implements SourceCodeFormatter {
 					.printNewLine()
 					.printIndent();
 
-			new MethodSourceCodeFormatter(methodDeclaration, codeWriter)
+			new MethodSourceCodeFormatter(typeNameRenderer, codeWriter, methodDeclaration)
 					.convertAstToJavaCode();
 		}
 

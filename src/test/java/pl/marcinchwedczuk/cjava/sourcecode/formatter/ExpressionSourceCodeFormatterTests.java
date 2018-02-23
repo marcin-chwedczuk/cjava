@@ -4,6 +4,7 @@ import org.junit.Test;
 import pl.marcinchwedczuk.cjava.ast.expr.*;
 import pl.marcinchwedczuk.cjava.decompiler.fixture.AstBuilder;
 import pl.marcinchwedczuk.cjava.decompiler.signature.LocalVariable;
+import pl.marcinchwedczuk.cjava.optimizer.imports.FullQualifiedNameJavaTypeNameRenderer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -95,7 +96,7 @@ public class ExpressionSourceCodeFormatterTests {
 	private static String format(ExprAst expr) {
 		JavaCodeWriter codeWriter = new JavaCodeWriter();
 
-		new ExpressionSourceCodeFormatter(codeWriter)
+		new ExpressionSourceCodeFormatter(new FullQualifiedNameJavaTypeNameRenderer(), codeWriter)
 				.convertAstToJavaCode(expr);
 
 		return codeWriter.dumpSourceCode();

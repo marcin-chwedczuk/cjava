@@ -99,4 +99,21 @@ public class JavaTypeHistogramCollector extends BaseAstMapper {
 
 		return current;
 	}
+
+	@Override
+	public ExprAst map(FieldAccessAst current, FieldAccessAst.Builder mapped) {
+		histogram.addUsage(current.getClassContainingField());
+
+		return current;
+	}
+
+	@Override
+	public ExprAst map(MethodCallAst current, MethodCallAst.Builder mapped) {
+		if (current.getThisArgument() == null) {
+			// static call
+			histogram.addUsage(current.getClassContainingMethod());
+		}
+
+		return current;
+	}
 }

@@ -1,7 +1,9 @@
-@pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_Annotation(intField = 123, stringField = "foo", stringArrayField = { "foo", "bar" })
-@pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_EmptyAnnotation
-public class pl.marcinchwedczuk.cjava.bytecode.test.fixtures.Fixture_ClassWithAnnotations
-		extends java.lang.Object {
+package pl.marcinchwedczuk.cjava.bytecode.test.fixtures;
+
+@Fixture_Annotation(intField = 123, stringField = "foo", stringArrayField = { "foo", "bar" })
+@Fixture_EmptyAnnotation
+public class Fixture_ClassWithAnnotations
+		extends Object {
 
 	public Fixture_ClassWithAnnotations() { }
 }

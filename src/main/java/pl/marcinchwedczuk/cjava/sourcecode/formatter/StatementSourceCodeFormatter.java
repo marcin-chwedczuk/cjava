@@ -3,21 +3,18 @@ package pl.marcinchwedczuk.cjava.sourcecode.formatter;
 import pl.marcinchwedczuk.cjava.ast.expr.ExprAst;
 import pl.marcinchwedczuk.cjava.ast.statement.*;
 import pl.marcinchwedczuk.cjava.decompiler.signature.LocalVariable;
-
-import java.util.Objects;
+import pl.marcinchwedczuk.cjava.optimizer.imports.JavaTypeNameRenderer;
 
 import static java.util.Objects.requireNonNull;
 
-public class StatementSourceCodeFormatter implements SourceCodeFormatter {
+public class StatementSourceCodeFormatter extends BaseSourceCodeFormatter {
 	private final StatementAst statement;
-	private final JavaCodeWriter codeWriter;
 
-	public StatementSourceCodeFormatter(StatementAst statement, JavaCodeWriter codeWriter) {
+	public StatementSourceCodeFormatter(JavaTypeNameRenderer typeNameRenderer, JavaCodeWriter codeWriter, StatementAst statement) {
+		super(typeNameRenderer, codeWriter);
 		this.statement = requireNonNull(statement);
-		this.codeWriter = requireNonNull(codeWriter);
 	}
 
-	@Override
 	public void convertAstToJavaCode() {
 		if (statement instanceof ExprStatementAst) {
 			printExpression((ExprStatementAst) statement);
@@ -52,7 +49,7 @@ public class StatementSourceCodeFormatter implements SourceCodeFormatter {
 		LocalVariable variable = statement.getVariable();
 
 		codeWriter.printIndent()
-				.print(variable.getType().asSourceCodeString())
+				.print(typeName(variable.getType()))
 				.print(" ")
 				.print(variable.getName())
 				.print(" = ");
@@ -73,7 +70,7 @@ public class StatementSourceCodeFormatter implements SourceCodeFormatter {
 	}
 
 	private void printExpression(ExprAst expr) {
-		new ExpressionSourceCodeFormatter(codeWriter)
+		new ExpressionSourceCodeFormatter(typeNameRenderer, codeWriter)
 				.convertAstToJavaCode(expr);
 	}
 }

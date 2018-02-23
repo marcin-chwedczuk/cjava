@@ -5,6 +5,7 @@ import pl.marcinchwedczuk.cjava.ast.FieldDeclarationAst;
 import pl.marcinchwedczuk.cjava.ast.Visibility;
 import pl.marcinchwedczuk.cjava.ast.annotation.AnnotationAst;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.ClassType;
+import pl.marcinchwedczuk.cjava.optimizer.imports.FullQualifiedNameJavaTypeNameRenderer;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,7 +45,10 @@ public class FieldFormatterTests {
 	private String format(FieldDeclarationAst declarationAst) {
 		JavaCodeWriter codeWriter = new JavaCodeWriter();
 
-		new FieldSourceCodeFormatter(declarationAst, codeWriter)
+		new FieldSourceCodeFormatter(
+					new FullQualifiedNameJavaTypeNameRenderer(),
+					codeWriter,
+					declarationAst)
 				.convertAstToJavaCode();
 
 		return codeWriter.dumpSourceCode();

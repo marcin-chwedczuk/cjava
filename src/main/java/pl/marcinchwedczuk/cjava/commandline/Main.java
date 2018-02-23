@@ -1,17 +1,14 @@
-package pl.marcinchwedczuk.cjava;
+package pl.marcinchwedczuk.cjava.commandline;
 
-import pl.marcinchwedczuk.cjava.ast.ClassDeclarationAst;
-import pl.marcinchwedczuk.cjava.ast.CompilationUnitAst;
-import pl.marcinchwedczuk.cjava.bytecode.JavaClassFileLoader;
-import pl.marcinchwedczuk.cjava.decompiler.BytecodeDecompiler;
-import pl.marcinchwedczuk.cjava.decompiler.DecompilationOptions;
-import pl.marcinchwedczuk.cjava.sourcecode.formatter.ClassDeclarationFormatter;
-import pl.marcinchwedczuk.cjava.sourcecode.formatter.JavaCodeWriter;
+import pl.marcinchwedczuk.cjava.CJava;
+import pl.marcinchwedczuk.cjava.DecompilationOptions;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static pl.marcinchwedczuk.cjava.DecompilationOptions.defaultOptions;
 
 public class Main {
 
@@ -41,20 +38,7 @@ public class Main {
 		try {
 			byte[] klassBytes = Files.readAllBytes(classFilePath);
 
-			CompilationUnitAst compilationUnit =
-					new BytecodeDecompiler(
-								new JavaClassFileLoader().load(klassBytes),
-								DecompilationOptions.defaultOptions())
-							.decompile();
-
-			ClassDeclarationAst classDeclaration =
-					(ClassDeclarationAst) compilationUnit.getDeclaredTypes().get(0);
-
-			JavaCodeWriter codeWriter = new JavaCodeWriter();
-			ClassDeclarationFormatter formatter =
-					new ClassDeclarationFormatter(codeWriter, classDeclaration);
-
-			String sourceCode = codeWriter.dumpSourceCode();
+			String sourceCode = CJava.decompile(klassBytes, defaultOptions());
 
 			Files.write(Paths.get(sourceCodePath), sourceCode.getBytes("UTF-8"));
 		}
