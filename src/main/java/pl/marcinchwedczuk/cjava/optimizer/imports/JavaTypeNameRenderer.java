@@ -1,55 +1,27 @@
 package pl.marcinchwedczuk.cjava.optimizer.imports;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
-import pl.marcinchwedczuk.cjava.decompiler.JvmConstants;
 import pl.marcinchwedczuk.cjava.decompiler.typesystem.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static pl.marcinchwedczuk.cjava.decompiler.JvmConstants.JAVA_LANG_PACKAGE;
-import static pl.marcinchwedczuk.cjava.util.ListUtils.readOnlyCopy;
 
 public class JavaTypeNameRenderer {
-	private final PackageName currentPackage;
-
-	private final ImmutableSet<ClassType> topLevelTypeDeclarations;
-	private final ImmutableSet<ClassType> importedTypes;
-	private final ImmutableSet<String> allocatedNames;
+	private final ImmutableSet<ClassType> explicitImports;
+	private final ImmutableSet<ClassType> implicitImports;
 
 	public JavaTypeNameRenderer(
-			PackageName currentPackage,
-			Set<ClassType> topLevelTypeDeclarations,
-			JavaTypeHistogram histogram)
-	{
-		this.currentPackage = currentPackage;
-		this.topLevelTypeDeclarations = ImmutableSet.copyOf(topLevelTypeDeclarations);
-
-		new ImportAlgorithm(
-								currentPackage, new HashSet<>(),
-								topLevelTypeDeclarations, histogram)
-					.selectTypesToImport();
-
-		this.importedTypes = ImmutableSet.of();
-
-		this.allocatedNames = Stream.concat(
-					this.topLevelTypeDeclarations.stream(),
-					this.importedTypes.stream())
-				.map(ClassType::computeSimpleClassName)
-				.collect(toImmutableSet());
+			ImmutableSet<ClassType> explicitImports, ImmutableSet<ClassType> implicitImports) {
+		this.implicitImports = requireNonNull(implicitImports);
+		this.explicitImports = requireNonNull(explicitImports);
 	}
 
-
 	public List<ImportStatement> getImports() {
-		return importedTypes.stream()
+		return explicitImports.stream()
 				.map(ImportStatement::new)
 				.collect(toList());
 	}
@@ -85,24 +57,15 @@ public class JavaTypeNameRenderer {
 			return type.computeSimpleClassName();
 		}
 
-		if (type.isPartOfPackage(JAVA_LANG_PACKAGE) && !isShadowedByImport(type)) {
-			return type.computeSimpleClassName();
-		}
-
-		if (type.isPartOfPackage(currentPackage) && !isShadowedByImport(type)) {
-			return type.computeSimpleClassName();
-		}
-
 		// full type name
 		return type.asSourceCodeString();
 	}
 
 	private boolean isImported(ClassType type) {
-		return importedTypes.contains(type.toRawType());
-	}
+		ClassType rawType = type.toRawType();
 
-	private boolean isShadowedByImport(ClassType type) {
-		return allocatedNames.contains(type.computeSimpleClassName());
+		return implicitImports.contains(rawType)
+			|| explicitImports.contains(rawType);
 	}
 
 	private String renderTypeVariable(TypeVariable typeVariable) {

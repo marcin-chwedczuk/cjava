@@ -87,7 +87,7 @@ public class ImportAlgorithmTests {
 	}
 
 	@Test
-	public void doesNotImportTypesFromTheCompilationUnitPackage() throws Exception {
+	public void doesNotExplicitlyImportTypesFromTheCompilationUnitPackage() throws Exception {
 		JavaTypeHistogram histogram =
 				JavaTypeHistogram.fromUsages(TEST_TESTCLASS_B);
 
@@ -101,7 +101,7 @@ public class ImportAlgorithmTests {
 	}
 
 	@Test
-	public void doesNotImportTypesFromJavaLangPackage() throws Exception {
+	public void doesNotExplicitlyImportTypesFromJavaLangPackage() throws Exception {
 		JavaTypeHistogram histogram = JavaTypeHistogram.fromUsages(
 				object(), integerWrapper());
 
@@ -132,6 +132,28 @@ public class ImportAlgorithmTests {
 
 		assertThat(algorithm.findImplicitImports())
 				.containsExactlyInAnyOrder(object());
+	}
+
+	@Test
+	public void doesNotImportJavaLangTypeIfItCausesACollisionWithTopLevelTypeName() throws Exception {
+		ClassType topLevelClass = ClassType.fromPackageAndClassName("test", "Object");
+
+		JavaTypeHistogram histogram = JavaTypeHistogram.fromUsages(
+				object(), string());
+
+		ImportAlgorithm algorithm = new ImportAlgorithm(
+				PackageName.fromString("test"),
+				ImmutableSet.of(),
+				singleton(topLevelClass),
+				histogram);
+
+		algorithm.selectTypesToImport();
+
+		assertThat(algorithm.findExplicitImport())
+				.isEmpty();
+
+		assertThat(algorithm.findImplicitImports())
+				.containsExactlyInAnyOrder(string());
 	}
 
 	private ImportAlgorithm createAndRunAlgorithm(JavaTypeHistogram histogram) {

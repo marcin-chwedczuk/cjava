@@ -10,7 +10,6 @@ import static pl.marcinchwedczuk.cjava.decompiler.typesystem.JavaType.MetaType.T
 public interface JavaType {
 	String asSourceCodeString();
 	ImmutableList<JavaType> decomposeToRawTypes();
-
 	MetaType getMetaType();
 
 	default boolean isReferenceType() {
