@@ -30,6 +30,8 @@ public class FlowGraphBuilder {
 			FlowBlock current = blocks.get(i);
 			FlowBlock next = ((i+1) < blocks.size()) ? blocks.get(i+1) : graph.stop;
 
+			graph.addBlock(current);
+
 			Instruction lastInstruction = current.getLastInstruction();
 			if (isReturnOrThrowInstruction(lastInstruction)) {
 				current.addTransitionTo(graph.stop, ALWAYS);
@@ -42,8 +44,11 @@ public class FlowGraphBuilder {
 				FlowBlock jumpTarget = blockByPC.get(target);
 				current.addTransitionTo(jumpTarget, WHEN_TRUE);
 
-				// when jump is not performed
-				current.addTransitionTo(next, WHEN_FALSE);
+				if (isConditionalJumpInstruction(lastInstruction)) {
+					// when jump is not performed
+					current.addTransitionTo(next, WHEN_FALSE);
+				}
+				
 				continue;
 			}
 
@@ -132,12 +137,26 @@ public class FlowGraphBuilder {
 	}
 
 	private boolean isJumpInstruction(Instruction instruction) {
+		return isUnconditionalJumpInstruction(instruction)
+			|| isConditionalJumpInstruction(instruction);
+	}
+
+	private boolean isConditionalJumpInstruction(Instruction instruction) {
 		switch (instruction.getOpcode()) {
-			case goto_: case goto_w:
 			case ifeq: case ifne:
 			case iflt: case ifgt:
 			case ifle: case ifge:
 				// TODO: Other jumps
+				return true;
+
+			default:
+				return false;
+		}
+	}
+
+	private boolean isUnconditionalJumpInstruction(Instruction instruction) {
+		switch (instruction.getOpcode()) {
+			case goto_: case goto_w:
 				return true;
 
 			default:

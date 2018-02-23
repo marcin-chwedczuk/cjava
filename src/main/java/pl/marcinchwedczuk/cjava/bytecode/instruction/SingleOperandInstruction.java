@@ -15,6 +15,6 @@ public class SingleOperandInstruction extends Instruction {
 
 	@Override
 	public String toString() {
-		return String.format("%4s: %s 0x%02X", getPC(), getOpcode(), operand);
+		return String.format("%4s: %s %02d", getPC(), getOpcode(), operand);
 	}
 }

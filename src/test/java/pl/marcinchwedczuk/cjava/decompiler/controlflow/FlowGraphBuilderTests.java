@@ -35,7 +35,10 @@ public class FlowGraphBuilderTests extends BaseDecompilerTests {
 		assertThat(flowGraph)
 				.isNotNull();
 
-		fail("Add other tests");
+		// cat /home/mc/tmp/flowGraph1.dot | xclip -sel clip
+		new FlowGraphToDotConverter(flowGraph, "/home/mc/tmp/flowGraph1.dot")
+				.saveToDotFile();
+
 	}
 
 	private static List<Instruction> readMethodInstructions(String methodName) throws IOException {

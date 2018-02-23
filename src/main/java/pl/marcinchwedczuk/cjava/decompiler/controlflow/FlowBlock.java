@@ -39,4 +39,29 @@ public class FlowBlock {
 	public Instruction getLastInstruction() {
 		return ((InstructionFlowElement) lastElement(elements)).getInstruction();
 	}
+
+	public Instruction getFirstInstruction() {
+		return ((InstructionFlowElement) firstElement(elements)).getInstruction();
+	}
+
+	public List<FlowTransition> getOutgoing() {
+		return outgoing;
+	}
+
+	public List<FlowTransition> getIncoming() {
+		return incoming;
+	}
+
+	public List<FlowElement> getElements() {
+		return elements;
+	}
+
+	@Override
+	public String toString() {
+		if (isEmpty()) return "EmptyBlock";
+
+		return "Block(from=" + firstElement(elements).getPC() +
+				",to=" + lastElement(elements).getPC() + ")";
+	}
+
 }
