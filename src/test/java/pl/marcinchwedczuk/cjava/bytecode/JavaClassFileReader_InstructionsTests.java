@@ -36,7 +36,7 @@ public class JavaClassFileReader_InstructionsTests extends BaseJavaClassFileRead
 		assertInstruction(instructions.get(14),
 				23, Opcode.goto_, -18);
 
-		assertThat(gotoTarget.getPC() - goto_.getPC())
+		assertThat(gotoTarget.getPC().asInteger() - goto_.getPC().asInteger())
 				.as("goto offset")
 				.isEqualTo(-18);
 
@@ -87,7 +87,7 @@ public class JavaClassFileReader_InstructionsTests extends BaseJavaClassFileRead
 
 	private static void assertInstruction(Instruction instruction,
 										  int pc, Opcode opcode, int... operands) {
-		assertThat(instruction.getPC()).isEqualTo(pc);
+		assertThat(instruction.getPC().asInteger()).isEqualTo(pc);
 		assertThat(instruction.getOpcode()).isEqualTo(opcode);
 
 		switch (operands.length) {

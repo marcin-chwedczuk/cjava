@@ -7,6 +7,6 @@ public class BasicInstruction extends Instruction {
 
 	@Override
 	public String toString() {
-		return String.format("%04d: %s", getPC(), getOpcode());
+		return String.format("%4s: %s", getPC(), getOpcode());
 	}
 }
