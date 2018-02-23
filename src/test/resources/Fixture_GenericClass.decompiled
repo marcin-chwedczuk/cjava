@@ -1,10 +1,12 @@
 package pl.marcinchwedczuk.cjava.bytecode.test.fixtures;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.io.Serializable;
 
 public class Fixture_GenericClass<
-			ParamA extends java.io.Serializable,
-			ParamB extends java.util.ArrayList<ParamA>
+			ParamA extends Serializable,
+			ParamB extends ArrayList<ParamA>
 		>
 		extends ArrayDeque<ParamA>
 		implements Fixture_GenericInterface<ParamA> {

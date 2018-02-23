@@ -9,6 +9,8 @@ import pl.marcinchwedczuk.cjava.optimizer.imports.JavaTypeNameRenderer;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
+import static pl.marcinchwedczuk.cjava.sourcecode.formatter.ListWriter.ElementPosition.LAST;
+import static pl.marcinchwedczuk.cjava.sourcecode.formatter.ListWriter.writeList;
 
 public class ClassDeclarationFormatter extends BaseSourceCodeFormatter {
 	private final ClassDeclarationAst classDeclarationAst;
@@ -81,28 +83,33 @@ public class ClassDeclarationFormatter extends BaseSourceCodeFormatter {
 	private void printGenericTypeParameters() {
 		if (classDeclarationAst.isGenericClassDeclaration()) {
 
-			codeWriter
-					.print("<")
-					.increaseIndent(3);
+			writeList(classDeclarationAst.getTypeParameters())
+					.beforeNonEmpty(() -> {
+						codeWriter
+								.print("<")
+								.increaseIndent(3);
+					})
+					.element((typeParam, pos) -> {
+						codeWriter
+								.printNewLine()
+								.printIndent();
 
-			List<TypeParameter> typeParameters = classDeclarationAst.getTypeParameters();
-			for (int i = 0; i < typeParameters.size(); i++) {
-				boolean isLast = (i == (typeParameters.size()-1));
+						new TypeParameterDeclarationSourceCodeFormatter(typeNameRenderer, codeWriter, typeParam)
+									.convertAstToJavaCode();
 
-				codeWriter
-						.printNewLine()
-						.printIndent()
-						// TODO: Use typeNameRenderer
-						.print(typeParameters.get(i).toJavaString())
-						.printIf(!isLast, ",");
-			}
-
-			codeWriter
-					.printNewLine()
-					.decreaseIndent(1)
-					.printIndent()
-					.print(">")
-					.decreaseIndent(2);
+						if (pos != LAST) {
+							codeWriter.print(",");
+						}
+					})
+					.afterNonEmpty(() -> {
+						codeWriter
+								.printNewLine()
+								.decreaseIndent(1)
+								.printIndent()
+								.print(">")
+								.decreaseIndent(2);
+					})
+					.write();
 		}
 	}
 }

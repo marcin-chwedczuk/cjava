@@ -14,7 +14,9 @@ import pl.marcinchwedczuk.cjava.ast.statement.*;
 import pl.marcinchwedczuk.cjava.ast.visitor.AstMapper;
 import pl.marcinchwedczuk.cjava.ast.visitor.BaseAstMapper;
 import pl.marcinchwedczuk.cjava.decompiler.signature.MethodSignature;
+import pl.marcinchwedczuk.cjava.decompiler.signature.TypeParameter;
 
+import java.util.List;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
@@ -34,8 +36,11 @@ public class JavaTypeHistogramCollector extends BaseAstMapper {
 			.getImplementedInterfaces()
 			.forEach(histogram::addUsage);
 
+		addTypeParameters(current.getTypeParameters());
+
 		return current;
 	}
+
 
 	@Override
 	public FieldDeclarationAst map(FieldDeclarationAst current, FieldDeclarationAst.Builder mapped) {
@@ -53,6 +58,8 @@ public class JavaTypeHistogramCollector extends BaseAstMapper {
 		methodSignature
 				.getParametersTypes()
 				.forEach(histogram::addUsage);
+
+		addTypeParameters(methodSignature.getTypeParameters());
 
 		return current;
 	}
@@ -115,5 +122,18 @@ public class JavaTypeHistogramCollector extends BaseAstMapper {
 		}
 
 		return current;
+	}
+
+
+	private void addTypeParameters(List<TypeParameter> typeParameters) {
+		typeParameters
+				.forEach(p -> {
+					if (p.getClassBound() != null) {
+						histogram.addUsage(p.getClassBound());
+					}
+
+					p.getInterfaceBounds()
+							.forEach(histogram::addUsage);
+				});
 	}
 }

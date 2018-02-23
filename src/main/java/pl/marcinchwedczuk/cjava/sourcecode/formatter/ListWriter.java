@@ -7,14 +7,15 @@ import static java.util.Objects.requireNonNull;
 
 public class ListWriter<T> {
 	private static final Runnable NO_ACTION = () -> { };
-
 	public static <T> ListWriter<T> writeList(List<T> list) {
 		return new ListWriter<>(list);
 	}
 
+
 	private Runnable beforeAction = NO_ACTION;
 	private Runnable beforeNonEmpty = NO_ACTION;
 	private Runnable afterAction = NO_ACTION;
+	private Runnable afterNonEmpty = NO_ACTION;
 	private BiConsumer<T, ElementPosition> elementAction = this::throwExceptionIfNotSet;
 	private Runnable betweenAction = NO_ACTION;
 
@@ -40,6 +41,11 @@ public class ListWriter<T> {
 
 	public ListWriter<T> after(Runnable action) {
 		afterAction = requireNonNull(action);
+		return this;
+	}
+
+	public ListWriter<T> afterNonEmpty(Runnable action) {
+		afterNonEmpty = requireNonNull(action);
 		return this;
 	}
 
@@ -75,6 +81,10 @@ public class ListWriter<T> {
 			if (position != ElementPosition.LAST) {
 				betweenAction.run();
 			}
+		}
+
+		if (!list.isEmpty()) {
+			afterNonEmpty.run();
 		}
 
 		afterAction.run();
