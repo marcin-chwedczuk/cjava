@@ -27,7 +27,8 @@ public class FlowGraphBuilderTests extends BaseDecompilerTests {
 
 	@Test
 	public void canBuildGraphForSimpleIfElse() throws Exception {
-		List<Instruction> instructions = readMethodInstructions("ifElseStatement");
+		// ifElseStatement
+		List<Instruction> instructions = readMethodInstructions("doWhileWithNestedIf");
 
 		FlowGraph flowGraph =
 				new FlowGraphBuilder(instructions).buildGraph();

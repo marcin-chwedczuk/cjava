@@ -640,7 +640,7 @@ public enum Opcode {
 	 * <p>
 	 * {@code STACK ..., value1, value2 -> ..., result }
 	 */
-	irem(0x70),
+	irem(0x70, ""),
 
 	/**
 	 * Return int from method.

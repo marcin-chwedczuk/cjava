@@ -39,16 +39,18 @@ public class FlowGraphBuilder {
 			}
 
 			if (isJumpInstruction(lastInstruction)) {
+				boolean isUnconditional = isUnconditionalJumpInstruction(lastInstruction);
+
 				// when jump is performed
 				InstructionPC target = getJumpTarget(lastInstruction);
 				FlowBlock jumpTarget = blockByPC.get(target);
-				current.addTransitionTo(jumpTarget, WHEN_TRUE);
+				current.addTransitionTo(jumpTarget, isUnconditional ? ALWAYS : WHEN_TRUE);
 
 				if (isConditionalJumpInstruction(lastInstruction)) {
 					// when jump is not performed
 					current.addTransitionTo(next, WHEN_FALSE);
 				}
-				
+
 				continue;
 			}
 
@@ -147,6 +149,10 @@ public class FlowGraphBuilder {
 			case iflt: case ifgt:
 			case ifle: case ifge:
 				// TODO: Other jumps
+
+			case if_icmpeq: case if_icmpne:
+			case if_icmplt: case if_icmpgt:
+			case if_icmple: case if_icmpge:
 				return true;
 
 			default:
