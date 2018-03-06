@@ -1,6 +1,6 @@
 package pl.marcinchwedczuk.nomoregotos;
 
-public class CodeNode extends Node {
+public class CodeNode extends CfgNode {
 	public final String instruction;
 
 	public CodeNode(String instruction) {

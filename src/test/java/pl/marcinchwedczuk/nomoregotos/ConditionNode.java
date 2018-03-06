@@ -1,6 +1,6 @@
 package pl.marcinchwedczuk.nomoregotos;
 
-public class ConditionNode extends Node {
+public class ConditionNode extends CfgNode {
 	public final String conditionVariable;
 
 	public ConditionNode(String conditionVariable) {

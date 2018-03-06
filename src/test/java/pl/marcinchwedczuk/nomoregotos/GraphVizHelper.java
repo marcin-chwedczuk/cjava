@@ -1,11 +1,7 @@
 package pl.marcinchwedczuk.nomoregotos;
 
-import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 import com.google.common.io.Files;
-import pl.marcinchwedczuk.cjava.decompiler.controlflow.FlowBlock;
-import pl.marcinchwedczuk.cjava.decompiler.controlflow.FlowElement;
-import pl.marcinchwedczuk.cjava.decompiler.controlflow.FlowGraph;
-import pl.marcinchwedczuk.cjava.decompiler.controlflow.FlowTransition;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -28,7 +24,7 @@ public class GraphVizHelper {
 			writer.newLine();
 
 			// write vertices
-			for (Node block : graph.getVeriticesWithStartStopMarks()) {
+			for (CfgNode block : graph.getVeriticesWithStartStopMarks()) {
 				writer.write(block.toString());
 
 				String color = (block instanceof ConditionNode)
@@ -39,12 +35,16 @@ public class GraphVizHelper {
 						? color
 						: block.color;
 
-				writer.write("[label=\"" + block.toString() + "\", style=filled, fillcolor=\"" + color + "\"]");
+				String extraLabel = Strings.isNullOrEmpty(block.extraLabel)
+						? ""
+						: "\\n" + block.extraLabel;
+
+				writer.write("[label=\"" + block.toString() + extraLabel + "\", style=filled, fillcolor=\"" + color + "\"]");
 				writer.newLine();
 			}
 
 			// write edges
-			for (Edge e : graph.getEdges()) {
+			for (CfgEdge e : graph.getEdges()) {
 					writer.write(e.from.toString());
 					writer.write(" -> ");
 					writer.write(e.to.toString());

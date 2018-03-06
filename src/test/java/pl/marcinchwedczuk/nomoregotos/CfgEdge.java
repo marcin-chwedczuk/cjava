@@ -1,8 +1,8 @@
 package pl.marcinchwedczuk.nomoregotos;
 
-public class Edge {
-	public static Edge connect(Node from, Node to, Condition condition) {
-		Edge e = new Edge(from, to, condition);
+public class CfgEdge {
+	public static CfgEdge connect(CfgNode from, CfgNode to, CfgEdgeCondition condition) {
+		CfgEdge e = new CfgEdge(from, to, condition);
 
 		from.addOutgoingEdge(e);
 		to.addIncomingEdge(e);
@@ -10,13 +10,13 @@ public class Edge {
 		return e;
 	}
 
-	public final Node from;
-	public final Node to;
-	public final Condition condition;
+	public final CfgNode from;
+	public final CfgNode to;
+	public final CfgEdgeCondition condition;
 
 	public boolean backedge = false;
 
-	public Edge(Node from, Node to, Condition condition) {
+	public CfgEdge(CfgNode from, CfgNode to, CfgEdgeCondition condition) {
 		this.from = from;
 		this.to = to;
 		this.condition = condition;

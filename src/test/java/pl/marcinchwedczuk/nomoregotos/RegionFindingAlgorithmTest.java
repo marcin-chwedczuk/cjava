@@ -1,15 +1,23 @@
 package pl.marcinchwedczuk.nomoregotos;
 
 import org.junit.Test;
+import pl.marcinchwedczuk.nomoregotos.condexpr.Condition;
+import pl.marcinchwedczuk.nomoregotos.graph.slicegraph.SliceEdge;
+import pl.marcinchwedczuk.nomoregotos.graph.slicegraph.SliceGraph;
+import pl.marcinchwedczuk.nomoregotos.graph.slicegraph.SliceNode;
 
-import static pl.marcinchwedczuk.nomoregotos.Condition.ALWAYS;
-import static pl.marcinchwedczuk.nomoregotos.Condition.WHEN_FALSE;
-import static pl.marcinchwedczuk.nomoregotos.Condition.WHEN_TRUE;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static pl.marcinchwedczuk.nomoregotos.CfgEdgeCondition.ALWAYS;
+import static pl.marcinchwedczuk.nomoregotos.CfgEdgeCondition.WHEN_FALSE;
+import static pl.marcinchwedczuk.nomoregotos.CfgEdgeCondition.WHEN_TRUE;
 
 public class RegionFindingAlgorithmTest {
 	@Test
 	public void canFindRegions() throws Exception {
-		ControlFlowGraph g = buildR2Graph();
+		ControlFlowGraph g = buildGraph();
 
 		DfsBackEdgeDetectionAndTopologicalSort tmp = new DfsBackEdgeDetectionAndTopologicalSort(g);
 		tmp.start();
@@ -25,9 +33,49 @@ public class RegionFindingAlgorithmTest {
 			node.color = "red";
 		});
 
-		/*for (Node node : tmp.getTopologicalOrder()) {
+		/*for (CfgNode node : tmp.getTopologicalOrder()) {
 			System.out.println(node);
 		}*/
+
+		BuildSliceGraphAlgorithm alg =
+				new BuildSliceGraphAlgorithm(g, g.findNode("A"), g.findNode("n9"));
+		SliceGraph sliceGraph = alg.createSliceGraph();
+
+		List<SliceNode> top =
+				sliceGraph.peformTopologicalSort(sliceGraph.findNode(g.findNode("A")));
+
+		Collections.reverse(top);
+
+		top.forEach(node -> {
+			Condition c = null;
+
+			for (SliceEdge edge : node.getIncoming()) {
+				Condition predCond = edge.getFrom().cfgNode.condition;
+				if (predCond == null) {
+					predCond = Condition.alwaysTrue();
+				}
+
+				CfgEdge cfgEdge = edge.getFrom().cfgNode.findEdgeTo(edge.getTo().cfgNode);
+
+				if (cfgEdge.condition == WHEN_TRUE) {
+					Condition var = Condition.variable(edge.getFrom().cfgNode.toString());
+					predCond = predCond.and(var);
+				} else if (cfgEdge.condition == WHEN_FALSE) {
+					Condition var = Condition.negatedVariable(edge.getFrom().cfgNode.toString());
+					predCond = predCond.and(var);
+				}
+
+				if (c == null) { c = predCond; }
+				else {
+					c = c.or(predCond);
+				}
+			}
+
+			if (c != null) {
+				node.cfgNode.condition = c;
+				node.cfgNode.extraLabel = c.toString();
+			}
+		});
 
 		new GraphVizHelper(g, "/home/mc/tmp/graph.graphviz").saveToDotFile();
 	}
@@ -35,20 +83,20 @@ public class RegionFindingAlgorithmTest {
 	private ControlFlowGraph buildR2Graph() {
 		ControlFlowGraph g = new ControlFlowGraph();
 
-		Node A = g.addConditionNode("A");
+		CfgNode A = g.addConditionNode("A");
 		g.addEdge(g.start, A, ALWAYS);
 
-		Node n9 = g.addCodeNode("n9");
+		CfgNode n9 = g.addCodeNode("n9");
 		g.addEdge(n9, g.stop, ALWAYS);
 
 		// Region R2
 		{
-			Node b1 = g.addConditionNode("b1");
-			Node b2 = g.addConditionNode("b2");
-			Node n4 = g.addCodeNode("n4");
-			Node n5 = g.addCodeNode("n5");
-			Node n6 = g.addCodeNode("n6");
-			Node n7 = g.addCodeNode("n7");
+			CfgNode b1 = g.addConditionNode("b1");
+			CfgNode b2 = g.addConditionNode("b2");
+			CfgNode n4 = g.addCodeNode("n4");
+			CfgNode n5 = g.addCodeNode("n5");
+			CfgNode n6 = g.addCodeNode("n6");
+			CfgNode n7 = g.addCodeNode("n7");
 
 			g.addEdge(b1, b2, WHEN_TRUE);
 			g.addEdge(b1, n4, WHEN_FALSE);
@@ -68,21 +116,21 @@ public class RegionFindingAlgorithmTest {
 	private ControlFlowGraph buildGraph() {
 		ControlFlowGraph g = new ControlFlowGraph();
 
-		Node A = g.addConditionNode("A");
+		CfgNode A = g.addConditionNode("A");
 		g.addEdge(g.start, A, ALWAYS);
 
-		Node n9 = g.addCodeNode("n9");
+		CfgNode n9 = g.addCodeNode("n9");
 		g.addEdge(n9, g.stop, ALWAYS);
 
 		{
 			// Region R1
-			Node c1 = g.addConditionNode("c1");
-			Node c2 = g.addConditionNode("c2");
-			Node c3 = g.addConditionNode("c3");
+			CfgNode c1 = g.addConditionNode("c1");
+			CfgNode c2 = g.addConditionNode("c2");
+			CfgNode c3 = g.addConditionNode("c3");
 
-			Node n1 = g.addCodeNode("n1");
-			Node n2 = g.addCodeNode("n2");
-			Node n3 = g.addCodeNode("n3");
+			CfgNode n1 = g.addCodeNode("n1");
+			CfgNode n2 = g.addCodeNode("n2");
+			CfgNode n3 = g.addCodeNode("n3");
 
 			g.addEdge(A, c1, WHEN_TRUE);
 			g.addEdge(c1, n1, WHEN_TRUE);
@@ -97,11 +145,11 @@ public class RegionFindingAlgorithmTest {
 		}
 
 		// Region R3
-		Node d1 = g.addConditionNode("d1");
+		CfgNode d1 = g.addConditionNode("d1");
 		{
-			Node d2 = g.addConditionNode("d2");
-			Node d3 = g.addConditionNode("d3");
-			Node n8 = g.addCodeNode("n8");
+			CfgNode d2 = g.addConditionNode("d2");
+			CfgNode d3 = g.addConditionNode("d3");
+			CfgNode n8 = g.addCodeNode("n8");
 
 			g.addEdge(d1, d3, WHEN_TRUE);
 			g.addEdge(d1, d2, WHEN_FALSE);
@@ -114,12 +162,12 @@ public class RegionFindingAlgorithmTest {
 
 		// Region R2
 		{
-			Node b1 = g.addConditionNode("b1");
-			Node b2 = g.addConditionNode("b2");
-			Node n4 = g.addCodeNode("n4");
-			Node n5 = g.addCodeNode("n5");
-			Node n6 = g.addCodeNode("n6");
-			Node n7 = g.addCodeNode("n7");
+			CfgNode b1 = g.addConditionNode("b1");
+			CfgNode b2 = g.addConditionNode("b2");
+			CfgNode n4 = g.addCodeNode("n4");
+			CfgNode n5 = g.addCodeNode("n5");
+			CfgNode n6 = g.addCodeNode("n6");
+			CfgNode n7 = g.addCodeNode("n7");
 
 			g.addEdge(b1, b2, WHEN_TRUE);
 			g.addEdge(b1, n4, WHEN_FALSE);

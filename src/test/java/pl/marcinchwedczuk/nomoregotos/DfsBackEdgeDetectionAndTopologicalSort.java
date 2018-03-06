@@ -9,14 +9,14 @@ public class DfsBackEdgeDetectionAndTopologicalSort {
 
 	private final ControlFlowGraph g;
 
-	private final List<Node> topologicalOrder = new ArrayList<>();
-	private final IdentityHashMap<Node, Status> visitedStatus = new IdentityHashMap<>();
+	private final List<CfgNode> topologicalOrder = new ArrayList<>();
+	private final IdentityHashMap<CfgNode, Status> visitedStatus = new IdentityHashMap<>();
 
 	public DfsBackEdgeDetectionAndTopologicalSort(ControlFlowGraph g) {
 		this.g = g;
 	}
 
-	public List<Node> getTopologicalOrder() {
+	public List<CfgNode> getTopologicalOrder() {
 		return topologicalOrder;
 	}
 
@@ -24,7 +24,7 @@ public class DfsBackEdgeDetectionAndTopologicalSort {
 		visit(g.start, null);
 	}
 
-	private void visit(Node node, Edge e) {
+	private void visit(CfgNode node, CfgEdge e) {
 		if (visitedStatus.containsKey(node)) {
 			Status status = visitedStatus.get(node);
 			if (status == Status.IN_PROGRESS) {
@@ -35,7 +35,7 @@ public class DfsBackEdgeDetectionAndTopologicalSort {
 
 		visitedStatus.put(node, Status.IN_PROGRESS);
 
-		for (Edge outgoingEdge : node.getOutgoing()) {
+		for (CfgEdge outgoingEdge : node.getOutgoing()) {
 			visit(outgoingEdge.to, outgoingEdge);
 		}
 

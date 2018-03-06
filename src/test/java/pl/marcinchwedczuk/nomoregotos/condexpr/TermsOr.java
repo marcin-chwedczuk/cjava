@@ -1,5 +1,6 @@
 package pl.marcinchwedczuk.nomoregotos.condexpr;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.HashSet;
@@ -15,6 +16,17 @@ public class TermsOr extends CondExpr {
 	public final ImmutableSet<Term> operands;
 
 	public TermsOr(ImmutableSet<Term> operands) {
+		Preconditions.checkArgument(!operands.isEmpty());
+
+		// F|x <=> x
+		operands = operands.stream()
+				.filter(t -> t != False.instance)
+				.collect(toImmutableSet());
+
+		if (operands.isEmpty()) {
+			operands = ImmutableSet.of(False.instance);
+		}
+
 		boolean isTrue = false;
 
 		for (Term t : operands) {
@@ -39,9 +51,24 @@ public class TermsOr extends CondExpr {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		TermsOr termsOr = (TermsOr) o;
+
+		return operands.equals(termsOr.operands);
+	}
+
+	@Override
+	public int hashCode() {
+		return operands.hashCode();
+	}
+
+	@Override
 	public String toString() {
-		return "(" + operands.stream()
+		return operands.stream()
 				.map(CondExpr::toString)
-				.collect(joining(") || (")) + ")";
+				.collect(joining(" || "));
 	}
 }
