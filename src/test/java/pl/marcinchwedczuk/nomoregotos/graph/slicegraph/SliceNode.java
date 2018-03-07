@@ -9,4 +9,9 @@ public class SliceNode extends Node<SliceNode, SliceEdge> {
 	SliceNode(CfgNode cfgNode) {
 		this.cfgNode = cfgNode;
 	}
+
+	@Override
+	public String toString() {
+		return cfgNode.toString();
+	}
 }

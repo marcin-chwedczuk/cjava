@@ -91,7 +91,9 @@ public class DnfBooleanExpression extends CondExpr {
 				ImmutableSet.<TermsAnd>builder()
 					.addAll(this.operands)
 					.addAll(other.operands)
-					.build());
+					.build())
+				// Double negation - jiggle terms to introduce simplifications
+				.not().not();
 	}
 
 
@@ -113,7 +115,9 @@ public class DnfBooleanExpression extends CondExpr {
 			conjuctions.add(new TermsAnd(False.instance));
 		}
 
-		return new DnfBooleanExpression(ImmutableSet.copyOf(conjuctions));
+		return new DnfBooleanExpression(ImmutableSet.copyOf(conjuctions))
+				// double negation to introduce further simplifications
+				.not().not();
 	}
 
 	private ImmutableSet<TermsAnd> andCrossProduct(List<TermsOr> ors, int to) {

@@ -38,11 +38,9 @@ public class BuildSliceGraphAlgorithm {
 			CfgNode target = edge.to;
 
 			if (target == stop) {
-				dfsStack.push(stop);
-				addDfsPathToSliceGraph();
-				dfsStack.pop();
+				addDfsPathToSliceGraph(stop);
 			} else if (sliceGraph.contains(target) && !dfsStack.contains(target)) {
-				addDfsPathToSliceGraph();
+				addDfsPathToSliceGraph(target);
 			}
 
 			if (!isVisited(target)) {
@@ -54,16 +52,20 @@ public class BuildSliceGraphAlgorithm {
 		}
 	}
 
-	private void addDfsPathToSliceGraph() {
+	private void addDfsPathToSliceGraph(CfgNode lastNode) {
 		SliceNode prev = null;
 
+		dfsStack.push(lastNode);
 		for (CfgNode node : dfsStack) {
 			 SliceNode curr = sliceGraph.findOrCreateNode(node);
 			 if (prev != null) {
-				 sliceGraph.addEdge(prev, curr);
+			 	if (prev.tryFindEdge(curr) == null) {
+					sliceGraph.addEdge(prev, curr);
+				}
 			 }
 			 prev = curr;
 		}
+		dfsStack.pop();
 	}
 
 	private boolean isVisited(CfgEdge node) {

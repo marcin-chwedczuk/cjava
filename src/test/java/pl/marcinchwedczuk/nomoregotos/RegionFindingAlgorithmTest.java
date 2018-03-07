@@ -1,7 +1,11 @@
 package pl.marcinchwedczuk.nomoregotos;
 
 import org.junit.Test;
+import pl.marcinchwedczuk.nomoregotos.ast.ExprStatementAst;
+import pl.marcinchwedczuk.nomoregotos.ast.IfStatementAst;
+import pl.marcinchwedczuk.nomoregotos.ast.StatementBlockAst;
 import pl.marcinchwedczuk.nomoregotos.condexpr.Condition;
+import pl.marcinchwedczuk.nomoregotos.graph.DirectedGraphVizHelper;
 import pl.marcinchwedczuk.nomoregotos.graph.slicegraph.SliceEdge;
 import pl.marcinchwedczuk.nomoregotos.graph.slicegraph.SliceGraph;
 import pl.marcinchwedczuk.nomoregotos.graph.slicegraph.SliceNode;
@@ -17,7 +21,7 @@ import static pl.marcinchwedczuk.nomoregotos.CfgEdgeCondition.WHEN_TRUE;
 public class RegionFindingAlgorithmTest {
 	@Test
 	public void canFindRegions() throws Exception {
-		ControlFlowGraph g = buildGraph();
+		ControlFlowGraph g = buildR2Graph();
 
 		DfsBackEdgeDetectionAndTopologicalSort tmp = new DfsBackEdgeDetectionAndTopologicalSort(g);
 		tmp.start();
@@ -26,7 +30,7 @@ public class RegionFindingAlgorithmTest {
 		d.compute();
 
 		d.getDominatedNodes().forEach(node -> {
-			node.color = "green";
+			// node.color = "green";
 		});
 
 		d.getRegionSuccessor().forEach(node -> {
@@ -38,14 +42,32 @@ public class RegionFindingAlgorithmTest {
 		}*/
 
 		BuildSliceGraphAlgorithm alg =
-				new BuildSliceGraphAlgorithm(g, g.findNode("A"), g.findNode("n9"));
+				new BuildSliceGraphAlgorithm(g, g.findNode("b1"), g.findNode("n9"));
 		SliceGraph sliceGraph = alg.createSliceGraph();
 
 		List<SliceNode> top =
-				sliceGraph.peformTopologicalSort(sliceGraph.findNode(g.findNode("A")));
-
+				sliceGraph.peformTopologicalSort(sliceGraph.findNode(g.findNode("b1")));
 		Collections.reverse(top);
 
+		computeConditions(top);
+
+		// Compute AST ---------------
+		StatementBlockAst block = new StatementBlockAst();
+		top.forEach(node -> {
+			if (node.cfgNode instanceof CodeNode) {
+				block.addStatement(new IfStatementAst(
+						node.cfgNode.condition,
+						new ExprStatementAst(((CodeNode)node.cfgNode).instruction)));
+			}
+		});
+
+		System.out.println(block.toString());
+
+		//new DirectedGraphVizHelper(sliceGraph, "/home/mc/tmp/graph.graphviz").saveToDotFile();
+		new GraphVizHelper(g, "/home/mc/tmp/graph.graphviz").saveToDotFile();
+	}
+
+	private void computeConditions(List<SliceNode> top) {
 		top.forEach(node -> {
 			Condition c = null;
 
@@ -76,8 +98,6 @@ public class RegionFindingAlgorithmTest {
 				node.cfgNode.extraLabel = c.toString();
 			}
 		});
-
-		new GraphVizHelper(g, "/home/mc/tmp/graph.graphviz").saveToDotFile();
 	}
 
 	private ControlFlowGraph buildR2Graph() {

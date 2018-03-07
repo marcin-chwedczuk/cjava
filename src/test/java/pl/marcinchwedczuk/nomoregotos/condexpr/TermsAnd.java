@@ -118,7 +118,13 @@ public class TermsAnd extends CondExpr {
 				.findFirst()
 				.get();
 
-		return new TermsAnd(remove(terms, termToRemove));
+		ImmutableSet<Term> afterRemoval = remove(terms, termToRemove);
+
+		if (afterRemoval.isEmpty()) {
+			return new TermsAnd(True.instance);
+		}
+
+		return new TermsAnd(afterRemoval);
 	}
 
 	public boolean isMoreSpecific(TermsAnd other) {
